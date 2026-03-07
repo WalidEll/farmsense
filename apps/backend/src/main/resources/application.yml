@@ -1,0 +1,95 @@
+spring:
+  application:
+    name: farmsense-backend
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/farmsense}
+    username: ${DB_USER:farmsense}
+    password: ${DB_PASSWORD:farmsense}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate        # Flyway manages the schema
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+  error:
+    include-message: always
+
+# ── JWT ──────────────────────────────────────────────────────
+farmsense:
+  jwt:
+    secret: ${JWT_SECRET:change-me-in-production-use-256-bit-secret}
+    access-token-expiry-ms: 900000       # 15 minutes
+    refresh-token-expiry-ms: 2592000000  # 30 days
+
+  whatsapp:
+    token: ${WHATSAPP_TOKEN:}
+    phone-number-id: ${WHATSAPP_PHONE_ID:}
+    api-url: https://graph.facebook.com/v19.0
+
+  anthropic:
+    api-key: ${ANTHROPIC_API_KEY:}
+    model: claude-sonnet-4-6
+    api-url: https://api.anthropic.com/v1/messages
+
+  weather:
+    api-url: https://api.open-meteo.com
+
+  alert:
+    suppress-hours: 4             # hours before same alert fires again
+    offline-threshold-minutes: 30 # minutes before device is "offline"
+    daylight-start-hour: 7        # for light alerts — Morocco timezone
+    daylight-end-hour: 19
+
+  device:
+    claim-token-expiry-minutes: 15
+
+# ── Logging ───────────────────────────────────────────────────
+logging:
+  level:
+    ma.farmsense: DEBUG
+    org.springframework.security: INFO
+
+# ── Actuator ──────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+---
+# Production profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+logging:
+  level:
+    ma.farmsense: INFO
