@@ -18,18 +18,34 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'dashboard',
-      component: () => import('@/views/DashboardView.vue'),
-    },
-    {
-      path: '/sensors',
-      name: 'sensors',
-      component: () => import('@/views/SensorsView.vue'),
-    },
-    {
-      path: '/plants/:id',
-      name: 'plant-detail',
-      component: () => import('@/views/PlantDetailView.vue'),
+      component: () => import('@/components/shared/AppLayout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'dashboard',
+          component: () => import('@/views/DashboardView.vue'),
+        },
+        {
+          path: 'sensors',
+          name: 'sensors',
+          component: () => import('@/views/SensorsView.vue'),
+        },
+        {
+          path: 'plants/:id',
+          name: 'plant-detail',
+          component: () => import('@/views/PlantDetailView.vue'),
+        },
+        {
+          path: 'alerts',
+          name: 'alerts',
+          component: () => import('@/views/AlertsView.vue'),
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: () => import('@/views/SettingsView.vue'),
+        },
+      ],
     },
   ],
 })

@@ -1,9 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <NavBar />
-    <OfflineBanner />
-
-    <main class="max-w-6xl mx-auto px-4 py-8">
+  <div>
+    <div class="max-w-5xl mx-auto px-4 py-8">
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-800">{{ t('nav.plants') }}</h2>
@@ -73,7 +70,7 @@
         <h3 class="text-lg font-semibold text-gray-700 mb-3">{{ t('nav.alerts') }}</h3>
         <AlertFeed :limit="5" />
       </div>
-    </main>
+    </div>
 
     <!-- Plant form modal -->
     <PlantForm v-if="showForm" @close="showForm = false" @saved="showForm = false" />
@@ -90,8 +87,6 @@ import { usePlantStore } from '@/stores/plants.store'
 import { useAlertsStore } from '@/stores/alerts.store'
 import { useReadingsStore } from '@/stores/readings.store'
 import { useI18n } from '@/i18n'
-import NavBar from '@/components/shared/NavBar.vue'
-import OfflineBanner from '@/components/shared/OfflineBanner.vue'
 import PlantCard from '@/components/plants/PlantCard.vue'
 import PlantForm from '@/components/plants/PlantForm.vue'
 import AlertFeed from '@/components/alerts/AlertFeed.vue'

@@ -83,6 +83,19 @@ export interface Alert {
   ackAt?: string
 }
 
+export interface AlertPreference {
+  soilDryEnabled: boolean
+  soilWetEnabled: boolean
+  tempHighEnabled: boolean
+  tempLowEnabled: boolean
+  lightLowEnabled: boolean
+  deviceOfflineEnabled: boolean
+  quietHoursStart?: number
+  quietHoursEnd?: number
+  channelWhatsapp: boolean
+  channelPush: boolean
+}
+
 export interface Device {
   id: string
   deviceId: string

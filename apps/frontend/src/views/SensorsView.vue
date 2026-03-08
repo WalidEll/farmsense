@@ -1,12 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <NavBar />
-    <OfflineBanner />
-
-    <main class="max-w-6xl mx-auto px-4 py-8">
+  <div>
+    <div class="max-w-5xl mx-auto px-4 py-8">
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-gray-800">{{ t('nav.sensors') }}</h2>
+        <h2 class="text-xl font-bold text-gray-800">{{ t('nav.devices') }}</h2>
         <div class="flex items-center gap-2">
           <button
             @click="devicesStore.fetchAll()"
@@ -77,7 +74,7 @@
           </div>
         </div>
       </div>
-    </main>
+    </div>
 
     <!-- Device detail modal -->
     <DeviceDetailModal
@@ -93,8 +90,6 @@
 import { ref, onMounted } from 'vue'
 import { useDevicesStore } from '@/stores/devices.store'
 import { useI18n } from '@/i18n'
-import NavBar from '@/components/shared/NavBar.vue'
-import OfflineBanner from '@/components/shared/OfflineBanner.vue'
 import DeviceCard from '@/components/devices/DeviceCard.vue'
 import DeviceDetailModal from '@/components/devices/DeviceDetailModal.vue'
 import type { Device } from '@/types'

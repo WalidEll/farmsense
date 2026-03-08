@@ -1,10 +1,15 @@
 package ma.farmsense.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ma.farmsense.dto.alert.AlertPreferenceRequest;
+import ma.farmsense.dto.alert.AlertPreferenceResponse;
 import ma.farmsense.dto.alert.AlertResponse;
 import ma.farmsense.entity.Alert;
+import ma.farmsense.entity.AlertPreference;
 import ma.farmsense.entity.User;
 import ma.farmsense.exception.AppException;
+import ma.farmsense.repository.AlertPreferenceRepository;
 import ma.farmsense.repository.AlertRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +25,7 @@ import java.util.UUID;
 public class AlertController {
 
     private final AlertRepository alertRepository;
+    private final AlertPreferenceRepository alertPreferenceRepository;
 
     /** US-040: Alert history feed */
     @GetMapping
@@ -48,5 +54,37 @@ public class AlertController {
     public ResponseEntity<Long> unreadCount(@AuthenticationPrincipal User user) {
         long count = alertRepository.findByUserAndAckAtIsNullOrderByTriggeredAtDesc(user).size();
         return ResponseEntity.ok(count);
+    }
+
+    /** US-044: Get alert preferences (creates defaults if none exist) */
+    @GetMapping("/preferences")
+    public ResponseEntity<AlertPreferenceResponse> getPreferences(@AuthenticationPrincipal User user) {
+        AlertPreference pref = alertPreferenceRepository.findByUser(user)
+                .orElseGet(() -> alertPreferenceRepository.save(
+                        AlertPreference.builder().user(user).build()
+                ));
+        return ResponseEntity.ok(AlertPreferenceResponse.from(pref));
+    }
+
+    /** US-044: Update alert preferences */
+    @PutMapping("/preferences")
+    public ResponseEntity<AlertPreferenceResponse> updatePreferences(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody AlertPreferenceRequest req) {
+        AlertPreference pref = alertPreferenceRepository.findByUser(user)
+                .orElseGet(() -> AlertPreference.builder().user(user).build());
+
+        pref.setSoilDryEnabled(req.isSoilDryEnabled());
+        pref.setSoilWetEnabled(req.isSoilWetEnabled());
+        pref.setTempHighEnabled(req.isTempHighEnabled());
+        pref.setTempLowEnabled(req.isTempLowEnabled());
+        pref.setLightLowEnabled(req.isLightLowEnabled());
+        pref.setDeviceOfflineEnabled(req.isDeviceOfflineEnabled());
+        pref.setQuietHoursStart(req.getQuietHoursStart());
+        pref.setQuietHoursEnd(req.getQuietHoursEnd());
+        pref.setChannelWhatsapp(req.isChannelWhatsapp());
+        pref.setChannelPush(req.isChannelPush());
+
+        return ResponseEntity.ok(AlertPreferenceResponse.from(alertPreferenceRepository.save(pref)));
     }
 }

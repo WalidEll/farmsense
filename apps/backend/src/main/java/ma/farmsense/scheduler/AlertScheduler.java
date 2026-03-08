@@ -20,6 +20,7 @@ import java.util.Optional;
  *  2. Check each threshold
  *  3. If breached for 2 consecutive readings → fire alert
  *  4. Suppress if same alert fired within suppress-hours
+ *  5. Respect user alert preferences (enabled types + quiet hours)
  */
 @Component
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class AlertScheduler {
     private final PlantRepository plantRepo;
     private final SensorReadingRepository readingRepo;
     private final AlertRepository alertRepo;
+    private final AlertPreferenceRepository alertPrefRepo;
     private final WhatsAppService whatsApp;
 
     @Value("${farmsense.alert.suppress-hours:4}")
@@ -90,6 +92,17 @@ public class AlertScheduler {
     }
 
     private void fire(Plant plant, Alert.AlertType type, double value) {
+        User user = plant.getUser();
+
+        // Load user's alert preferences (defaults if none saved)
+        AlertPreference pref = alertPrefRepo.findByUser(user).orElse(null);
+
+        // Check if this alert type is enabled
+        if (pref != null && !isAlertTypeEnabled(pref, type)) {
+            log.debug("Alert type {} disabled by user {} preferences", type, user.getId());
+            return;
+        }
+
         // Suppress check
         Optional<Alert> recent = alertRepo.findMostRecentByPlantAndType(
                 plant.getId(), type, Instant.now().minusSeconds(suppressHours * 3600L));
@@ -100,7 +113,7 @@ public class AlertScheduler {
         }
 
         Alert alert = Alert.builder()
-                .user(plant.getUser())
+                .user(user)
                 .plant(plant)
                 .type(type)
                 .severity(Alert.Severity.MEDIUM)
@@ -113,16 +126,50 @@ public class AlertScheduler {
         alertRepo.save(alert);
         log.info("Alert fired: {} for plant {} ({})", type, plant.getName(), value);
 
-        // Send WhatsApp
-        if (plant.getUser().getPhoneWa() != null) {
-            String msg = switch (plant.getUser().getLang()) {
+        // Check quiet hours — skip WhatsApp if within quiet window, but alert is still saved
+        boolean inQuietHours = isInQuietHours(pref);
+
+        // Send WhatsApp (respect quiet hours + channel preference)
+        boolean whatsappEnabled = pref == null || pref.isChannelWhatsapp();
+        if (user.getPhoneWa() != null && whatsappEnabled && !inQuietHours) {
+            String msg = switch (user.getLang()) {
                 case DARIJA -> alert.getMsgDarija();
                 case AR     -> alert.getMsgAr();
                 default     -> alert.getMsgFr();
             };
-            whatsApp.send(plant.getUser().getPhoneWa(), msg);
+            whatsApp.send(user.getPhoneWa(), msg);
             alert.setWaSent(true);
             alertRepo.save(alert);
+        }
+    }
+
+    /** Check whether the given alert type is enabled in preferences */
+    private boolean isAlertTypeEnabled(AlertPreference pref, Alert.AlertType type) {
+        return switch (type) {
+            case SOIL_DRY       -> pref.isSoilDryEnabled();
+            case SOIL_WET       -> pref.isSoilWetEnabled();
+            case TEMP_HIGH      -> pref.isTempHighEnabled();
+            case TEMP_LOW       -> pref.isTempLowEnabled();
+            case LIGHT_LOW      -> pref.isLightLowEnabled();
+            case DEVICE_OFFLINE -> pref.isDeviceOfflineEnabled();
+        };
+    }
+
+    /** Check whether the current time falls within quiet hours */
+    private boolean isInQuietHours(AlertPreference pref) {
+        if (pref == null || pref.getQuietHoursStart() == null || pref.getQuietHoursEnd() == null) {
+            return false;
+        }
+        int currentHour = ZonedDateTime.now(ZoneId.of("Africa/Casablanca")).getHour();
+        int start = pref.getQuietHoursStart();
+        int end = pref.getQuietHoursEnd();
+
+        if (start <= end) {
+            // e.g. 22 <= current < 7 doesn't apply; 9 <= current < 17 does
+            return currentHour >= start && currentHour < end;
+        } else {
+            // Wraps midnight: e.g. start=22, end=7 → quiet from 22:00 to 07:00
+            return currentHour >= start || currentHour < end;
         }
     }
 

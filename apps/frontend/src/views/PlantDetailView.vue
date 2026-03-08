@@ -1,9 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <NavBar />
-    <OfflineBanner />
-
-    <main class="max-w-4xl mx-auto px-4 py-8">
+  <div>
+    <div class="max-w-4xl mx-auto px-4 py-8">
       <!-- Back -->
       <button @click="router.push('/')" class="flex items-center gap-1 text-gray-500 hover:text-green-700 mb-6 text-sm">
         ← {{ t('common.back') }}
@@ -47,6 +44,16 @@
         </div>
 
         <!-- Latest sensor cards -->
+        <div class="flex items-center justify-between mb-3" v-if="latestReading">
+          <div class="flex items-center gap-2">
+            <span v-if="latestReading.source === 'MANUAL'" class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">
+              ✏️ {{ t('manual_indicator') }}
+            </span>
+          </div>
+          <button @click="showManual = true" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1">
+            ✏️ {{ t('manual_add') }}
+          </button>
+        </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8" v-if="latestReading">
           <SensorCard icon="💧" :label="t('sensors.soil')" :value="latestReading.soilMoisture" unit="%" :min="plant.soilMin" :max="plant.soilMax" />
           <SensorCard icon="🌡️" :label="t('sensors.temp')" :value="latestReading.temperature" unit="°C" :min="plant.tempMin" :max="plant.tempMax" />
@@ -54,7 +61,10 @@
           <SensorCard icon="☀️" :label="t('sensors.light')" :value="latestReading.lightLux" unit=" lux" :min="plant.lightMin" />
         </div>
         <div v-else class="bg-white rounded-xl p-6 text-center text-gray-400 mb-8 border border-dashed border-gray-300">
-          {{ t('sensors.noData') }}
+          <p>{{ t('sensors.noData') }}</p>
+          <button @click="showManual = true" class="mt-3 text-sm bg-purple-50 hover:bg-purple-100 text-purple-700 px-4 py-2 rounded-lg font-medium transition-colors">
+            ✏️ {{ t('manual_add') }}
+          </button>
         </div>
 
         <!-- Care Schedule -->
@@ -90,6 +100,9 @@
 
       <!-- Edit modal -->
       <PlantForm v-if="showEdit" :plant="plant" @close="showEdit = false" @saved="showEdit = false" />
+
+      <!-- Manual reading modal -->
+      <ManualReadingForm v-if="showManual" :plant-id="plantId" @close="showManual = false" @saved="onManualSaved" />
       
       <!-- Device modals -->
       <DeviceAssignModal 
@@ -107,7 +120,7 @@
         @close="showConfig = false"
         @updated="showConfig = false"
       />
-    </main>
+    </div>
   </div>
 </template>
 
@@ -118,8 +131,6 @@ import { usePlantStore } from '@/stores/plants.store'
 import { useReadingsStore } from '@/stores/readings.store'
 import { useDevicesStore } from '@/stores/devices.store'
 import { useI18n } from '@/i18n'
-import NavBar from '@/components/shared/NavBar.vue'
-import OfflineBanner from '@/components/shared/OfflineBanner.vue'
 import SensorCard from '@/components/sensors/SensorCard.vue'
 import SensorChart from '@/components/sensors/SensorChart.vue'
 import PlantForm from '@/components/plants/PlantForm.vue'
@@ -128,6 +139,7 @@ import DeviceAssignModal from '@/components/devices/DeviceAssignModal.vue'
 import DeviceSetupModal from '@/components/devices/DeviceSetupModal.vue'
 import DeviceConfigModal from '@/components/devices/DeviceConfigModal.vue'
 import CareScheduleCard from '@/components/plants/CareScheduleCard.vue'
+import ManualReadingForm from '@/components/sensors/ManualReadingForm.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -141,6 +153,7 @@ const showEdit = ref(false)
 const showAssign = ref(false)
 const showSetup = ref(false)
 const showConfig = ref(false)
+const showManual = ref(false)
 const hours = ref(24)
 
 const plant = computed(() => plantsStore.plants.find((p: any) => p.id === plantId))
@@ -151,6 +164,11 @@ const historyReadings = computed(() => readingsStore.history[plantId] ?? [])
 async function changeHours(h: number) {
   hours.value = h
   await readingsStore.fetchHistory(plantId, h)
+}
+
+async function onManualSaved() {
+  showManual.value = false
+  await fetchAllData()
 }
 
 let syncInterval: ReturnType<typeof setInterval>
