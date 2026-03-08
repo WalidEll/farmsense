@@ -3,8 +3,15 @@ import { ref, computed } from 'vue'
 import { api } from '@/services/api'
 import type { User, AuthResponse } from '@/types'
 
+function loadUser(): User | null {
+  try {
+    const raw = localStorage.getItem('user')
+    return raw ? JSON.parse(raw) : null
+  } catch { return null }
+}
+
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref<User | null>(null)
+  const user = ref<User | null>(loadUser())
   const accessToken = ref<string | null>(localStorage.getItem('access_token'))
   const refreshToken = ref<string | null>(localStorage.getItem('refresh_token'))
 
@@ -34,6 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
     refreshToken.value = null
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
+    localStorage.removeItem('user')
   }
 
   function setTokens(res: AuthResponse) {
@@ -51,6 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
       latitude: res.latitude,
       longitude: res.longitude,
     }
+    localStorage.setItem('user', JSON.stringify(user.value))
   }
 
   const hasLocation = computed(() => user.value?.latitude != null && user.value?.longitude != null)
@@ -60,6 +69,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (user.value) {
       user.value.latitude = latitude
       user.value.longitude = longitude
+      localStorage.setItem('user', JSON.stringify(user.value))
     }
   }
 
