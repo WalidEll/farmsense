@@ -14,5 +14,7 @@ public interface DeviceRepository extends JpaRepository<Device, UUID> {
 
     List<Device> findByUser(User user);
 
+    List<Device> findByPlantId(UUID plantId);
+
     Optional<Device> findByIdAndUser(UUID id, User user);
 }

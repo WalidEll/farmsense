@@ -163,3 +163,10 @@ Devices POST sensor readings with `X-Device-Key` header for authentication.
 6. AI Plant Diagnosis
 7. Offline & PWA
 8. Multilingual UI
+
+## Active Technologies
+- Markdown (document artifact); no runtime language required + `docs/USER_STORIES_V0.md` (source of truth for 26 stories + acceptance criteria); existing codebase in `apps/backend`, `apps/frontend`, `apps/esp32` (001-v0-us-coverage)
+- File system — `specs/001-v0-us-coverage/coverage-report.md` (001-v0-us-coverage)
+
+## Recent Changes
+- 001-v0-us-coverage: Added Markdown (document artifact); no runtime language required + `docs/USER_STORIES_V0.md` (source of truth for 26 stories + acceptance criteria); existing codebase in `apps/backend`, `apps/frontend`, `apps/esp32`

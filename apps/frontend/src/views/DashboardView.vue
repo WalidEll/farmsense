@@ -89,8 +89,18 @@
 
                 <!-- Quick Status Icons -->
                 <div class="flex gap-2 shrink-0">
-                  <StatusBadge :value="readingsStore.latest[plant.id]?.soilMoisture" type="moisture" />
-                  <StatusBadge :value="readingsStore.latest[plant.id]?.temperature" type="temp" />
+                  <StatusBadge 
+                    :value="readingsStore.latest[plant.id]?.soilMoisture" 
+                    type="moisture"
+                    :min="plant.soilMin"
+                    :max="plant.soilMax"
+                  />
+                  <StatusBadge 
+                    :value="readingsStore.latest[plant.id]?.temperature" 
+                    type="temp"
+                    :min="plant.tempMin"
+                    :max="plant.tempMax"
+                  />
                 </div>
               </div>
             </div>

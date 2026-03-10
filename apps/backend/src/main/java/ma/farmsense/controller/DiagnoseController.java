@@ -36,4 +36,10 @@ public class DiagnoseController {
             @PathVariable UUID plantId) {
         return ResponseEntity.ok(diagnoseService.history(user, plantId));
     }
+
+    /** US-052: Public share link for diagnosis */
+    @GetMapping("/share/{id}")
+    public ResponseEntity<DiagnoseResponse> share(@PathVariable UUID id) {
+        return ResponseEntity.ok(diagnoseService.getShared(id));
+    }
 }

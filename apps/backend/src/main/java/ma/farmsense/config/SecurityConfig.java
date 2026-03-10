@@ -49,12 +49,12 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         // Crop database — public read access
                         .requestMatchers(HttpMethod.GET, "/api/v1/crops/**").permitAll()
+                        // US-052: Public sharing link for diagnosis
+                        .requestMatchers(HttpMethod.GET, "/api/v1/diagnose/share/**").permitAll()
                         // Everything else requires JWT
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((req, res, e) -> res.sendError(401, "Unauthorized"))
-                )
+                        .authenticationEntryPoint((req, res, e) -> res.sendError(401, "Unauthorized")))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

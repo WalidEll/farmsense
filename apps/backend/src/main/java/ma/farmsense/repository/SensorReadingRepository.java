@@ -17,9 +17,17 @@ public interface SensorReadingRepository extends JpaRepository<SensorReading, Lo
     @Query("SELECT r FROM SensorReading r WHERE r.plant.id = :plantId ORDER BY r.recordedAt DESC LIMIT 1")
     Optional<SensorReading> findLatestByPlantId(@Param("plantId") UUID plantId);
 
-    /** Last 2 readings — used by AlertScheduler to detect sustained threshold breaches */
+    /**
+     * Last 2 readings — used by AlertScheduler to detect sustained threshold
+     * breaches
+     */
     @Query("SELECT r FROM SensorReading r WHERE r.plant.id = :plantId ORDER BY r.recordedAt DESC LIMIT 2")
     List<SensorReading> findLatest2ByPlant(@Param("plantId") UUID plantId);
+
+    /** US-022: Last 2 readings per specific device */
+    @Query("SELECT r FROM SensorReading r WHERE r.plant.id = :plantId AND r.deviceId = :deviceId ORDER BY r.recordedAt DESC LIMIT 2")
+    List<SensorReading> findLatest2ByPlantAndDeviceId(@Param("plantId") UUID plantId,
+            @Param("deviceId") String deviceId);
 
     /** History for charts */
     @Query("SELECT r FROM SensorReading r WHERE r.plant = :plant AND r.recordedAt >= :since ORDER BY r.recordedAt ASC")

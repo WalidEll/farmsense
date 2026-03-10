@@ -16,11 +16,11 @@ import java.util.Optional;
 /**
  * Runs every 15 minutes.
  * For each plant with an active sensor:
- *  1. Fetch the last 2 readings
- *  2. Check each threshold
- *  3. If breached for 2 consecutive readings → fire alert
- *  4. Suppress if same alert fired within suppress-hours
- *  5. Respect user alert preferences (enabled types + quiet hours)
+ * 1. Fetch the last 2 readings
+ * 2. Check each threshold
+ * 3. If breached for 2 consecutive readings → fire alert
+ * 4. Suppress if same alert fired within suppress-hours
+ * 5. Respect user alert preferences (enabled types + quiet hours)
  */
 @Component
 @RequiredArgsConstructor
@@ -28,6 +28,7 @@ import java.util.Optional;
 public class AlertScheduler {
 
     private final PlantRepository plantRepo;
+    private final DeviceRepository deviceRepo;
     private final SensorReadingRepository readingRepo;
     private final AlertRepository alertRepo;
     private final AlertPreferenceRepository alertPrefRepo;
@@ -57,8 +58,16 @@ public class AlertScheduler {
     }
 
     private void checkPlant(Plant plant) {
-        List<SensorReading> last2 = readingRepo.findLatest2ByPlant(plant.getId());
-        if (last2.size() < 2) return;
+        List<Device> devices = deviceRepo.findByPlantId(plant.getId());
+        for (Device device : devices) {
+            checkDeviceForPlant(plant, device);
+        }
+    }
+
+    private void checkDeviceForPlant(Plant plant, Device device) {
+        List<SensorReading> last2 = readingRepo.findLatest2ByPlantAndDeviceId(plant.getId(), device.getDeviceId());
+        if (last2.size() < 2)
+            return;
 
         SensorReading r1 = last2.get(0);
         SensorReading r2 = last2.get(1);
@@ -70,7 +79,7 @@ public class AlertScheduler {
             }
         }
 
-        // ── Temperature high ───────────────────────────────────
+        // ── Temperature high/low ──────────────────────────────
         if (r1.getTemperature() != null && r2.getTemperature() != null) {
             if (r1.getTemperature() > plant.getTempMax() && r2.getTemperature() > plant.getTempMax()) {
                 fire(plant, Alert.AlertType.TEMP_HIGH, r1.getTemperature());
@@ -126,16 +135,17 @@ public class AlertScheduler {
         alertRepo.save(alert);
         log.info("Alert fired: {} for plant {} ({})", type, plant.getName(), value);
 
-        // Check quiet hours — skip WhatsApp if within quiet window, but alert is still saved
+        // Check quiet hours — skip WhatsApp if within quiet window, but alert is still
+        // saved
         boolean inQuietHours = isInQuietHours(pref);
 
         // Send WhatsApp (respect quiet hours + channel preference)
         boolean whatsappEnabled = pref == null || pref.isChannelWhatsapp();
         if (user.getPhoneWa() != null && whatsappEnabled && !inQuietHours) {
             String msg = switch (user.getLang()) {
-                case EN  -> alert.getMsgEn();
-                case AR  -> alert.getMsgAr();
-                default  -> alert.getMsgFr();
+                case EN -> alert.getMsgEn();
+                case AR -> alert.getMsgAr();
+                default -> alert.getMsgFr();
             };
             whatsApp.send(user.getPhoneWa(), msg);
             alert.setWaSent(true);
@@ -146,11 +156,11 @@ public class AlertScheduler {
     /** Check whether the given alert type is enabled in preferences */
     private boolean isAlertTypeEnabled(AlertPreference pref, Alert.AlertType type) {
         return switch (type) {
-            case SOIL_DRY       -> pref.isSoilDryEnabled();
-            case SOIL_WET       -> pref.isSoilWetEnabled();
-            case TEMP_HIGH      -> pref.isTempHighEnabled();
-            case TEMP_LOW       -> pref.isTempLowEnabled();
-            case LIGHT_LOW      -> pref.isLightLowEnabled();
+            case SOIL_DRY -> pref.isSoilDryEnabled();
+            case SOIL_WET -> pref.isSoilWetEnabled();
+            case TEMP_HIGH -> pref.isTempHighEnabled();
+            case TEMP_LOW -> pref.isTempLowEnabled();
+            case LIGHT_LOW -> pref.isLightLowEnabled();
             case DEVICE_OFFLINE -> pref.isDeviceOfflineEnabled();
         };
     }
@@ -178,22 +188,22 @@ public class AlertScheduler {
             case SOIL_DRY -> switch (lang) {
                 case "en" -> String.format("🌱 Soil is dry! Water now — %s (%.0f%%)", plantName, value);
                 case "ar" -> String.format("🌱 التربة جافة! اسقِ الآن — %s (%.0f%%)", plantName, value);
-                default   -> String.format("🌱 Sol sec ! Arrosez maintenant — %s (%.0f%%)", plantName, value);
+                default -> String.format("🌱 Sol sec ! Arrosez maintenant — %s (%.0f%%)", plantName, value);
             };
             case TEMP_HIGH -> switch (lang) {
                 case "en" -> String.format("🌡️ Too hot! — %s (%.1f°C)", plantName, value);
                 case "ar" -> String.format("🌡️ حرارة مرتفعة جداً! — %s (%.1f°C)", plantName, value);
-                default   -> String.format("🌡️ Trop chaud ! — %s (%.1f°C)", plantName, value);
+                default -> String.format("🌡️ Trop chaud ! — %s (%.1f°C)", plantName, value);
             };
             case TEMP_LOW -> switch (lang) {
                 case "en" -> String.format("🥶 Too cold! — %s (%.1f°C)", plantName, value);
                 case "ar" -> String.format("🥶 برودة شديدة! — %s (%.1f°C)", plantName, value);
-                default   -> String.format("🥶 Trop froid ! — %s (%.1f°C)", plantName, value);
+                default -> String.format("🥶 Trop froid ! — %s (%.1f°C)", plantName, value);
             };
             case LIGHT_LOW -> switch (lang) {
                 case "en" -> String.format("☀️ Not enough light — %s (%.0f lux)", plantName, value);
                 case "ar" -> String.format("☀️ الضوء غير كافٍ — %s (%.0f lux)", plantName, value);
-                default   -> String.format("☀️ Pas assez de lumière — %s (%.0f lux)", plantName, value);
+                default -> String.format("☀️ Pas assez de lumière — %s (%.0f lux)", plantName, value);
             };
             default -> String.format("⚠️ Alert %s — %s", type, plantName);
         };
