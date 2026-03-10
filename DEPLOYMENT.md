@@ -1,93 +1,117 @@
-# FarmSense Deployment Guide (TrueNAS)
+# FarmSense Deployment Guide (Dockge on TrueNAS)
 
-This guide explains how to deploy FarmSense to a **TrueNAS SCALE** instance using **GitHub Actions** and a **Self-Hosted Runner**.
+This guide explains how to deploy FarmSense manually on a **TrueNAS SCALE** instance using **Dockge** and images built via **GitHub Actions**.
 
-## 1. Prepare TrueNAS Environment
+## 1. Automated Build Pipeline
 
-You need a Linux environment with Docker and Docker Compose. On TrueNAS SCALE, you have two main options:
-- **A Linux VM** (Ubuntu Server recommended): Most stable and isolated.
-- **A Sandbox/Jail (systemd-nspawn)**: More lightweight but requires manual Docker setup.
+The project uses GitHub Actions (`.github/workflows/docker-build-push.yml`) to automatically build and push Docker images to the **GitHub Container Registry (GHCR)** whenever code is pushed to the `main` branch.
 
-### Prerequisites (on the VM/Host)
-1. **Install Docker & Docker Compose**:
-   ```bash
-   sudo apt update
-   sudo apt install docker.io docker-compose-v2 -y
-   sudo usermod -aG docker $USER
-   newgrp docker
-   ```
-2. **Setup Data Persistence**:
-   Create a directory for your data if you want to mount TrueNAS datasets:
-   ```bash
-   mkdir -p ~/farmsense/data
-   ```
+**Registry Images:**
+- `ghcr.io/<your-github-username>/farmsense-backend:latest`
+- `ghcr.io/<your-github-username>/farmsense-frontend:latest`
 
-## 2. Setup GitHub Self-Hosted Runner
+## 2. Prepare TrueNAS for Dockge
 
-1. Go to your GitHub Repository: **Settings > Actions > Runners**.
-2. Click **New self-hosted runner**.
-3. Select **Linux** and **X64**.
-4. Follow the download and configuration instructions on your TrueNAS VM.
-   - When asked for the runner group, use `Default`.
-   - When asked for the name, use something like `truenas-runner`.
-   - When asked for labels, the default `self-hosted` is used in our workflow.
-5. **Install as a service** (so it starts on boot):
-   ```bash
-   sudo ./svc.sh install
-   sudo ./svc.sh start
-   ```
+If you haven't installed Dockge yet:
+1. Install it via TrueNAS "Apps" (it's available in the official or TrueCharts catalog).
+2. Alternatively, run it in a Linux VM/Sandbox using their [official install script](https://dockge.kuma.pet/).
 
-## 3. Configure GitHub Secrets
+## 3. Manual Deployment with Dockge
 
-Go to **Settings > Secrets and variables > Actions** and add the following secrets:
+1. Open your **Dockge** dashboard.
+2. Click **+ Compose** to create a new stack named `farmsense`.
+3. Copy and paste the following `docker-compose.yml` (update the `<username>` placeholder):
 
-| Secret Name | Description | Example |
-|-------------|-------------|---------|
-| `DB_USER` | PostgreSQL Username | `farmsense` |
-| `DB_PASSWORD` | PostgreSQL Password | `a-strong-password` |
-| `JWT_SECRET` | 256-bit secret for JWT | `base64-random-string...` |
-| `WHATSAPP_TOKEN` | Meta API Token | `EAAB...` |
-| `WHATSAPP_PHONE_ID` | Meta Phone Number ID | `123456789` |
-| `ANTHROPIC_API_KEY` | Claude API Key | `sk-ant-api03-...` |
+```yaml
+version: '3.9'
 
-## 4. Deployment Pipeline
+services:
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: farmsense-db
+    environment:
+      POSTGRES_DB: farmsense
+      POSTGRES_USER: ${DB_USER:-farmsense}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-farmsense}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-farmsense}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
-We use two separate workflows for a robust CI/CD:
+  # Redis for cache & blacklist
+  redis:
+    image: redis:7-alpine
+    container_name: farmsense-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
 
-1.  **Build & Push (`docker-build-push.yml`)**:
-    - Runs on GitHub-hosted runners.
-    - Builds multi-stage Docker images for Backend and Frontend.
-    - Pushes images to **GitHub Container Registry (GHCR)**: `ghcr.io/owner/farmsense-backend:latest`.
-    - Requires **Package Write Permissions** (enabled by default for the `GITHUB_TOKEN`).
+  # Backend API
+  backend:
+    image: ghcr.io/<username>/farmsense-backend:latest
+    container_name: farmsense-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://postgres:5432/farmsense
+      DB_USER: ${DB_USER:-farmsense}
+      DB_PASSWORD: ${DB_PASSWORD:-farmsense}
+      REDIS_HOST: redis
+      JWT_SECRET: ${JWT_SECRET}
+      WHATSAPP_TOKEN: ${WHATSAPP_TOKEN}
+      WHATSAPP_PHONE_ID: ${WHATSAPP_PHONE_ID}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
 
-2.  **Deploy to TrueNAS (`deploy.yml`)**:
-    - Triggered after the build workflow completes.
-    - Runs on your **Self-Hosted Runner** on TrueNAS.
-    - Pulls pre-built images from GHCR.
-    - Restarts containers using `docker compose up -d`.
+  # Frontend Web
+  frontend:
+    image: ghcr.io/<username>/farmsense-frontend:latest
+    container_name: farmsense-frontend
+    ports:
+      - "8080:80" # Map to 8080 or any preferred port on TrueNAS
+    depends_on:
+      - backend
+    restart: unless-stopped
 
-**Workflow Steps:**
-1. **Checkout**: Pulls the latest code.
-2. **Login**: Authenticates the self-hosted runner to GHCR using the `GITHUB_TOKEN`.
-3. **Environment**: Generates a `.env` file from GitHub Secrets.
-4. **Docker Compose**: 
-   - Pulls latest images from GHCR.
-   - Starts all services in detached mode.
-   - Prunes old unused images to save disk space on TrueNAS.
+volumes:
+  pgdata:
+```
 
-## 5. Accessing the Application
+## 4. Configure Environment Variables
 
-Once deployed, the application will be available at your TrueNAS VM's IP address on **Port 80**.
-- **Frontend**: `http://<VM_IP>/`
-- **Backend API**: `http://<VM_IP>/api/v1`
+In Dockge, click the **.env** tab or use the UI to add the following variables:
 
-## 6. Troubleshooting
+| Variable Name | Example |
+|-------------|---------|
+| `DB_USER` | `farmsense` |
+| `DB_PASSWORD` | `your-secure-db-pass` |
+| `JWT_SECRET` | `your-256-bit-jwt-secret` |
+| `WHATSAPP_TOKEN` | `EAAB...` |
+| `WHATSAPP_PHONE_ID` | `123456789` |
+| `ANTHROPIC_API_KEY` | `sk-ant-api03-...` |
 
-- **Check Logs**:
-  ```bash
-  docker compose logs -f backend
-  ```
-- **Database Access**:
-  The DB is exposed on port `5432` by default. You can change this in the root `docker-compose.yml`.
-- **Nginx Proxy**:
-  The frontend container includes an Nginx config that proxies `/api` requests to the `backend` container.
+## 5. Deployment
+
+1. Click **Deploy** in Dockge.
+2. To update to the latest version after a new GitHub build:
+   - Click **Update** in Dockge (this will pull the latest images and recreate containers).
+
+## 6. Registry Authentication (If Private)
+
+If your GHCR images are private, you must run this command once on your TrueNAS host to allow Docker to pull them:
+```bash
+docker login ghcr.io -u <your-github-username>
+# Use a GitHub Personal Access Token (PAT) with 'read:packages' scope as the password
+```
