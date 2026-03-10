@@ -59,7 +59,7 @@ services:
       context: ./apps/frontend
     container_name: farmsense-frontend
     ports:
-      - "80:80"
+      - "8085:80"
     depends_on:
       - backend
     restart: unless-stopped

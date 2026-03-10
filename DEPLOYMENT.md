@@ -80,7 +80,7 @@ services:
     image: ghcr.io/<username>/farmsense-frontend:latest
     container_name: farmsense-frontend
     ports:
-      - "8080:80" # Map to 8080 or any preferred port on TrueNAS
+      - "8085:80" # Avoid port 80 (used by TrueNAS UI)
     depends_on:
       - backend
     restart: unless-stopped
