@@ -14,11 +14,11 @@ public class CropGrowthStageResponse {
     private Integer stageOrder;
     private String name;
     private String nameAr;
-    private String nameDarija;
+    private String nameEn;
     private Integer durationDays;
     private String description;
     private String descriptionAr;
-    private String descriptionDarija;
+    private String descriptionEn;
 
     public static CropGrowthStageResponse from(CropGrowthStage s) {
         return CropGrowthStageResponse.builder()
@@ -26,11 +26,11 @@ public class CropGrowthStageResponse {
                 .stageOrder(s.getStageOrder())
                 .name(s.getName())
                 .nameAr(s.getNameAr())
-                .nameDarija(s.getNameDarija())
+                .nameEn(s.getNameEn())
                 .durationDays(s.getDurationDays())
                 .description(s.getDescription())
                 .descriptionAr(s.getDescriptionAr())
-                .descriptionDarija(s.getDescriptionDarija())
+                .descriptionEn(s.getDescriptionEn())
                 .build();
     }
 }

@@ -34,6 +34,7 @@ public class Planting {
     private PlantingStatus status = PlantingStatus.PLANNED;
 
     private Integer quantity;
+    @Column(name = "area_m2")
     private Double areaM2;
 
     @Column(columnDefinition = "TEXT")

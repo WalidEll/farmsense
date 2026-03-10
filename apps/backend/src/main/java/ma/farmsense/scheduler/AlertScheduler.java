@@ -118,7 +118,7 @@ public class AlertScheduler {
                 .type(type)
                 .severity(Alert.Severity.MEDIUM)
                 .sensorValue(value)
-                .msgDarija(buildMsg(type, value, "darija", plant.getName()))
+                .msgEn(buildMsg(type, value, "en", plant.getName()))
                 .msgFr(buildMsg(type, value, "fr", plant.getName()))
                 .msgAr(buildMsg(type, value, "ar", plant.getName()))
                 .build();
@@ -133,9 +133,9 @@ public class AlertScheduler {
         boolean whatsappEnabled = pref == null || pref.isChannelWhatsapp();
         if (user.getPhoneWa() != null && whatsappEnabled && !inQuietHours) {
             String msg = switch (user.getLang()) {
-                case DARIJA -> alert.getMsgDarija();
-                case AR     -> alert.getMsgAr();
-                default     -> alert.getMsgFr();
+                case EN  -> alert.getMsgEn();
+                case AR  -> alert.getMsgAr();
+                default  -> alert.getMsgFr();
             };
             whatsApp.send(user.getPhoneWa(), msg);
             alert.setWaSent(true);
@@ -176,24 +176,24 @@ public class AlertScheduler {
     private String buildMsg(Alert.AlertType type, double value, String lang, String plantName) {
         return switch (type) {
             case SOIL_DRY -> switch (lang) {
-                case "darija" -> String.format("🌱 Trab jaf! Sqi daba — %s (%.0f%%)", plantName, value);
-                case "ar"     -> String.format("🌱 التربة جافة! اسقِ الآن — %s (%.0f%%)", plantName, value);
-                default       -> String.format("🌱 Sol sec ! Arrosez maintenant — %s (%.0f%%)", plantName, value);
+                case "en" -> String.format("🌱 Soil is dry! Water now — %s (%.0f%%)", plantName, value);
+                case "ar" -> String.format("🌱 التربة جافة! اسقِ الآن — %s (%.0f%%)", plantName, value);
+                default   -> String.format("🌱 Sol sec ! Arrosez maintenant — %s (%.0f%%)", plantName, value);
             };
             case TEMP_HIGH -> switch (lang) {
-                case "darija" -> String.format("🌡️ Skhana bzzaf! — %s (%.1f°C)", plantName, value);
-                case "ar"     -> String.format("🌡️ حرارة مرتفعة جداً! — %s (%.1f°C)", plantName, value);
-                default       -> String.format("🌡️ Trop chaud ! — %s (%.1f°C)", plantName, value);
+                case "en" -> String.format("🌡️ Too hot! — %s (%.1f°C)", plantName, value);
+                case "ar" -> String.format("🌡️ حرارة مرتفعة جداً! — %s (%.1f°C)", plantName, value);
+                default   -> String.format("🌡️ Trop chaud ! — %s (%.1f°C)", plantName, value);
             };
             case TEMP_LOW -> switch (lang) {
-                case "darija" -> String.format("🥶 Bard bzzaf! — %s (%.1f°C)", plantName, value);
-                case "ar"     -> String.format("🥶 برودة شديدة! — %s (%.1f°C)", plantName, value);
-                default       -> String.format("🥶 Trop froid ! — %s (%.1f°C)", plantName, value);
+                case "en" -> String.format("🥶 Too cold! — %s (%.1f°C)", plantName, value);
+                case "ar" -> String.format("🥶 برودة شديدة! — %s (%.1f°C)", plantName, value);
+                default   -> String.format("🥶 Trop froid ! — %s (%.1f°C)", plantName, value);
             };
             case LIGHT_LOW -> switch (lang) {
-                case "darija" -> String.format("☀️ Ma3ndha3 daw ikafi — %s (%.0f lux)", plantName, value);
-                case "ar"     -> String.format("☀️ الضوء غير كافٍ — %s (%.0f lux)", plantName, value);
-                default       -> String.format("☀️ Pas assez de lumière — %s (%.0f lux)", plantName, value);
+                case "en" -> String.format("☀️ Not enough light — %s (%.0f lux)", plantName, value);
+                case "ar" -> String.format("☀️ الضوء غير كافٍ — %s (%.0f lux)", plantName, value);
+                default   -> String.format("☀️ Pas assez de lumière — %s (%.0f lux)", plantName, value);
             };
             default -> String.format("⚠️ Alert %s — %s", type, plantName);
         };

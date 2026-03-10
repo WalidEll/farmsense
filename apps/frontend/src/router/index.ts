@@ -74,6 +74,16 @@ const router = createRouter({
           component: () => import('@/views/CropDetailView.vue'),
         },
         {
+          path: 'plans',
+          name: 'plans',
+          component: () => import('@/views/CropPlansView.vue'),
+        },
+        {
+          path: 'plans/:id',
+          name: 'plan-detail',
+          component: () => import('@/views/CropPlanDetailView.vue'),
+        },
+        {
           path: 'settings',
           name: 'settings',
           component: () => import('@/views/SettingsView.vue'),

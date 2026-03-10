@@ -1,0 +1,68 @@
+version: '3.9'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: farmsense-db
+    environment:
+      POSTGRES_DB: farmsense
+      POSTGRES_USER: ${DB_USER:-farmsense}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-farmsense}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-farmsense}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis for cache & blacklist
+  redis:
+    image: redis:7-alpine
+    container_name: farmsense-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-walidell}/farmsense-backend:latest
+    build:
+      context: ./apps/backend
+    container_name: farmsense-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://postgres:5432/farmsense
+      DB_USER: ${DB_USER:-farmsense}
+      DB_PASSWORD: ${DB_PASSWORD:-farmsense}
+      REDIS_HOST: redis
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-use-256-bit-secret}
+      WHATSAPP_TOKEN: ${WHATSAPP_TOKEN:-}
+      WHATSAPP_PHONE_ID: ${WHATSAPP_PHONE_ID:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  # Frontend Web
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-walidell}/farmsense-frontend:latest
+    build:
+      context: ./apps/frontend
+    container_name: farmsense-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:

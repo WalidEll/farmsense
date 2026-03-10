@@ -38,6 +38,7 @@ public class FarmLocation {
     @Column(name = "location_type", nullable = false)
     private LocationType locationType;
 
+    @Column(name = "area_m2")
     private Double areaM2;
     private Double latitude;
     private Double longitude;

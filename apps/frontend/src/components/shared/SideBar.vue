@@ -49,13 +49,22 @@
           <span class="badge-new">{{ t('common.new') }}</span>
         </RouterLink>
         <RouterLink
+          to="/plans"
+          class="nav-item"
+          :class="{ 'active': isActive('/plans') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🌾</span>
+          <span class="label">{{ t('nav.crop_plan') }}</span>
+        </RouterLink>
+        <RouterLink
           to="/crops"
           class="nav-item"
           :class="{ 'active': isActive('/crops') }"
           @click="$emit('close')"
         >
-          <span class="icon">🌾</span>
-          <span class="label">{{ t('nav.crop_plan') }}</span>
+          <span class="icon">📚</span>
+          <span class="label">{{ t('nav_crops') }}</span>
         </RouterLink>
       </div>
 

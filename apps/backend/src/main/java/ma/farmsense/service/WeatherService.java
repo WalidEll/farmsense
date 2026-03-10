@@ -122,72 +122,72 @@ public class WeatherService {
     private String wmoDescription(int code, User.Language lang) {
         return switch (code) {
             case 0 -> switch (lang) {
-                case DARIJA -> "Sma s7a";
+                case EN -> "Clear sky";
                 case AR -> "\u0633\u0645\u0627\u0621 \u0635\u0627\u0641\u064A\u0629";
                 default -> "Ciel d\u00E9gag\u00E9";
             };
             case 1, 2, 3 -> switch (lang) {
-                case DARIJA -> "Chwiya d s7ab";
+                case EN -> "Partly cloudy";
                 case AR -> "\u063A\u0627\u0626\u0645 \u062C\u0632\u0626\u064A\u0627\u064B";
                 default -> "Partiellement nuageux";
             };
             case 45, 48 -> switch (lang) {
-                case DARIJA -> "Dbbab";
+                case EN -> "Fog";
                 case AR -> "\u0636\u0628\u0627\u0628";
                 default -> "Brouillard";
             };
             case 51, 53, 55 -> switch (lang) {
-                case DARIJA -> "Rchach khfif";
+                case EN -> "Drizzle";
                 case AR -> "\u0631\u0630\u0627\u0630";
                 default -> "Bruine";
             };
             case 56, 57 -> switch (lang) {
-                case DARIJA -> "Rchach bard";
+                case EN -> "Freezing drizzle";
                 case AR -> "\u0631\u0630\u0627\u0630 \u0645\u062A\u062C\u0645\u062F";
                 default -> "Bruine vergla\u00E7ante";
             };
             case 61, 63, 65 -> switch (lang) {
-                case DARIJA -> "Shta";
+                case EN -> "Rain";
                 case AR -> "\u0645\u0637\u0631";
                 default -> "Pluie";
             };
             case 66, 67 -> switch (lang) {
-                case DARIJA -> "Shta barda";
+                case EN -> "Freezing rain";
                 case AR -> "\u0645\u0637\u0631 \u0645\u062A\u062C\u0645\u062F";
                 default -> "Pluie vergla\u00E7ante";
             };
             case 71, 73, 75 -> switch (lang) {
-                case DARIJA -> "Ttelj";
+                case EN -> "Snow";
                 case AR -> "\u062B\u0644\u062C";
                 default -> "Neige";
             };
             case 77 -> switch (lang) {
-                case DARIJA -> "7bab ttelj";
+                case EN -> "Snow grains";
                 case AR -> "\u062D\u0628\u064A\u0628\u0627\u062A \u062B\u0644\u062C\u064A\u0629";
                 default -> "Grains de neige";
             };
             case 80, 81, 82 -> switch (lang) {
-                case DARIJA -> "Sh7al mn shta";
+                case EN -> "Rain showers";
                 case AR -> "\u0632\u062E\u0627\u062A \u0645\u0637\u0631\u064A\u0629";
                 default -> "Averses";
             };
             case 85, 86 -> switch (lang) {
-                case DARIJA -> "Ttelj ktar";
+                case EN -> "Snow showers";
                 case AR -> "\u0632\u062E\u0627\u062A \u062B\u0644\u062C\u064A\u0629";
                 default -> "Averses de neige";
             };
             case 95 -> switch (lang) {
-                case DARIJA -> "R3d w brek";
+                case EN -> "Thunderstorm";
                 case AR -> "\u0639\u0627\u0635\u0641\u0629 \u0631\u0639\u062F\u064A\u0629";
                 default -> "Orage";
             };
             case 96, 99 -> switch (lang) {
-                case DARIJA -> "R3d w brd";
+                case EN -> "Thunderstorm with hail";
                 case AR -> "\u0639\u0627\u0635\u0641\u0629 \u0628\u0631\u062F";
                 default -> "Orage avec gr\u00EAle";
             };
             default -> switch (lang) {
-                case DARIJA -> "Weqt 3adi";
+                case EN -> "Normal weather";
                 case AR -> "\u0637\u0642\u0633 \u0639\u0627\u062F\u064A";
                 default -> "Temps normal";
             };

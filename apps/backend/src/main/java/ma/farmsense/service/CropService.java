@@ -51,12 +51,12 @@ public class CropService {
         Crop crop = Crop.builder()
                 .name(req.getName())
                 .nameAr(req.getNameAr())
-                .nameDarija(req.getNameDarija())
+                .nameEn(req.getNameEn())
                 .scientificName(req.getScientificName())
                 .category(req.getCategory())
                 .description(req.getDescription())
                 .descriptionAr(req.getDescriptionAr())
-                .descriptionDarija(req.getDescriptionDarija())
+                .descriptionEn(req.getDescriptionEn())
                 .imageUrl(req.getImageUrl())
                 .growingSeason(req.getGrowingSeason())
                 .daysToHarvest(req.getDaysToHarvest())
@@ -70,12 +70,12 @@ public class CropService {
         Crop crop = getCrop(id);
         if (req.getName() != null) crop.setName(req.getName());
         if (req.getNameAr() != null) crop.setNameAr(req.getNameAr());
-        if (req.getNameDarija() != null) crop.setNameDarija(req.getNameDarija());
+        if (req.getNameEn() != null) crop.setNameEn(req.getNameEn());
         if (req.getScientificName() != null) crop.setScientificName(req.getScientificName());
         if (req.getCategory() != null) crop.setCategory(req.getCategory());
         if (req.getDescription() != null) crop.setDescription(req.getDescription());
         if (req.getDescriptionAr() != null) crop.setDescriptionAr(req.getDescriptionAr());
-        if (req.getDescriptionDarija() != null) crop.setDescriptionDarija(req.getDescriptionDarija());
+        if (req.getDescriptionEn() != null) crop.setDescriptionEn(req.getDescriptionEn());
         if (req.getImageUrl() != null) crop.setImageUrl(req.getImageUrl());
         if (req.getGrowingSeason() != null) crop.setGrowingSeason(req.getGrowingSeason());
         if (req.getDaysToHarvest() != null) crop.setDaysToHarvest(req.getDaysToHarvest());
@@ -121,11 +121,11 @@ public class CropService {
                 .stageOrder(req.getStageOrder())
                 .name(req.getName())
                 .nameAr(req.getNameAr())
-                .nameDarija(req.getNameDarija())
+                .nameEn(req.getNameEn())
                 .durationDays(req.getDurationDays())
                 .description(req.getDescription())
                 .descriptionAr(req.getDescriptionAr())
-                .descriptionDarija(req.getDescriptionDarija())
+                .descriptionEn(req.getDescriptionEn())
                 .build();
         return CropGrowthStageResponse.from(stageRepository.save(s));
     }
@@ -138,11 +138,11 @@ public class CropService {
         if (req.getStageOrder() != null) s.setStageOrder(req.getStageOrder());
         if (req.getName() != null) s.setName(req.getName());
         if (req.getNameAr() != null) s.setNameAr(req.getNameAr());
-        if (req.getNameDarija() != null) s.setNameDarija(req.getNameDarija());
+        if (req.getNameEn() != null) s.setNameEn(req.getNameEn());
         if (req.getDurationDays() != null) s.setDurationDays(req.getDurationDays());
         if (req.getDescription() != null) s.setDescription(req.getDescription());
         if (req.getDescriptionAr() != null) s.setDescriptionAr(req.getDescriptionAr());
-        if (req.getDescriptionDarija() != null) s.setDescriptionDarija(req.getDescriptionDarija());
+        if (req.getDescriptionEn() != null) s.setDescriptionEn(req.getDescriptionEn());
         return CropGrowthStageResponse.from(stageRepository.save(s));
     }
 
@@ -164,7 +164,7 @@ public class CropService {
         if (req.getPotassiumNeed() != null) n.setPotassiumNeed(req.getPotassiumNeed());
         if (req.getFertilizerType() != null) n.setFertilizerType(req.getFertilizerType());
         if (req.getFertilizerTypeAr() != null) n.setFertilizerTypeAr(req.getFertilizerTypeAr());
-        if (req.getFertilizerTypeDarija() != null) n.setFertilizerTypeDarija(req.getFertilizerTypeDarija());
+        if (req.getFertilizerTypeEn() != null) n.setFertilizerTypeEn(req.getFertilizerTypeEn());
         if (req.getApplicationFrequency() != null) n.setApplicationFrequency(req.getApplicationFrequency());
         return CropNutrientResponse.from(nutrientRepository.save(n));
     }
@@ -179,13 +179,13 @@ public class CropService {
                 .issueType(req.getIssueType())
                 .name(req.getName())
                 .nameAr(req.getNameAr())
-                .nameDarija(req.getNameDarija())
+                .nameEn(req.getNameEn())
                 .symptoms(req.getSymptoms())
                 .symptomsAr(req.getSymptomsAr())
-                .symptomsDarija(req.getSymptomsDarija())
+                .symptomsEn(req.getSymptomsEn())
                 .treatment(req.getTreatment())
                 .treatmentAr(req.getTreatmentAr())
-                .treatmentDarija(req.getTreatmentDarija())
+                .treatmentEn(req.getTreatmentEn())
                 .prevention(req.getPrevention())
                 .build();
         return CropIssueResponse.from(issueRepository.save(i));
@@ -199,13 +199,13 @@ public class CropService {
         if (req.getIssueType() != null) i.setIssueType(req.getIssueType());
         if (req.getName() != null) i.setName(req.getName());
         if (req.getNameAr() != null) i.setNameAr(req.getNameAr());
-        if (req.getNameDarija() != null) i.setNameDarija(req.getNameDarija());
+        if (req.getNameEn() != null) i.setNameEn(req.getNameEn());
         if (req.getSymptoms() != null) i.setSymptoms(req.getSymptoms());
         if (req.getSymptomsAr() != null) i.setSymptomsAr(req.getSymptomsAr());
-        if (req.getSymptomsDarija() != null) i.setSymptomsDarija(req.getSymptomsDarija());
+        if (req.getSymptomsEn() != null) i.setSymptomsEn(req.getSymptomsEn());
         if (req.getTreatment() != null) i.setTreatment(req.getTreatment());
         if (req.getTreatmentAr() != null) i.setTreatmentAr(req.getTreatmentAr());
-        if (req.getTreatmentDarija() != null) i.setTreatmentDarija(req.getTreatmentDarija());
+        if (req.getTreatmentEn() != null) i.setTreatmentEn(req.getTreatmentEn());
         if (req.getPrevention() != null) i.setPrevention(req.getPrevention());
         return CropIssueResponse.from(issueRepository.save(i));
     }

@@ -19,7 +19,7 @@ public class AlertResponse {
     private Double sensorValue;
     private String msgFr;
     private String msgAr;
-    private String msgDarija;
+    private String msgEn;
     private boolean waSent;
     private Instant triggeredAt;
     private Instant ackAt;
@@ -34,7 +34,7 @@ public class AlertResponse {
                 .sensorValue(a.getSensorValue())
                 .msgFr(a.getMsgFr())
                 .msgAr(a.getMsgAr())
-                .msgDarija(a.getMsgDarija())
+                .msgEn(a.getMsgEn())
                 .waSent(a.isWaSent())
                 .triggeredAt(a.getTriggeredAt())
                 .ackAt(a.getAckAt())

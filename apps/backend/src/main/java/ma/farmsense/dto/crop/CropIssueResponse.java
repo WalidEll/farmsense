@@ -15,13 +15,13 @@ public class CropIssueResponse {
     private IssueType issueType;
     private String name;
     private String nameAr;
-    private String nameDarija;
+    private String nameEn;
     private String symptoms;
     private String symptomsAr;
-    private String symptomsDarija;
+    private String symptomsEn;
     private String treatment;
     private String treatmentAr;
-    private String treatmentDarija;
+    private String treatmentEn;
     private String prevention;
 
     public static CropIssueResponse from(CropIssue i) {
@@ -30,13 +30,13 @@ public class CropIssueResponse {
                 .issueType(i.getIssueType())
                 .name(i.getName())
                 .nameAr(i.getNameAr())
-                .nameDarija(i.getNameDarija())
+                .nameEn(i.getNameEn())
                 .symptoms(i.getSymptoms())
                 .symptomsAr(i.getSymptomsAr())
-                .symptomsDarija(i.getSymptomsDarija())
+                .symptomsEn(i.getSymptomsEn())
                 .treatment(i.getTreatment())
                 .treatmentAr(i.getTreatmentAr())
-                .treatmentDarija(i.getTreatmentDarija())
+                .treatmentEn(i.getTreatmentEn())
                 .prevention(i.getPrevention())
                 .build();
     }

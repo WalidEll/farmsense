@@ -15,12 +15,12 @@ public class CropDetailResponse {
     private UUID id;
     private String name;
     private String nameAr;
-    private String nameDarija;
+    private String nameEn;
     private String scientificName;
     private CropCategory category;
     private String description;
     private String descriptionAr;
-    private String descriptionDarija;
+    private String descriptionEn;
     private String imageUrl;
     private String growingSeason;
     private Integer daysToHarvest;
@@ -42,12 +42,12 @@ public class CropDetailResponse {
                 .id(c.getId())
                 .name(c.getName())
                 .nameAr(c.getNameAr())
-                .nameDarija(c.getNameDarija())
+                .nameEn(c.getNameEn())
                 .scientificName(c.getScientificName())
                 .category(c.getCategory())
                 .description(c.getDescription())
                 .descriptionAr(c.getDescriptionAr())
-                .descriptionDarija(c.getDescriptionDarija())
+                .descriptionEn(c.getDescriptionEn())
                 .imageUrl(c.getImageUrl())
                 .growingSeason(c.getGrowingSeason())
                 .daysToHarvest(c.getDaysToHarvest())

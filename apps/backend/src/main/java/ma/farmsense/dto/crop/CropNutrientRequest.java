@@ -11,6 +11,6 @@ public class CropNutrientRequest {
     private NutrientLevel potassiumNeed;
     private String fertilizerType;
     private String fertilizerTypeAr;
-    private String fertilizerTypeDarija;
+    private String fertilizerTypeEn;
     private String applicationFrequency;
 }

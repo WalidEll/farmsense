@@ -17,7 +17,7 @@ public class CropNutrientResponse {
     private NutrientLevel potassiumNeed;
     private String fertilizerType;
     private String fertilizerTypeAr;
-    private String fertilizerTypeDarija;
+    private String fertilizerTypeEn;
     private String applicationFrequency;
 
     public static CropNutrientResponse from(CropNutrient n) {
@@ -28,7 +28,7 @@ public class CropNutrientResponse {
                 .potassiumNeed(n.getPotassiumNeed())
                 .fertilizerType(n.getFertilizerType())
                 .fertilizerTypeAr(n.getFertilizerTypeAr())
-                .fertilizerTypeDarija(n.getFertilizerTypeDarija())
+                .fertilizerTypeEn(n.getFertilizerTypeEn())
                 .applicationFrequency(n.getApplicationFrequency())
                 .build();
     }

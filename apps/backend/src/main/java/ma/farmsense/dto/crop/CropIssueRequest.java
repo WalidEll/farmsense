@@ -15,12 +15,12 @@ public class CropIssueRequest {
     private String name;
 
     private String nameAr;
-    private String nameDarija;
+    private String nameEn;
     private String symptoms;
     private String symptomsAr;
-    private String symptomsDarija;
+    private String symptomsEn;
     private String treatment;
     private String treatmentAr;
-    private String treatmentDarija;
+    private String treatmentEn;
     private String prevention;
 }

@@ -14,9 +14,9 @@ public class CropGrowthStageRequest {
     private String name;
 
     private String nameAr;
-    private String nameDarija;
+    private String nameEn;
     private Integer durationDays;
     private String description;
     private String descriptionAr;
-    private String descriptionDarija;
+    private String descriptionEn;
 }

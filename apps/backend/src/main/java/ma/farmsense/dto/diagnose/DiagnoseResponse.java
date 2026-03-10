@@ -18,7 +18,7 @@ public class DiagnoseResponse {
     private String severity;
     private String treatmentFr;
     private String treatmentAr;
-    private String treatmentDarija;
+    private String treatmentEn;
     private String prevention;
     private String rawResponse;
     private String photoUrl;
@@ -33,7 +33,7 @@ public class DiagnoseResponse {
                 .severity(d.getSeverity())
                 .treatmentFr(d.getTreatmentFr())
                 .treatmentAr(d.getTreatmentAr())
-                .treatmentDarija(d.getTreatmentDarija())
+                .treatmentEn(d.getTreatmentEn())
                 .prevention(d.getPrevention())
                 .rawResponse(d.getRawResponse())
                 .photoUrl(d.getPhotoUrl())
