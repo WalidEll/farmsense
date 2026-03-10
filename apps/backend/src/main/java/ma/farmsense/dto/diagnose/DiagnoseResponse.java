@@ -22,6 +22,7 @@ public class DiagnoseResponse {
     private String prevention;
     private String rawResponse;
     private String photoUrl;
+    private String shareUrl;
     private Instant createdAt;
 
     public static DiagnoseResponse from(Diagnosis d) {
