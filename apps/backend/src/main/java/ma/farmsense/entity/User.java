@@ -64,6 +64,6 @@ public class User implements UserDetails {
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return true; }
 
-    public enum Language { AR, FR, DARIJA }
+    public enum Language { AR, FR, EN }
     public enum Tier { FREE, HOME_PRO }
 }

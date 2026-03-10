@@ -139,7 +139,7 @@ function statusText(task: CareTask): string {
   if (task.overdue) return t('care_overdue')
   if (task.daysRemaining === 0) return t('care_due_today')
   if (task.daysRemaining === 1) return t('care_due_tomorrow')
-  return t('care_due_in').replace('{n}', String(task.daysRemaining))
+  return t('care_due_in', { n: task.daysRemaining })
 }
 
 function statusColor(task: CareTask): string {
@@ -154,7 +154,7 @@ function lastDoneText(task: CareTask): string {
   const days = Math.floor(
     (Date.now() - new Date(task.lastDoneAt).getTime()) / (1000 * 60 * 60 * 24)
   )
-  return t('care_last_done').replace('{n}', String(days))
+  return t('care_last_done', { n: days })
 }
 
 function taskIcon(type: string): string {
@@ -178,7 +178,7 @@ function taskLabel(type: string): string {
 function formatRelative(iso: string): string {
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24))
   if (days === 0) return t('care_due_today')
-  return t('care_last_done').replace('{n}', String(days))
+  return t('care_last_done', { n: days })
 }
 
 onMounted(fetchSchedule)

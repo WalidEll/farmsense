@@ -124,6 +124,6 @@ const wateringStatus = computed(() => {
   if (remaining < 0) return { text: t('care_overdue'), color: 'text-red-500' }
   if (remaining === 0) return { text: t('care_due_today'), color: 'text-orange-500' }
   if (remaining === 1) return { text: t('care_due_tomorrow'), color: 'text-orange-400' }
-  return { text: t('care_due_in').replace('{n}', String(remaining)), color: 'text-green-500' }
+  return { text: t('care_due_in', { n: remaining }), color: 'text-green-500' }
 })
 </script>

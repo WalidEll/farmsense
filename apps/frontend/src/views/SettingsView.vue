@@ -7,7 +7,7 @@
       <!-- Language Section -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <h3 class="text-base font-semibold text-gray-800 mb-1">
-          Language / &#x627;&#x644;&#x644;&#x63A;&#x629; / Lgha
+          Language / &#x627;&#x644;&#x644;&#x63A;&#x629; / Langue
         </h3>
         <p class="text-sm text-gray-500 mb-4">{{ t('settings.language') }}</p>
         <div class="flex gap-3">
@@ -61,13 +61,13 @@
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
               <span class="text-sm text-gray-700">
-                {{ t('settings.devicesConnected').replace('{n}', String(devicesStore.devices.length)) }}
+                {{ t('settings.devicesConnected', { n: devicesStore.devices.length }) }}
               </span>
             </div>
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
               <span class="text-sm text-gray-700">
-                {{ t('settings.devicesOnline').replace('{n}', String(devicesStore.onlineCount)) }}
+                {{ t('settings.devicesOnline', { n: devicesStore.onlineCount }) }}
               </span>
             </div>
           </div>
@@ -112,7 +112,7 @@ const current = computed(() => auth.lang)
 const langs = [
   { value: 'FR' as Lang, label: 'FR' },
   { value: 'AR' as Lang, label: '\u0639' },
-  { value: 'DARIJA' as Lang, label: 'DR' },
+  { value: 'EN' as Lang, label: 'EN' },
 ]
 
 function setLang(l: Lang) {

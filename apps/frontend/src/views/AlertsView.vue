@@ -214,7 +214,7 @@ onMounted(async () => {
 function alertMsg(alert: Alert) {
   const lang = auth.lang
   if (lang === 'AR' && alert.msgAr) return alert.msgAr
-  if (lang === 'DARIJA' && alert.msgDarija) return alert.msgDarija
+  if (lang === 'EN' && alert.msgEn) return alert.msgEn
   return alert.msgFr ?? alert.type
 }
 

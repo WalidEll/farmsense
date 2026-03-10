@@ -110,7 +110,7 @@ const loading = ref(false)
 const langs = [
   { value: 'FR' as Lang, label: 'Français' },
   { value: 'AR' as Lang, label: 'العربية' },
-  { value: 'DARIJA' as Lang, label: 'Darija' },
+  { value: 'EN' as Lang, label: 'English' },
 ]
 
 async function submit() {

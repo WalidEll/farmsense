@@ -1,18 +1,19 @@
 <template>
-  <div class="flex gap-1">
-    <button
-      v-for="l in langs"
-      :key="l.value"
-      @click="setLang(l.value)"
-      :class="[
-        'px-2 py-1 rounded text-xs font-medium',
-        current === l.value
-          ? 'bg-green-700 text-white'
-          : 'bg-gray-100 text-gray-600 hover:bg-green-100',
-      ]"
+  <div class="relative group">
+    <select
+      :value="current"
+      @change="handleChange"
+      class="appearance-none bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-green-500 focus:border-green-500 block w-full px-2.5 py-1.5 pr-8 cursor-pointer hover:bg-white transition-colors font-medium"
     >
-      {{ l.label }}
-    </button>
+      <option v-for="l in langs" :key="l.value" :value="l.value">
+        {{ l.label }}
+      </option>
+    </select>
+    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -25,12 +26,18 @@ const auth = useAuthStore()
 const current = computed(() => auth.lang)
 
 const langs = [
-  { value: 'FR' as Lang, label: 'FR' },
-  { value: 'AR' as Lang, label: 'ع' },
-  { value: 'DARIJA' as Lang, label: 'DR' },
+  { value: 'FR' as Lang, label: 'Français' },
+  { value: 'EN' as Lang, label: 'English' },
+  { value: 'AR' as Lang, label: 'العربية' },
 ]
 
-function setLang(l: Lang) {
-  if (auth.user) auth.user.lang = l
+function handleChange(event: Event) {
+  const target = event.target as HTMLSelectElement
+  const l = target.value as Lang
+  if (auth.user) {
+    auth.user.lang = l
+    // Note: In a real app, you might also want to persist this to the backend
+    localStorage.setItem('user', JSON.stringify(auth.user))
+  }
 }
 </script>

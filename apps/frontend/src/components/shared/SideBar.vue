@@ -9,55 +9,139 @@
   <!-- Sidebar -->
   <aside
     :class="[
-      'fixed top-0 bottom-0 z-50 w-60 bg-white border-e border-gray-200 flex flex-col transition-transform duration-200 ease-in-out',
+      'fixed top-0 bottom-0 z-50 w-64 bg-white border-e border-gray-100 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] shadow-xl lg:shadow-none',
       open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
     ]"
   >
     <!-- Logo -->
-    <div class="h-14 flex items-center gap-2 px-5 border-b border-gray-100 shrink-0">
-      <span class="text-xl">🌱</span>
-      <span class="font-bold text-green-800 text-lg">FarmSense</span>
+    <div class="h-16 flex items-center gap-3 px-6 border-b border-gray-50 shrink-0">
+      <div class="bg-green-100 p-2 rounded-xl text-xl">🌱</div>
+      <div class="flex flex-col">
+        <span class="font-bold text-gray-900 text-lg leading-tight">FarmSense</span>
+        <span class="text-[10px] font-medium text-green-600 uppercase tracking-wider">Mazraati v2.0</span>
+      </div>
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-      <RouterLink
-        v-for="item in navItems"
-        :key="item.to"
-        :to="item.to"
-        :class="[
-          'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-          isActive(item.to)
-            ? 'bg-green-50 text-green-700'
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-        ]"
-        @click="$emit('close')"
-      >
-        <span class="text-lg w-6 text-center">{{ item.icon }}</span>
-        <span>{{ t(item.label) }}</span>
-        <!-- Alerts badge -->
-        <span
-          v-if="item.badge && item.badge > 0"
-          class="ms-auto bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center"
+    <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-8 scrollbar-thin">
+      <!-- Section: Farm Management -->
+      <div class="space-y-1">
+        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t('nav.farm_management') }}
+        </div>
+        <RouterLink
+          to="/"
+          class="nav-item"
+          :class="{ 'active': isActive('/') }"
+          @click="$emit('close')"
         >
-          {{ item.badge > 9 ? '9+' : item.badge }}
-        </span>
-      </RouterLink>
+          <span class="icon">🏠</span>
+          <span class="label">{{ t('nav.dashboard') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/map"
+          class="nav-item group"
+          :class="{ 'active': isActive('/map') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🗺️</span>
+          <span class="label">{{ t('nav.map_view') }}</span>
+          <span class="badge-new">{{ t('common.new') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/crops"
+          class="nav-item"
+          :class="{ 'active': isActive('/crops') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🌾</span>
+          <span class="label">{{ t('nav.crop_plan') }}</span>
+        </RouterLink>
+      </div>
+
+      <!-- Section: Operations -->
+      <div class="space-y-1">
+        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t('nav.operations') }}
+        </div>
+        <RouterLink
+          to="/tasks"
+          class="nav-item"
+          :class="{ 'active': isActive('/tasks') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">📋</span>
+          <span class="label">{{ t('nav.tasks') }}</span>
+          <span class="badge" v-if="taskCount > 0">{{ taskCount }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/nursery"
+          class="nav-item"
+          :class="{ 'active': isActive('/nursery') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🌱</span>
+          <span class="label">{{ t('nav.nursery') }}</span>
+        </RouterLink>
+      </div>
+
+      <!-- Section: System -->
+      <div class="space-y-1">
+        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t('nav.system') }}
+        </div>
+        <RouterLink
+          to="/sensors"
+          class="nav-item"
+          :class="{ 'active': isActive('/sensors') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">📡</span>
+          <span class="label">{{ t('nav.sensors') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/alerts"
+          class="nav-item"
+          :class="{ 'active': isActive('/alerts') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🔔</span>
+          <span class="label">{{ t('nav.alerts') }}</span>
+          <span class="badge-danger" v-if="alertsStore.unreadCount > 0">
+            {{ alertsStore.unreadCount }}
+          </span>
+        </RouterLink>
+        <RouterLink
+          to="/settings"
+          class="nav-item"
+          :class="{ 'active': isActive('/settings') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">⚙️</span>
+          <span class="label">{{ t('nav.settings') }}</span>
+        </RouterLink>
+      </div>
     </nav>
 
     <!-- Bottom section -->
-    <div class="border-t border-gray-100 p-4 space-y-3 shrink-0">
-      <!-- Language switcher -->
-      <LanguageSwitcher />
-
-      <!-- User + logout -->
-      <div class="flex items-center justify-between">
-        <span class="text-sm text-gray-600 truncate max-w-[140px]">{{ auth.user?.name }}</span>
+    <div class="border-t border-gray-50 p-4 shrink-0 bg-gray-50/50">
+      <div class="flex items-center gap-3 mb-3 px-2">
+        <div class="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-bold text-sm">
+          {{ auth.user?.name?.charAt(0) || 'U' }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate">{{ auth.user?.name }}</p>
+          <p class="text-xs text-gray-500 truncate">{{ auth.user?.email }}</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center justify-between gap-2">
+        <LanguageSwitcher />
         <button
           @click="logout"
-          class="text-xs text-gray-500 hover:text-red-600 border border-gray-200 rounded px-2 py-1 transition-colors"
+          class="text-xs text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors flex items-center gap-1.5"
         >
-          {{ t('auth_logout') }}
+          <span>🚪</span> {{ t('auth.logout') }}
         </button>
       </div>
     </div>
@@ -65,7 +149,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
 import { useAlertsStore } from '@/stores/alerts.store'
@@ -81,16 +165,12 @@ const router = useRouter()
 const auth = useAuthStore()
 const alertsStore = useAlertsStore()
 
-const navItems = computed(() => [
-  { icon: '🏠', label: 'nav_dashboard', to: '/' },
-  { icon: '📡', label: 'nav_devices', to: '/sensors' },
-  { icon: '🔔', label: 'nav_alerts', to: '/alerts', badge: alertsStore.unreadCount },
-  { icon: '⚙️', label: 'nav_settings', to: '/settings' },
-])
+// Mock task count for now
+const taskCount = ref(3)
 
 function isActive(to: string) {
   if (to === '/') return route.path === '/'
-  return route.path.startsWith(to)
+  return route.path.startsWith(to) && to !== '/'
 }
 
 function logout() {
@@ -98,3 +178,44 @@ function logout() {
   router.push('/login')
 }
 </script>
+
+<style scoped>
+.nav-item {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 relative overflow-hidden;
+}
+
+.nav-item.active {
+  @apply bg-green-50/80 text-green-800 shadow-sm shadow-green-100/50;
+}
+
+.nav-item .icon {
+  @apply text-lg w-6 text-center transition-transform duration-200;
+}
+
+.nav-item:hover .icon {
+  @apply scale-110;
+}
+
+.badge {
+  @apply ms-auto bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-md;
+}
+
+.badge-danger {
+  @apply ms-auto bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-md animate-pulse;
+}
+
+.badge-new {
+  @apply ms-auto bg-blue-100 text-blue-600 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #e5e7eb;
+  border-radius: 20px;
+}
+</style>

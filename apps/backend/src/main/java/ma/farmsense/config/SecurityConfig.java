@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/devices/claim").permitAll()
                         // Actuator health check
                         .requestMatchers("/actuator/health").permitAll()
+                        // Crop database — public read access
+                        .requestMatchers(HttpMethod.GET, "/api/v1/crops/**").permitAll()
                         // Everything else requires JWT
                         .anyRequest().authenticated()
                 )

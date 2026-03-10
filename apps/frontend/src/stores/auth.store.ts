@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isLoggedIn = computed(() => !!accessToken.value)
   const lang = computed(() => user.value?.lang ?? 'FR')
-  const isRtl = computed(() => ['AR', 'DARIJA'].includes(lang.value))
+  const isRtl = computed(() => lang.value === 'AR')
 
   async function register(name: string, email: string, password: string, lang: string, phoneWa?: string) {
     const res = await api.post<AuthResponse>('/auth/register', { name, email, password, lang, phoneWa })

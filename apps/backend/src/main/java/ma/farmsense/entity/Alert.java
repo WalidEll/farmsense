@@ -34,7 +34,7 @@ public class Alert {
 
     private Double sensorValue;
 
-    private String msgDarija;
+    private String msgEn;
     private String msgFr;
     private String msgAr;
 

@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
 
+// ... existing imports
+import ComingSoonView from '@/views/ComingSoonView.vue'
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -26,6 +29,21 @@ const router = createRouter({
           component: () => import('@/views/DashboardView.vue'),
         },
         {
+          path: 'map',
+          name: 'map',
+          component: ComingSoonView,
+        },
+        {
+          path: 'tasks',
+          name: 'tasks',
+          component: ComingSoonView,
+        },
+        {
+          path: 'nursery',
+          name: 'nursery',
+          component: ComingSoonView,
+        },
+        {
           path: 'sensors',
           name: 'sensors',
           component: () => import('@/views/SensorsView.vue'),
@@ -41,6 +59,21 @@ const router = createRouter({
           component: () => import('@/views/AlertsView.vue'),
         },
         {
+          path: 'crops',
+          name: 'crops',
+          component: () => import('@/views/CropCatalogView.vue'),
+        },
+        {
+          path: 'crops/admin',
+          name: 'crop-admin',
+          component: () => import('@/views/CropAdminView.vue'),
+        },
+        {
+          path: 'crops/:id',
+          name: 'crop-detail',
+          component: () => import('@/views/CropDetailView.vue'),
+        },
+        {
           path: 'settings',
           name: 'settings',
           component: () => import('@/views/SettingsView.vue'),
@@ -49,6 +82,7 @@ const router = createRouter({
     },
   ],
 })
+// ... rest of file
 
 router.beforeEach((to) => {
   const auth = useAuthStore()

@@ -37,7 +37,7 @@ public class Diagnosis {
     private String treatmentAr;
 
     @Column(columnDefinition = "TEXT")
-    private String treatmentDarija;
+    private String treatmentEn;
 
     @Column(columnDefinition = "TEXT")
     private String prevention;
