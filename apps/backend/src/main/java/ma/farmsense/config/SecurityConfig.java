@@ -51,6 +51,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/crops/**").permitAll()
                         // US-052: Public sharing link for diagnosis
                         .requestMatchers(HttpMethod.GET, "/api/v1/diagnose/share/**").permitAll()
+                        // Sentry test endpoint
+                        .requestMatchers(HttpMethod.GET, "/api/sentry-test").permitAll()
                         // Everything else requires JWT
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
