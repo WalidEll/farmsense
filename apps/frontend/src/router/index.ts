@@ -88,6 +88,32 @@ const router = createRouter({
           name: 'settings',
           component: () => import('@/views/SettingsView.vue'),
         },
+        // ── Poultry ──
+        {
+          path: 'poultry',
+          name: 'poultry-dashboard',
+          component: () => import('@/views/poultry/PoultryDashboardView.vue'),
+        },
+        {
+          path: 'poultry/flocks',
+          name: 'flocks',
+          component: () => import('@/views/poultry/FlocksView.vue'),
+        },
+        {
+          path: 'poultry/flocks/:id',
+          name: 'flock-detail',
+          component: () => import('@/views/poultry/FlockDetailView.vue'),
+        },
+        {
+          path: 'poultry/suppliers',
+          name: 'suppliers',
+          component: () => import('@/views/poultry/SuppliersView.vue'),
+        },
+        {
+          path: 'poultry/customers',
+          name: 'customers',
+          component: () => import('@/views/poultry/CustomersView.vue'),
+        },
       ],
     },
   ],

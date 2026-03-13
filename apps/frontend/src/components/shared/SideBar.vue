@@ -68,6 +68,49 @@
         </RouterLink>
       </div>
 
+      <!-- Section: Aviculture -->
+      <div class="space-y-1">
+        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t('nav.poultry') }}
+        </div>
+        <RouterLink
+          to="/poultry"
+          class="nav-item"
+          :class="{ 'active': isActive('/poultry') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🐔</span>
+          <span class="label">{{ t('nav.poultry_dashboard') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/poultry/flocks"
+          class="nav-item"
+          :class="{ 'active': isActive('/poultry/flocks') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🐣</span>
+          <span class="label">{{ t('nav.flocks') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/poultry/suppliers"
+          class="nav-item"
+          :class="{ 'active': isActive('/poultry/suppliers') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">📦</span>
+          <span class="label">{{ t('nav.suppliers') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/poultry/customers"
+          class="nav-item"
+          :class="{ 'active': isActive('/poultry/customers') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">👥</span>
+          <span class="label">{{ t('nav.customers') }}</span>
+        </RouterLink>
+      </div>
+
       <!-- Section: Operations -->
       <div class="space-y-1">
         <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">

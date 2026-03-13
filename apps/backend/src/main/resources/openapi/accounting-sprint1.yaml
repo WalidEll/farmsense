@@ -1,0 +1,1364 @@
+openapi: 3.0.3
+info:
+  title: FarmSense Smart Farm Accounting API — Sprint 1
+  description: |
+    Universal farm accounting system. Covers Transactions, Tags, Receipts (AI OCR),
+    Labor tracking, and Team management. Works across all farm types.
+    All endpoints require JWT Bearer authentication.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Transactions
+    description: Unified expense/income management with approval workflow
+  - name: Tags
+    description: User-defined custom tags for organizing transactions
+  - name: Receipts
+    description: Receipt upload and AI-powered OCR scanning
+  - name: Labor
+    description: Worker timesheet tracking with auto-expense creation
+  - name: Teams
+    description: Multi-user team management with role-based access
+
+paths:
+  # ── Transactions ──────────────────────────────────────────────
+
+  /transactions:
+    get:
+      tags: [Transactions]
+      summary: List transactions with filters
+      operationId: listTransactions
+      parameters:
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/TransactionType'
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: approvalStatus
+          in: query
+          schema:
+            $ref: '#/components/schemas/ApprovalStatus'
+        - name: tagIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+        - name: supplierId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: customerId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: flockId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: cropPlanId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search description, category, notes
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Paginated list of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Transactions]
+      summary: Create a transaction
+      operationId: createTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /transactions/{id}:
+    parameters:
+      - $ref: '#/components/parameters/TransactionId'
+
+    get:
+      tags: [Transactions]
+      summary: Get transaction by ID
+      operationId: getTransactionById
+      responses:
+        '200':
+          description: Transaction detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Transactions]
+      summary: Update transaction
+      operationId: updateTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransactionRequest'
+      responses:
+        '200':
+          description: Transaction updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Transactions]
+      summary: Delete transaction
+      operationId: deleteTransaction
+      responses:
+        '204':
+          description: Transaction deleted
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /transactions/dashboard:
+    get:
+      tags: [Transactions]
+      summary: Get financial dashboard KPIs
+      operationId: getDashboard
+      parameters:
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+
+  /transactions/categories:
+    get:
+      tags: [Transactions]
+      summary: Get distinct categories for autocomplete
+      operationId: getCategories
+      responses:
+        '200':
+          description: List of category strings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /transactions/{id}/approve:
+    parameters:
+      - $ref: '#/components/parameters/TransactionId'
+    post:
+      tags: [Transactions]
+      summary: Approve or reject a transaction
+      description: Only OWNER or MANAGER of the team can approve/reject.
+      operationId: approveTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalRequest'
+      responses:
+        '200':
+          description: Transaction approval updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /transactions/{id}/approval-history:
+    parameters:
+      - $ref: '#/components/parameters/TransactionId'
+    get:
+      tags: [Transactions]
+      summary: Get approval audit trail
+      operationId: getApprovalHistory
+      responses:
+        '200':
+          description: Approval log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApprovalLogResponse'
+
+  # ── Tags ──────────────────────────────────────────────────────
+
+  /tags:
+    get:
+      tags: [Tags]
+      summary: List user's tags
+      operationId: listTags
+      responses:
+        '200':
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TagResponse'
+
+    post:
+      tags: [Tags]
+      summary: Create a tag
+      operationId: createTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagRequest'
+      responses:
+        '201':
+          description: Tag created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagResponse'
+        '409':
+          description: Tag name already exists for this user
+
+  /tags/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    put:
+      tags: [Tags]
+      summary: Update tag
+      operationId: updateTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagRequest'
+      responses:
+        '200':
+          description: Tag updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagResponse'
+
+    delete:
+      tags: [Tags]
+      summary: Delete tag
+      operationId: deleteTag
+      responses:
+        '204':
+          description: Tag deleted
+
+  # ── Receipts ──────────────────────────────────────────────────
+
+  /receipts/upload:
+    post:
+      tags: [Receipts]
+      summary: Upload receipt image for OCR scanning
+      description: Accepts image file (JPEG/PNG), saves it, triggers async Claude Vision OCR.
+      operationId: uploadReceipt
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Receipt image (JPEG/PNG, max 10MB)
+      responses:
+        '201':
+          description: Receipt uploaded, OCR processing started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptUploadResponse'
+        '400':
+          description: Invalid file format or size
+
+  /receipts:
+    get:
+      tags: [Receipts]
+      summary: List receipts
+      operationId: listReceipts
+      responses:
+        '200':
+          description: List of receipts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReceiptUploadResponse'
+
+  /receipts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: [Receipts]
+      summary: Get receipt with OCR results
+      description: Poll this endpoint until ocrStatus is PROCESSED or FAILED.
+      operationId: getReceiptById
+      responses:
+        '200':
+          description: Receipt with OCR data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptUploadResponse'
+
+  /receipts/{id}/confirm:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags: [Receipts]
+      summary: Confirm OCR results and create transaction
+      description: User reviews/edits OCR data, then confirms to create a Transaction linked to this receipt.
+      operationId: confirmReceipt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptConfirmRequest'
+      responses:
+        '201':
+          description: Transaction created from receipt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+
+  # ── Labor ─────────────────────────────────────────────────────
+
+  /labor:
+    get:
+      tags: [Labor]
+      summary: List labor logs
+      operationId: listLaborLogs
+      parameters:
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of labor logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LaborLogResponse'
+
+    post:
+      tags: [Labor]
+      summary: Create labor log with auto-expense
+      description: Creates a labor log AND automatically creates an EXPENSE transaction with category "Labor".
+      operationId: createLaborLog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLaborLogRequest'
+      responses:
+        '201':
+          description: Labor log + expense transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LaborLogResponse'
+
+  /labor/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      tags: [Labor]
+      summary: Get labor log
+      operationId: getLaborLogById
+      responses:
+        '200':
+          description: Labor log detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LaborLogResponse'
+
+    put:
+      tags: [Labor]
+      summary: Update labor log
+      description: Also updates the linked expense transaction amount.
+      operationId: updateLaborLog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLaborLogRequest'
+      responses:
+        '200':
+          description: Labor log updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LaborLogResponse'
+
+    delete:
+      tags: [Labor]
+      summary: Delete labor log
+      description: Also deletes the linked expense transaction.
+      operationId: deleteLaborLog
+      responses:
+        '204':
+          description: Labor log and linked transaction deleted
+
+  # ── Teams ─────────────────────────────────────────────────────
+
+  /teams:
+    get:
+      tags: [Teams]
+      summary: List teams user belongs to
+      operationId: listTeams
+      responses:
+        '200':
+          description: List of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamResponse'
+
+    post:
+      tags: [Teams]
+      summary: Create a team
+      description: Creator is automatically added as OWNER member.
+      operationId: createTeam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeamRequest'
+      responses:
+        '201':
+          description: Team created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamResponse'
+
+  /teams/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    put:
+      tags: [Teams]
+      summary: Update team (OWNER only)
+      operationId: updateTeam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTeamRequest'
+      responses:
+        '200':
+          description: Team updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+    delete:
+      tags: [Teams]
+      summary: Delete team (OWNER only)
+      operationId: deleteTeam
+      responses:
+        '204':
+          description: Team deleted
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /teams/{id}/members:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: [Teams]
+      summary: List team members
+      operationId: listTeamMembers
+      responses:
+        '200':
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMemberResponse'
+
+  /teams/{id}/invite:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags: [Teams]
+      summary: Invite user to team (OWNER/MANAGER)
+      operationId: inviteMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteMemberRequest'
+      responses:
+        '201':
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMemberResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: User already a member
+
+  /teams/{id}/accept:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags: [Teams]
+      summary: Accept team invitation
+      operationId: acceptInvite
+      responses:
+        '200':
+          description: Invitation accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMemberResponse'
+        '404':
+          description: No pending invitation found
+
+  /teams/{id}/members/{memberId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: memberId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      tags: [Teams]
+      summary: Remove team member (OWNER/MANAGER)
+      operationId: removeMember
+      responses:
+        '204':
+          description: Member removed
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    TransactionId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    # ── Enums ───────────────────────────────────────────────────
+
+    TransactionType:
+      type: string
+      enum: [EXPENSE, INCOME]
+
+    ApprovalStatus:
+      type: string
+      enum: [DRAFT, PENDING, APPROVED, REJECTED]
+
+    PaymentMethod:
+      type: string
+      enum: [CASH, BANK_TRANSFER, CHECK, MOBILE, OTHER]
+
+    OcrStatus:
+      type: string
+      enum: [PENDING, PROCESSED, FAILED]
+
+    TeamRole:
+      type: string
+      enum: [OWNER, MANAGER, VIEWER]
+
+    MemberStatus:
+      type: string
+      enum: [PENDING, ACTIVE, REVOKED]
+
+    ApprovalAction:
+      type: string
+      enum: [SUBMITTED, APPROVED, REJECTED]
+
+    # ── Transaction ─────────────────────────────────────────────
+
+    CreateTransactionRequest:
+      type: object
+      required: [type, category, amount, transactionDate]
+      properties:
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        category:
+          type: string
+          example: "Feed"
+        subcategory:
+          type: string
+          example: "Starter feed"
+        amount:
+          type: number
+          format: decimal
+          minimum: 0.01
+          example: 1500.00
+        quantity:
+          type: number
+          format: double
+          example: 10
+        unitPrice:
+          type: number
+          format: decimal
+          example: 150.00
+        transactionDate:
+          type: string
+          format: date
+          example: "2026-03-13"
+        description:
+          type: string
+          example: "50 sacs d'aliment demarrage"
+        supplierId:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        paymentMethod:
+          type: string
+          example: "CASH"
+        referenceNumber:
+          type: string
+          example: "INV-2026-0042"
+        receiptId:
+          type: string
+          format: uuid
+        flockId:
+          type: string
+          format: uuid
+        cropPlanId:
+          type: string
+          format: uuid
+        farmLocationId:
+          type: string
+          format: uuid
+        notes:
+          type: string
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        submitForApproval:
+          type: boolean
+          default: false
+          description: If true, sets approvalStatus to PENDING
+
+    UpdateTransactionRequest:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        category:
+          type: string
+        subcategory:
+          type: string
+        amount:
+          type: number
+          format: decimal
+        quantity:
+          type: number
+        unitPrice:
+          type: number
+          format: decimal
+        transactionDate:
+          type: string
+          format: date
+        description:
+          type: string
+        supplierId:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        paymentMethod:
+          type: string
+        referenceNumber:
+          type: string
+        receiptId:
+          type: string
+          format: uuid
+        flockId:
+          type: string
+          format: uuid
+        cropPlanId:
+          type: string
+          format: uuid
+        farmLocationId:
+          type: string
+          format: uuid
+        notes:
+          type: string
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    TransactionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        category:
+          type: string
+        subcategory:
+          type: string
+        amount:
+          type: number
+          format: decimal
+        quantity:
+          type: number
+        unitPrice:
+          type: number
+          format: decimal
+        transactionDate:
+          type: string
+          format: date
+        description:
+          type: string
+        supplierId:
+          type: string
+          format: uuid
+        supplierName:
+          type: string
+        customerId:
+          type: string
+          format: uuid
+        customerName:
+          type: string
+        paymentMethod:
+          type: string
+        referenceNumber:
+          type: string
+        receiptId:
+          type: string
+          format: uuid
+        approvalStatus:
+          $ref: '#/components/schemas/ApprovalStatus'
+        approvedBy:
+          type: string
+          format: uuid
+        approvedAt:
+          type: string
+          format: date-time
+        flockId:
+          type: string
+          format: uuid
+        flockName:
+          type: string
+        cropPlanId:
+          type: string
+          format: uuid
+        cropPlanName:
+          type: string
+        farmLocationId:
+          type: string
+          format: uuid
+        farmLocationName:
+          type: string
+        notes:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponse'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    DashboardResponse:
+      type: object
+      properties:
+        totalIncome:
+          type: number
+          format: decimal
+        totalExpenses:
+          type: number
+          format: decimal
+        netProfit:
+          type: number
+          format: decimal
+        expensesByCategory:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySummary'
+        incomesByCategory:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySummary'
+        recentTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionResponse'
+        pendingApprovals:
+          type: integer
+
+    CategorySummary:
+      type: object
+      properties:
+        category:
+          type: string
+        total:
+          type: number
+          format: decimal
+        count:
+          type: integer
+          format: int64
+
+    ApprovalRequest:
+      type: object
+      required: [action]
+      properties:
+        action:
+          $ref: '#/components/schemas/ApprovalAction'
+        comment:
+          type: string
+
+    ApprovalLogResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        action:
+          $ref: '#/components/schemas/ApprovalAction'
+        userName:
+          type: string
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # ── Tag ─────────────────────────────────────────────────────
+
+    CreateTagRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          example: "Saison printemps 2026"
+        color:
+          type: string
+          pattern: '^#[0-9a-fA-F]{6}$'
+          default: "#6B7280"
+          example: "#10B981"
+
+    UpdateTagRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        color:
+          type: string
+          pattern: '^#[0-9a-fA-F]{6}$'
+
+    TagResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        color:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # ── Receipt ─────────────────────────────────────────────────
+
+    ReceiptUploadResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        originalFilename:
+          type: string
+        contentType:
+          type: string
+        fileSizeBytes:
+          type: integer
+          format: int64
+        ocrVendor:
+          type: string
+        ocrDate:
+          type: string
+          format: date
+        ocrAmount:
+          type: number
+          format: decimal
+        ocrCategory:
+          type: string
+        ocrLineItems:
+          type: string
+          description: JSON string of line items
+        ocrConfidence:
+          type: number
+          format: double
+        ocrStatus:
+          $ref: '#/components/schemas/OcrStatus'
+        transactionId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+
+    ReceiptConfirmRequest:
+      type: object
+      required: [amount, category, transactionDate]
+      properties:
+        vendor:
+          type: string
+        transactionDate:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: decimal
+        category:
+          type: string
+        description:
+          type: string
+        paymentMethod:
+          type: string
+        supplierId:
+          type: string
+          format: uuid
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    # ── Labor ───────────────────────────────────────────────────
+
+    CreateLaborLogRequest:
+      type: object
+      required: [workerName, hourlyRate, hoursWorked, workDate]
+      properties:
+        workerName:
+          type: string
+          maxLength: 255
+          example: "Ahmed"
+        workerRole:
+          type: string
+          example: "Ouvrier agricole"
+        hourlyRate:
+          type: number
+          format: decimal
+          minimum: 0.01
+          example: 50.00
+        hoursWorked:
+          type: number
+          format: double
+          minimum: 0.1
+          example: 8.0
+        workDate:
+          type: string
+          format: date
+          example: "2026-03-13"
+        activity:
+          type: string
+          example: "Recolte des oeufs"
+        flockId:
+          type: string
+          format: uuid
+        cropPlanId:
+          type: string
+          format: uuid
+        farmLocationId:
+          type: string
+          format: uuid
+        notes:
+          type: string
+        tagIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdateLaborLogRequest:
+      type: object
+      properties:
+        workerName:
+          type: string
+        workerRole:
+          type: string
+        hourlyRate:
+          type: number
+          format: decimal
+        hoursWorked:
+          type: number
+          format: double
+        workDate:
+          type: string
+          format: date
+        activity:
+          type: string
+        flockId:
+          type: string
+          format: uuid
+        cropPlanId:
+          type: string
+          format: uuid
+        farmLocationId:
+          type: string
+          format: uuid
+        notes:
+          type: string
+
+    LaborLogResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        workerName:
+          type: string
+        workerRole:
+          type: string
+        hourlyRate:
+          type: number
+          format: decimal
+        hoursWorked:
+          type: number
+          format: double
+        totalCost:
+          type: number
+          format: decimal
+          description: Computed (hourlyRate * hoursWorked)
+        workDate:
+          type: string
+          format: date
+        activity:
+          type: string
+        transactionId:
+          type: string
+          format: uuid
+          description: Auto-created expense transaction
+        flockId:
+          type: string
+          format: uuid
+        cropPlanId:
+          type: string
+          format: uuid
+        farmLocationId:
+          type: string
+          format: uuid
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # ── Team ────────────────────────────────────────────────────
+
+    CreateTeamRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Ferme El Baraka"
+        description:
+          type: string
+
+    UpdateTeamRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+
+    TeamResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        memberCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    InviteMemberRequest:
+      type: object
+      required: [email, role]
+      properties:
+        email:
+          type: string
+          format: email
+          example: "comptable@example.com"
+        role:
+          $ref: '#/components/schemas/TeamRole'
+
+    TeamMemberResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        userName:
+          type: string
+        userEmail:
+          type: string
+        role:
+          $ref: '#/components/schemas/TeamRole'
+        status:
+          $ref: '#/components/schemas/MemberStatus'
+        invitedAt:
+          type: string
+          format: date-time
+        joinedAt:
+          type: string
+          format: date-time
+
+    # ── Error ───────────────────────────────────────────────────
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Missing or invalid JWT token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Insufficient permissions (wrong team role)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found or not accessible
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

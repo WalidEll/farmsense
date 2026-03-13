@@ -413,3 +413,87 @@ export interface PlantingYieldRequest {
   qualityRating?: number
   harvestNotes?: string
 }
+
+// ── Poultry Module ────────────────────────────────────────
+export type FlockPurpose = 'LAYERS' | 'BROILERS'
+export type FlockStatus = 'ACTIVE' | 'SOLD' | 'FINISHED'
+
+export interface Flock {
+  id: string
+  name: string
+  nameAr?: string
+  nameEn?: string
+  breed?: string
+  birdCount: number
+  currentBirdCount: number
+  purpose: FlockPurpose
+  status: FlockStatus
+  startDate?: string
+  supplierId?: string
+  supplierName?: string
+  source?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Supplier {
+  id: string
+  name: string
+  phone?: string
+  email?: string
+  address?: string
+  productsSupplied?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Customer {
+  id: string
+  name: string
+  phone?: string
+  email?: string
+  address?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateFlockRequest {
+  name: string
+  nameAr?: string
+  nameEn?: string
+  breed?: string
+  birdCount: number
+  purpose: FlockPurpose
+  startDate?: string
+  supplierId?: string
+  source?: string
+  notes?: string
+}
+
+export interface UpdateFlockRequest extends Partial<CreateFlockRequest> {
+  status?: FlockStatus
+}
+
+export interface CreateSupplierRequest {
+  name: string
+  phone?: string
+  email?: string
+  address?: string
+  productsSupplied?: string
+  notes?: string
+}
+
+export interface UpdateSupplierRequest extends Partial<CreateSupplierRequest> {}
+
+export interface CreateCustomerRequest {
+  name: string
+  phone?: string
+  email?: string
+  address?: string
+  notes?: string
+}
+
+export interface UpdateCustomerRequest extends Partial<CreateCustomerRequest> {}

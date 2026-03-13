@@ -1,0 +1,692 @@
+openapi: 3.0.3
+info:
+  title: FarmSense Poultry Module API — Sprint 1
+  description: |
+    REST API for the Poultry Farm Management module (Sprint 1: Foundation).
+    Covers Flock, Supplier, and Customer CRUD operations.
+    All endpoints require JWT Bearer authentication.
+  version: 1.0.0
+  contact:
+    name: FarmSense Team
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Flocks
+    description: Flock lifecycle management (create, view, edit, soft-delete)
+  - name: Suppliers
+    description: Supplier directory management
+  - name: Customers
+    description: Customer directory management
+
+paths:
+  # ── Flocks ────────────────────────────────────────────────────────
+
+  /flocks:
+    get:
+      tags: [Flocks]
+      summary: List all flocks
+      description: Returns all flocks for the authenticated user, ordered by createdAt DESC. Supports optional filtering by status and purpose.
+      operationId: listFlocks
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/FlockStatus'
+          description: Filter by flock status
+        - name: purpose
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/FlockPurpose'
+          description: Filter by flock purpose
+      responses:
+        '200':
+          description: List of flocks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlockResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Flocks]
+      summary: Create a new flock
+      description: Creates a flock. `currentBirdCount` is automatically set to `birdCount`.
+      operationId: createFlock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFlockRequest'
+      responses:
+        '201':
+          description: Flock created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlockResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /flocks/{id}:
+    parameters:
+      - $ref: '#/components/parameters/FlockId'
+
+    get:
+      tags: [Flocks]
+      summary: Get flock by ID
+      operationId: getFlockById
+      responses:
+        '200':
+          description: Flock detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlockResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Flocks]
+      summary: Update flock
+      description: Partial update — only non-null fields are applied.
+      operationId: updateFlock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFlockRequest'
+      responses:
+        '200':
+          description: Flock updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlockResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Flocks]
+      summary: Soft-delete flock
+      description: Sets flock status to FINISHED. Does not remove the row from the database.
+      operationId: deleteFlock
+      responses:
+        '204':
+          description: Flock archived (status set to FINISHED)
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ── Suppliers ─────────────────────────────────────────────────────
+
+  /suppliers:
+    get:
+      tags: [Suppliers]
+      summary: List all suppliers
+      description: Returns all suppliers for the authenticated user, ordered by name ASC. Supports name search.
+      operationId: listSuppliers
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Case-insensitive name search
+      responses:
+        '200':
+          description: List of suppliers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SupplierResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Suppliers]
+      summary: Create a new supplier
+      operationId: createSupplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSupplierRequest'
+      responses:
+        '201':
+          description: Supplier created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplierResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /suppliers/{id}:
+    parameters:
+      - $ref: '#/components/parameters/SupplierId'
+
+    get:
+      tags: [Suppliers]
+      summary: Get supplier by ID
+      operationId: getSupplierById
+      responses:
+        '200':
+          description: Supplier detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplierResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Suppliers]
+      summary: Update supplier
+      operationId: updateSupplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSupplierRequest'
+      responses:
+        '200':
+          description: Supplier updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplierResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Suppliers]
+      summary: Delete supplier
+      operationId: deleteSupplier
+      responses:
+        '204':
+          description: Supplier deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ── Customers ─────────────────────────────────────────────────────
+
+  /customers:
+    get:
+      tags: [Customers]
+      summary: List all customers
+      description: Returns all customers for the authenticated user, ordered by name ASC. Supports name search.
+      operationId: listCustomers
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Case-insensitive name search
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Customers]
+      summary: Create a new customer
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerRequest'
+      responses:
+        '201':
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /customers/{id}:
+    parameters:
+      - $ref: '#/components/parameters/CustomerId'
+
+    get:
+      tags: [Customers]
+      summary: Get customer by ID
+      operationId: getCustomerById
+      responses:
+        '200':
+          description: Customer detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags: [Customers]
+      summary: Update customer
+      operationId: updateCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerRequest'
+      responses:
+        '200':
+          description: Customer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Customers]
+      summary: Delete customer
+      operationId: deleteCustomer
+      responses:
+        '204':
+          description: Customer deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    FlockId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Flock UUID
+
+    SupplierId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Supplier UUID
+
+    CustomerId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Customer UUID
+
+  schemas:
+    # ── Enums ─────────────────────────────────────────────────────
+
+    FlockPurpose:
+      type: string
+      enum: [LAYERS, BROILERS]
+      description: |
+        - LAYERS — egg-producing hens
+        - BROILERS — meat chickens
+
+    FlockStatus:
+      type: string
+      enum: [ACTIVE, SOLD, FINISHED]
+      description: |
+        - ACTIVE — flock is currently being raised
+        - SOLD — flock has been sold
+        - FINISHED — flock lifecycle is complete (soft-delete target)
+
+    # ── Flock DTOs ────────────────────────────────────────────────
+
+    CreateFlockRequest:
+      type: object
+      required: [name, birdCount, purpose]
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Lot Poulet Mars 2026"
+        nameAr:
+          type: string
+          maxLength: 255
+          example: "دفعة دجاج مارس 2026"
+        nameEn:
+          type: string
+          maxLength: 255
+          example: "Chicken Batch March 2026"
+        breed:
+          type: string
+          maxLength: 255
+          example: "Sasso"
+        birdCount:
+          type: integer
+          minimum: 1
+          example: 500
+        purpose:
+          $ref: '#/components/schemas/FlockPurpose'
+        startDate:
+          type: string
+          format: date
+          example: "2026-03-01"
+        supplierId:
+          type: string
+          format: uuid
+          description: Optional link to supplier who provided the chicks
+        source:
+          type: string
+          maxLength: 255
+          example: "Couvoir Ain Sebaa"
+        notes:
+          type: string
+          example: "Premier lot de la saison"
+
+    UpdateFlockRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        nameAr:
+          type: string
+          maxLength: 255
+        nameEn:
+          type: string
+          maxLength: 255
+        breed:
+          type: string
+          maxLength: 255
+        birdCount:
+          type: integer
+          minimum: 1
+        purpose:
+          $ref: '#/components/schemas/FlockPurpose'
+        status:
+          $ref: '#/components/schemas/FlockStatus'
+        startDate:
+          type: string
+          format: date
+        supplierId:
+          type: string
+          format: uuid
+        source:
+          type: string
+          maxLength: 255
+        notes:
+          type: string
+
+    FlockResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nameAr:
+          type: string
+        nameEn:
+          type: string
+        breed:
+          type: string
+        birdCount:
+          type: integer
+          description: Initial bird count at flock creation
+        currentBirdCount:
+          type: integer
+          description: Current bird count (decremented by mortality records)
+        purpose:
+          $ref: '#/components/schemas/FlockPurpose'
+        status:
+          $ref: '#/components/schemas/FlockStatus'
+        startDate:
+          type: string
+          format: date
+        supplierId:
+          type: string
+          format: uuid
+        supplierName:
+          type: string
+          description: Resolved supplier name (convenience field)
+        source:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # ── Supplier DTOs ─────────────────────────────────────────────
+
+    CreateSupplierRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Couvoir Atlas"
+        phone:
+          type: string
+          maxLength: 50
+          example: "+212 6 12 34 56 78"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: "atlas@example.com"
+        address:
+          type: string
+          example: "Zone Industrielle, Casablanca"
+        productsSupplied:
+          type: string
+          example: "Poussins, aliments, vaccins"
+        notes:
+          type: string
+
+    UpdateSupplierRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        phone:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        address:
+          type: string
+        productsSupplied:
+          type: string
+        notes:
+          type: string
+
+    SupplierResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        productsSupplied:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # ── Customer DTOs ─────────────────────────────────────────────
+
+    CreateCustomerRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Restaurant Chez Omar"
+        phone:
+          type: string
+          maxLength: 50
+          example: "+212 6 98 76 54 32"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        address:
+          type: string
+          example: "Hay Mohammadi, Casablanca"
+        notes:
+          type: string
+
+    UpdateCustomerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        phone:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        address:
+          type: string
+        notes:
+          type: string
+
+    CustomerResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # ── Error ─────────────────────────────────────────────────────
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Missing or invalid JWT token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found or not owned by the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
