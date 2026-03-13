@@ -12,6 +12,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@sentry/vue": "^10.43.0",
     "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "pinia": "^2.1.7",

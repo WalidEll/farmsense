@@ -68,6 +68,67 @@
         </RouterLink>
       </div>
 
+      <!-- Section: Comptabilité -->
+      <div class="space-y-1">
+        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t('nav.accounting') }}
+        </div>
+        <RouterLink
+          to="/accounting"
+          class="nav-item"
+          :class="{ 'active': isActive('/accounting') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">💰</span>
+          <span class="label">{{ t('nav.accounting_dashboard') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/accounting/transactions"
+          class="nav-item"
+          :class="{ 'active': isActive('/accounting/transactions') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">📑</span>
+          <span class="label">{{ t('nav.transactions') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/accounting/receipts"
+          class="nav-item"
+          :class="{ 'active': isActive('/accounting/receipts') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">📸</span>
+          <span class="label">{{ t('nav.receipts') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/accounting/labor"
+          class="nav-item"
+          :class="{ 'active': isActive('/accounting/labor') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">👷</span>
+          <span class="label">{{ t('nav.labor') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/accounting/tags"
+          class="nav-item"
+          :class="{ 'active': isActive('/accounting/tags') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🏷️</span>
+          <span class="label">{{ t('nav.tags') }}</span>
+        </RouterLink>
+        <RouterLink
+          to="/accounting/team"
+          class="nav-item"
+          :class="{ 'active': isActive('/accounting/team') }"
+          @click="$emit('close')"
+        >
+          <span class="icon">🤝</span>
+          <span class="label">{{ t('nav.team') }}</span>
+        </RouterLink>
+      </div>
+
       <!-- Section: Aviculture -->
       <div class="space-y-1">
         <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">

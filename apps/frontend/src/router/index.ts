@@ -88,6 +88,47 @@ const router = createRouter({
           name: 'settings',
           component: () => import('@/views/SettingsView.vue'),
         },
+        // ── Accounting ──
+        {
+          path: 'accounting',
+          name: 'accounting-dashboard',
+          component: () => import('@/views/accounting/AccountingDashboardView.vue'),
+        },
+        {
+          path: 'accounting/transactions',
+          name: 'transactions',
+          component: () => import('@/views/accounting/TransactionsView.vue'),
+        },
+        {
+          path: 'accounting/transactions/new',
+          name: 'transaction-new',
+          component: () => import('@/views/accounting/TransactionFormView.vue'),
+        },
+        {
+          path: 'accounting/transactions/:id/edit',
+          name: 'transaction-edit',
+          component: () => import('@/views/accounting/TransactionFormView.vue'),
+        },
+        {
+          path: 'accounting/receipts',
+          name: 'receipt-scanner',
+          component: () => import('@/views/accounting/ReceiptScannerView.vue'),
+        },
+        {
+          path: 'accounting/labor',
+          name: 'labor-tracking',
+          component: () => import('@/views/accounting/LaborTrackingView.vue'),
+        },
+        {
+          path: 'accounting/tags',
+          name: 'tags-manager',
+          component: () => import('@/views/accounting/TagsManagerView.vue'),
+        },
+        {
+          path: 'accounting/team',
+          name: 'team-management',
+          component: () => import('@/views/accounting/TeamManagementView.vue'),
+        },
         // ── Poultry ──
         {
           path: 'poultry',

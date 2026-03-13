@@ -497,3 +497,237 @@ export interface CreateCustomerRequest {
 }
 
 export interface UpdateCustomerRequest extends Partial<CreateCustomerRequest> {}
+
+// ── Smart Farm Accounting ──────────────────────────────────
+export type TransactionType = 'EXPENSE' | 'INCOME'
+export type ApprovalStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
+export type PaymentMethod = 'CASH' | 'BANK_TRANSFER' | 'CHECK' | 'MOBILE' | 'OTHER'
+export type OcrStatus = 'PENDING' | 'PROCESSED' | 'FAILED'
+export type TeamRole = 'OWNER' | 'MANAGER' | 'VIEWER'
+export type MemberStatus = 'PENDING' | 'ACTIVE' | 'REVOKED'
+export type ApprovalAction = 'SUBMITTED' | 'APPROVED' | 'REJECTED'
+
+export interface Tag {
+  id: string
+  name: string
+  color: string
+}
+
+export interface TagResponse extends Tag {}
+
+export interface CreateTagRequest {
+  name: string
+  color?: string
+}
+
+export interface UpdateTagRequest extends Partial<CreateTagRequest> {}
+
+export interface Transaction {
+  id: string
+  type: TransactionType
+  category: string
+  subcategory?: string
+  amount: number
+  quantity?: number
+  unitPrice?: number
+  transactionDate: string
+  description?: string
+  paymentMethod?: PaymentMethod
+  referenceNumber?: string
+  approvalStatus: ApprovalStatus
+  supplierId?: string
+  supplierName?: string
+  customerId?: string
+  customerName?: string
+  receiptId?: string
+  flockId?: string
+  flockName?: string
+  cropPlanId?: string
+  cropPlanName?: string
+  farmLocationId?: string
+  farmLocationName?: string
+  notes?: string
+  tags: TagResponse[]
+  approvedBy?: string
+  approvedAt?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TransactionResponse extends Transaction {}
+
+export interface CreateTransactionRequest {
+  type: TransactionType
+  category: string
+  subcategory?: string
+  amount: number
+  quantity?: number
+  unitPrice?: number
+  transactionDate: string
+  description?: string
+  paymentMethod?: PaymentMethod
+  referenceNumber?: string
+  supplierId?: string
+  customerId?: string
+  receiptId?: string
+  flockId?: string
+  cropPlanId?: string
+  farmLocationId?: string
+  tagIds?: string[]
+  notes?: string
+}
+
+export interface UpdateTransactionRequest extends Partial<CreateTransactionRequest> {
+  approvalStatus?: ApprovalStatus
+}
+
+export interface TransactionFilter {
+  type?: TransactionType
+  category?: string
+  from?: string
+  to?: string
+  approvalStatus?: ApprovalStatus
+  tagIds?: string[]
+}
+
+export interface CategorySummary {
+  category: string
+  total: number
+}
+
+export interface DashboardResponse {
+  totalIncome: number
+  totalExpenses: number
+  netProfit: number
+  expensesByCategory: CategorySummary[]
+  incomesByCategory: CategorySummary[]
+  recentTransactions: TransactionResponse[]
+  pendingApprovals: number
+}
+
+export interface Receipt {
+  id: string
+  originalFilename?: string
+  contentType?: string
+  fileSizeBytes?: number
+  ocrVendor?: string
+  ocrDate?: string
+  ocrAmount?: number
+  ocrCategory?: string
+  ocrLineItems?: string // JSON string
+  ocrRawJson?: string
+  ocrConfidence?: number
+  ocrStatus: OcrStatus
+  transactionId?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ReceiptResponse extends Receipt {}
+
+export interface ReceiptUploadResponse {
+  id: string
+  ocrStatus: OcrStatus
+  originalFilename?: string
+}
+
+export interface ReceiptConfirmRequest {
+  type: TransactionType
+  category: string
+  subcategory?: string
+  amount: number
+  transactionDate: string
+  description?: string
+  paymentMethod?: PaymentMethod
+  supplierId?: string
+  customerId?: string
+  flockId?: string
+  cropPlanId?: string
+  farmLocationId?: string
+  tagIds?: string[]
+}
+
+export interface LaborLog {
+  id: string
+  workerName: string
+  workerRole?: string
+  hourlyRate: number
+  hoursWorked: number
+  workDate: string
+  activity?: string
+  transactionId?: string
+  flockId?: string
+  cropPlanId?: string
+  farmLocationId?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface LaborLogResponse extends LaborLog {}
+
+export interface CreateLaborLogRequest {
+  workerName: string
+  workerRole?: string
+  hourlyRate: number
+  hoursWorked: number
+  workDate: string
+  activity?: string
+  flockId?: string
+  cropPlanId?: string
+  farmLocationId?: string
+  notes?: string
+}
+
+export interface UpdateLaborLogRequest extends Partial<CreateLaborLogRequest> {}
+
+export interface Team {
+  id: string
+  name: string
+  description?: string
+  ownerName: string
+  createdAt: string
+}
+
+export interface TeamResponse extends Team {}
+
+export interface CreateTeamRequest {
+  name: string
+  description?: string
+}
+
+export interface UpdateTeamRequest extends Partial<CreateTeamRequest> {}
+
+export interface TeamMember {
+  id: string
+  userId: string
+  userName: string
+  userEmail: string
+  role: TeamRole
+  status: MemberStatus
+  invitedByName?: string
+  invitedAt: string
+  joinedAt?: string
+}
+
+export interface TeamMemberResponse extends TeamMember {}
+
+export interface InviteMemberRequest {
+  email: string
+  role: TeamRole
+}
+
+export interface ApprovalRequest {
+  action: ApprovalAction
+  comment?: string
+}
+
+export interface ApprovalLogEntry {
+  id: string
+  action: ApprovalAction
+  userName: string
+  comment?: string
+  createdAt: string
+}
+
+export interface ApprovalLogResponse extends ApprovalLogEntry {}

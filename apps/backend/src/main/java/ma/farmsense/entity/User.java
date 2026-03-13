@@ -55,6 +55,10 @@ public class User implements UserDetails {
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
 
+    public String getFullName() {
+        return name;
+    }
+
     // ── UserDetails ──────────────────────────────────────────
     @Override public Collection<? extends GrantedAuthority> getAuthorities() { return List.of(); }
     @Override public String getPassword() { return passwordHash; }
