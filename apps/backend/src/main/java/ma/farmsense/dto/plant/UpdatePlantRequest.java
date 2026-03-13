@@ -1,8 +1,11 @@
 package ma.farmsense.dto.plant;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdatePlantRequest {
 
     private String name;

@@ -1,11 +1,14 @@
 package ma.farmsense.dto.sensor;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 import java.util.UUID;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ManualReadingRequest {
 
     @NotNull

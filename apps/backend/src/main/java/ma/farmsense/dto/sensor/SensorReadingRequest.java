@@ -1,12 +1,15 @@
 package ma.farmsense.dto.sensor;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SensorReadingRequest {
 
     @NotBlank
