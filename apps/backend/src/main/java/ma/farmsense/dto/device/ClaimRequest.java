@@ -1,9 +1,9 @@
 package ma.farmsense.dto.device;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class ClaimRequest {
 
     @NotBlank
