@@ -7,8 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
+        brand: {
+          dark: '#1B4235', // Main sidebar active/weather card background
+          light: '#F9FAFB', // Background
+        },
+        status: {
+          optimal: '#D1EAE0',
+          warning: '#FDF2D0',
+          critical: '#FAD5D5',
+          optimalDark: '#21A366',
+          warningDark: '#F2994A',
+          criticalDark: '#EB5757',
+        },
         green: {
-          50:  '#f0fdf4',
+          50: '#f0fdf4',
           100: '#dcfce7',
           200: '#bbf7d0',
           300: '#86efac',

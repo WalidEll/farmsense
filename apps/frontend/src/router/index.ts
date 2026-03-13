@@ -29,9 +29,9 @@ const router = createRouter({
           component: () => import('@/views/DashboardView.vue'),
         },
         {
-          path: 'map',
-          name: 'map',
-          component: ComingSoonView,
+          path: 'fields',
+          name: 'fields',
+          component: () => import('@/views/FieldMapView.vue'),
         },
         {
           path: 'tasks',

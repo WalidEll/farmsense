@@ -13,226 +13,74 @@
       open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
     ]"
   >
-    <!-- Logo -->
-    <div class="h-16 flex items-center gap-3 px-6 border-b border-gray-50 shrink-0">
-      <div class="bg-green-100 p-2 rounded-xl text-xl">🌱</div>
+    <!-- Enterprise Badge -->
+    <div class="px-6 pt-4 pb-2">
+      <div class="flex items-center gap-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">
+        <div class="w-1.5 h-1.5 rounded-full bg-brand-dark animate-pulse"></div>
+        ENTERPRISE EDITION
+      </div>
+    </div>
+
+    <!-- Group Selector / Logo Area -->
+    <div class="h-16 flex items-center gap-3 px-6 shrink-0">
+      <div class="w-9 h-9 rounded-xl bg-brand-dark flex items-center justify-center text-lg shadow-sm text-white">🌿</div>
       <div class="flex flex-col">
-        <span class="font-bold text-gray-900 text-lg leading-tight">FarmSense</span>
-        <span class="text-[10px] font-medium text-green-600 uppercase tracking-wider">Mazraati v2.0</span>
+        <span class="font-black text-gray-900 text-base leading-tight tracking-tight">FarmSense</span>
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dashboard</span>
       </div>
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-8 scrollbar-thin">
-      <!-- Section: Farm Management -->
-      <div class="space-y-1">
-        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-          {{ t('nav.farm_management') }}
-        </div>
-        <RouterLink
-          to="/"
-          class="nav-item"
-          :class="{ 'active': isActive('/') }"
-          @click="$emit('close')"
+    <nav class="flex-1 overflow-y-auto pt-4 pb-12 px-3 space-y-1.5 scrollbar-thin">
+      <div v-for="group in navigationConfig" :key="group.nameKey" class="mb-2">
+        <button
+          @click="toggleGroup(group.nameKey)"
+          class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 group/header"
+          :class="expandedGroup === group.nameKey ? 'text-brand-dark bg-gray-50/50' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'"
         >
-          <span class="icon">🏠</span>
-          <span class="label">{{ t('nav.dashboard') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/map"
-          class="nav-item group"
-          :class="{ 'active': isActive('/map') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🗺️</span>
-          <span class="label">{{ t('nav.map_view') }}</span>
-          <span class="badge-new">{{ t('common.new') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/plans"
-          class="nav-item"
-          :class="{ 'active': isActive('/plans') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🌾</span>
-          <span class="label">{{ t('nav.crop_plan') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/crops"
-          class="nav-item"
-          :class="{ 'active': isActive('/crops') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">📚</span>
-          <span class="label">{{ t('nav_crops') }}</span>
-        </RouterLink>
-      </div>
-
-      <!-- Section: Comptabilité -->
-      <div class="space-y-1">
-        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-          {{ t('nav.accounting') }}
-        </div>
-        <RouterLink
-          to="/accounting"
-          class="nav-item"
-          :class="{ 'active': isActive('/accounting') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">💰</span>
-          <span class="label">{{ t('nav.accounting_dashboard') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/accounting/transactions"
-          class="nav-item"
-          :class="{ 'active': isActive('/accounting/transactions') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">📑</span>
-          <span class="label">{{ t('nav.transactions') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/accounting/receipts"
-          class="nav-item"
-          :class="{ 'active': isActive('/accounting/receipts') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">📸</span>
-          <span class="label">{{ t('nav.receipts') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/accounting/labor"
-          class="nav-item"
-          :class="{ 'active': isActive('/accounting/labor') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">👷</span>
-          <span class="label">{{ t('nav.labor') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/accounting/tags"
-          class="nav-item"
-          :class="{ 'active': isActive('/accounting/tags') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🏷️</span>
-          <span class="label">{{ t('nav.tags') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/accounting/team"
-          class="nav-item"
-          :class="{ 'active': isActive('/accounting/team') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🤝</span>
-          <span class="label">{{ t('nav.team') }}</span>
-        </RouterLink>
-      </div>
-
-      <!-- Section: Aviculture -->
-      <div class="space-y-1">
-        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-          {{ t('nav.poultry') }}
-        </div>
-        <RouterLink
-          to="/poultry"
-          class="nav-item"
-          :class="{ 'active': isActive('/poultry') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🐔</span>
-          <span class="label">{{ t('nav.poultry_dashboard') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/poultry/flocks"
-          class="nav-item"
-          :class="{ 'active': isActive('/poultry/flocks') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🐣</span>
-          <span class="label">{{ t('nav.flocks') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/poultry/suppliers"
-          class="nav-item"
-          :class="{ 'active': isActive('/poultry/suppliers') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">📦</span>
-          <span class="label">{{ t('nav.suppliers') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/poultry/customers"
-          class="nav-item"
-          :class="{ 'active': isActive('/poultry/customers') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">👥</span>
-          <span class="label">{{ t('nav.customers') }}</span>
-        </RouterLink>
-      </div>
-
-      <!-- Section: Operations -->
-      <div class="space-y-1">
-        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-          {{ t('nav.operations') }}
-        </div>
-        <RouterLink
-          to="/tasks"
-          class="nav-item"
-          :class="{ 'active': isActive('/tasks') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">📋</span>
-          <span class="label">{{ t('nav.tasks') }}</span>
-          <span class="badge" v-if="taskCount > 0">{{ taskCount }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/nursery"
-          class="nav-item"
-          :class="{ 'active': isActive('/nursery') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🌱</span>
-          <span class="label">{{ t('nav.nursery') }}</span>
-        </RouterLink>
-      </div>
-
-      <!-- Section: System -->
-      <div class="space-y-1">
-        <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
-          {{ t('nav.system') }}
-        </div>
-        <RouterLink
-          to="/sensors"
-          class="nav-item"
-          :class="{ 'active': isActive('/sensors') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">📡</span>
-          <span class="label">{{ t('nav.sensors') }}</span>
-        </RouterLink>
-        <RouterLink
-          to="/alerts"
-          class="nav-item"
-          :class="{ 'active': isActive('/alerts') }"
-          @click="$emit('close')"
-        >
-          <span class="icon">🔔</span>
-          <span class="label">{{ t('nav.alerts') }}</span>
-          <span class="badge-danger" v-if="alertsStore.unreadCount > 0">
-            {{ alertsStore.unreadCount }}
+          <div class="flex items-center gap-3">
+            <div 
+              class="w-8 h-8 flex items-center justify-center rounded-lg transition-colors group-hover/header:bg-white group-hover/header:shadow-sm"
+              :class="expandedGroup === group.nameKey ? 'bg-white shadow-sm text-brand-dark' : 'text-gray-400'"
+              v-html="group.icon"
+            ></div>
+            <span class="text-sm font-bold tracking-tight">{{ t(group.nameKey) }}</span>
+          </div>
+          <span class="transform transition-transform duration-300 text-[10px]" :class="{ 'rotate-180': expandedGroup === group.nameKey }">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" /></svg>
           </span>
-        </RouterLink>
-        <RouterLink
-          to="/settings"
-          class="nav-item"
-          :class="{ 'active': isActive('/settings') }"
-          @click="$emit('close')"
+        </button>
+        
+        <div 
+          v-show="expandedGroup === group.nameKey" 
+          class="mt-1 ps-4 border-s border-gray-100 ms-7 space-y-1 overflow-hidden"
         >
-          <span class="icon">⚙️</span>
-          <span class="label">{{ t('nav.settings') }}</span>
-        </RouterLink>
+          <RouterLink
+            v-for="item in group.items"
+            :key="item.to"
+            :to="item.to"
+            class="nav-item"
+            active-class=""
+            :exact-active-class="item.exact ? 'active' : ''"
+            :class="{ 'active': !item.exact && isActive(item.to) }"
+            @click="handleNavClick"
+          >
+            <div class="icon-wrapper" v-html="item.icon"></div>
+            <span class="label">{{ t(item.labelKey) }}</span>
+            
+            <div v-if="isActive(item.to, item.exact)" class="active-pill"></div>
+
+            <template v-if="item.badge">
+              <span v-if="item.badge === 'new'" class="badge-new">{{ t('common.new') }}</span>
+              <span v-else-if="item.badge.type === 'danger' && getBadgeValue(item.badge.key) > 0" class="badge-danger">
+                {{ getBadgeValue(item.badge.key) }}
+              </span>
+              <span v-else-if="item.badge.type === 'count' && getBadgeValue(item.badge.key) > 0" class="badge">
+                {{ getBadgeValue(item.badge.key) }}
+              </span>
+            </template>
+          </RouterLink>
+        </div>
       </div>
     </nav>
 
@@ -262,15 +110,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
 import { useAlertsStore } from '@/stores/alerts.store'
 import { useI18n } from '@/i18n'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import { navigationConfig, type NavItem } from '@/config/navigation'
 
-defineProps<{ open: boolean }>()
-defineEmits<{ close: [] }>()
+const props = defineProps<{ open: boolean }>()
+const emit = defineEmits<{ close: [] }>()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -281,9 +130,36 @@ const alertsStore = useAlertsStore()
 // Mock task count for now
 const taskCount = ref(3)
 
-function isActive(to: string) {
+const expandedGroup = ref<string | null>(null)
+
+watch(() => route.path, () => {
+  for (const group of navigationConfig) {
+    if (group.items.some((item: NavItem) => isActive(item.to, item.exact))) {
+      expandedGroup.value = group.nameKey
+      break
+    }
+  }
+}, { immediate: true })
+
+function toggleGroup(nameKey: string) {
+  expandedGroup.value = expandedGroup.value === nameKey ? null : nameKey
+}
+
+function handleNavClick() {
+  emit('close')
+}
+
+function isActive(to: string, exact?: boolean) {
+  if (exact) return route.path === to
+  // For non-exact, match if path starts with 'to' (but don't match '/' against everything)
   if (to === '/') return route.path === '/'
-  return route.path.startsWith(to) && to !== '/'
+  return route.path === to || route.path.startsWith(to + '/')
+}
+
+function getBadgeValue(key: string) {
+  if (key === 'alerts') return alertsStore.unreadCount
+  if (key === 'tasks') return taskCount.value
+  return 0
 }
 
 function logout() {
@@ -294,19 +170,28 @@ function logout() {
 
 <style scoped>
 .nav-item {
-  @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 relative overflow-hidden;
+  @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-[14px] font-medium transition-all duration-200 text-gray-400 hover:text-gray-900 hover:bg-gray-50/50 relative;
 }
 
 .nav-item.active {
-  @apply bg-green-50/80 text-green-800 shadow-sm shadow-green-100/50;
+  @apply text-gray-900 bg-gray-100/80 font-bold;
+  box-shadow: none;
 }
 
-.nav-item .icon {
-  @apply text-lg w-6 text-center transition-transform duration-200;
+.nav-item .icon-wrapper {
+  @apply w-5 h-5 flex items-center justify-center shrink-0 text-gray-400 transition-colors duration-200;
 }
 
-.nav-item:hover .icon {
-  @apply scale-110;
+.nav-item.active .icon-wrapper {
+  @apply text-brand-dark;
+}
+
+.nav-item:hover .icon-wrapper {
+  @apply text-gray-600;
+}
+
+.active-pill {
+  @apply absolute right-0 top-1.5 bottom-1.5 w-1 bg-brand-dark rounded-s-full shadow-[0_0_10px_rgba(27,66,53,0.3)];
 }
 
 .badge {

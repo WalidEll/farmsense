@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F3F4F6] font-sans text-gray-900">
+  <div class="min-h-screen bg-brand-light font-sans text-gray-900">
     <!-- Sidebar -->
     <SideBar :open="sidebarOpen" @close="sidebarOpen = false" />
 
@@ -17,7 +17,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span class="font-bold text-gray-800 text-lg">FarmSense</span>
+          <span class="font-bold text-gray-800 text-lg">GreenAcres</span>
         </div>
 
         <!-- Alerts bell (mobile) -->

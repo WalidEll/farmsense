@@ -731,3 +731,36 @@ export interface ApprovalLogEntry {
 }
 
 export interface ApprovalLogResponse extends ApprovalLogEntry {}
+
+export type FieldStatus = 'OPTIMAL' | 'WARNING' | 'CRITICAL'
+export type FieldShape = 'RECTANGLE' | 'POLYGON'
+
+export interface Field {
+  id: string
+  name: string
+  shape: FieldShape
+  x: number
+  y: number
+  width: number
+  height: number
+  points?: { x: number; y: number }[]
+  status: FieldStatus
+  sensorId?: string
+  cropType?: string
+  area?: number
+}
+
+export interface CreateFieldRequest {
+  id: string
+  name: string
+  shape: FieldShape
+  x: number
+  y: number
+  width: number
+  height: number
+  points?: { x: number; y: number }[]
+  sensorId?: string
+  cropType?: string
+}
+
+export interface UpdateFieldRequest extends Partial<CreateFieldRequest> {}

@@ -1,5 +1,5 @@
 <template>
-  <div :dir="auth.isRtl ? 'rtl' : 'ltr'" class="min-h-screen bg-gray-50 text-gray-900">
+  <div :dir="auth.isRtl ? 'rtl' : 'ltr'" class="min-h-screen bg-brand-light text-gray-900">
     <RouterView />
   </div>
 </template>

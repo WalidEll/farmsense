@@ -16,6 +16,11 @@ export function setGlobalLang(l: Lang) {
 const translations = {
   FR: {
     // Nav
+    nav_group_farm: 'Gestion d\'exploitation',
+    nav_group_production: 'Production',
+    nav_group_finance: 'Finances M.A.',
+    nav_group_partners: 'Partenaires',
+    nav_group_admin: 'Administration',
     nav_dashboard: 'Tableau de bord',
     nav_plants: 'Mes plantes',
     nav_devices: 'Capteurs',
@@ -29,6 +34,14 @@ const translations = {
     nav_nursery: 'Pépinière',
     nav_system: 'Système',
     nav_sensors: 'Capteurs',
+    nav_fields: 'Carte des champs',
+    nav_group_plant: 'Plant Management',
+    nav_group_poultry: 'Poultry Management',
+    nav_planting_records: 'Registres de plantation',
+    nav_harvest_records: 'Registres de récolte',
+    nav_egg_collection: 'Collecte des œufs',
+    nav_bird_weight: 'Poids des oiseaux',
+    nav_feed_records: 'Registres d\'alimentation',
 
     // Dashboard
     dashboard_connectSensor: 'Connecter un Capteur',
@@ -514,6 +527,11 @@ const translations = {
   },
 
   AR: {
+    nav_group_farm: 'إدارة المزرعة',
+    nav_group_production: 'الإنتاج',
+    nav_group_finance: 'المالية',
+    nav_group_partners: 'الشركاء',
+    nav_group_admin: 'الإدارة',
     nav_dashboard: 'لوحة التحكم',
     nav_plants: 'نباتاتي',
     nav_devices: 'أجهزة الاستشعار',
@@ -527,6 +545,14 @@ const translations = {
     nav_nursery: 'المشتل',
     nav_system: 'النظام',
     nav_sensors: 'المستشعرات',
+    nav_fields: 'خريطة الحقول',
+    nav_group_plant: 'Plant Management',
+    nav_group_poultry: 'Poultry Management',
+    nav_planting_records: 'سجلات الزراعة',
+    nav_harvest_records: 'سجلات الحصاد',
+    nav_egg_collection: 'جمع البيض',
+    nav_bird_weight: 'وزن الطيور',
+    nav_feed_records: 'سجلات العلف',
 
     // Dashboard
     dashboard_connectSensor: 'ربط حساس',
@@ -987,6 +1013,11 @@ const translations = {
 
   EN: {
     // Nav
+    nav_group_farm: 'Farm Management',
+    nav_group_production: 'Production',
+    nav_group_finance: 'Finance',
+    nav_group_partners: 'Partners',
+    nav_group_admin: 'Administration',
     nav_dashboard: 'Dashboard',
     nav_plants: 'My Plants',
     nav_devices: 'Sensors',
@@ -1000,6 +1031,14 @@ const translations = {
     nav_nursery: 'Nursery',
     nav_system: 'System',
     nav_sensors: 'Sensors',
+    nav_fields: 'Field Map',
+    nav_group_plant: 'Plant Management',
+    nav_group_poultry: 'Poultry Management',
+    nav_planting_records: 'Planting Records',
+    nav_harvest_records: 'Harvest Records',
+    nav_egg_collection: 'Egg Collection',
+    nav_bird_weight: 'Bird Weight',
+    nav_feed_records: 'Feed Records',
 
     // Dashboard
     dashboard_connectSensor: 'Connect Sensor',
