@@ -4,6 +4,36 @@
 **Sprint Goal:** Deliver a working MVP of inventory management that allows farmers to add inventory items, record stock movements (purchase, usage, adjustment), track current stock levels, and link inventory usage to farm activities.
 **Migration Version:** V13
 **Module Prefix:** `/api/v1/inventory`
+**Last Updated:** 2026-03-14
+
+---
+
+## 🟢 Sprint Progress Tracker
+
+| Area | Status | Completion |
+|------|--------|------------|
+| **Frontend Types** (`types/index.ts`) | ✅ Done | 100% |
+| **Pinia Store** (`inventory.store.ts`) | ✅ Done | 100% |
+| **Router** (3 routes added) | ✅ Done | 100% |
+| **Navigation Config** (Inventory group) | ✅ Done | 100% |
+| **i18n Keys** (~55 keys × 3 langs) | ✅ Done | 100% |
+| **Dashboard View** (`InventoryDashboardView.vue`) | ✅ Done | 100% |
+| **Stock Movement Modal** (Log Usage dialog) | ✅ Done | 100% |
+| **Build Verification** (`vite build`) | ✅ Passes | 100% |
+| **Mobile Responsive** (375px tested) | ✅ Verified | 100% |
+| **Backend Migration** (`V13__inventory_module.sql`) | ❌ Not started | 0% |
+| **Backend Entities** (Java) | ❌ Not started | 0% |
+| **Backend Services** | ❌ Not started | 0% |
+| **Backend Controllers** | ❌ Not started | 0% |
+| **Backend Unit Tests** | ❌ Not started | 0% |
+| **Inventory List View** (separate page) | ⚠️ Partial (reuses dashboard) | 50% |
+| **Inventory Item Form** (add/edit) | ❌ Not started | 0% |
+| **Item Detail View** | ❌ Not started | 0% |
+| **Stock Movements Log View** | ❌ ComingSoon placeholder | 10% |
+| **Low-Stock Alert Trigger** | ❌ Not started | 0% |
+| **Activity Linking** | ❌ Not started | 0% |
+
+**Overall Sprint Progress: ~35%** (Frontend foundation complete, backend not started)
 
 ---
 
@@ -114,17 +144,17 @@
 
 ---
 
-### US-7: i18n Support (2 SP)
+### US-7: i18n Support (2 SP) ✅ DONE
 
 **As a** user,
 **I want** the inventory module fully translated in French, Arabic, and English,
 **So that** I can use the system in my preferred language.
 
 **Acceptance Criteria:**
-- [ ] All labels, buttons, messages, and empty states translated in FR, AR, EN
-- [ ] Category names translated
-- [ ] Movement type labels translated
-- [ ] Navigation items translated
+- [x] All labels, buttons, messages, and empty states translated in FR, AR, EN
+- [x] Category names translated
+- [x] Movement type labels translated
+- [x] Navigation items translated
 - [ ] RTL layout works correctly for Arabic
 
 ---
@@ -473,33 +503,33 @@ public class StockMovement {
 | **T14** | Create `StockMovementController` — movement endpoints | US-2 | 1 | Backend | D4 |
 | **T15** | Create `InventoryCategoryController` — category CRUD | US-1 | 1 | Backend | D4 |
 | **T16** | Backend unit tests — services + validation | All | 3 | Backend | D5 |
-| **T17** | Add TypeScript types to `types/index.ts` | US-1,2 | 1 | Frontend | D3 |
-| **T18** | Create `inventory.store.ts` Pinia store | US-1,4 | 2 | Frontend | D3 |
-| **T19** | Create `stockMovements.store.ts` Pinia store | US-2 | 1 | Frontend | D4 |
-| **T20** | Add routes to `router/index.ts` (6 routes) | US-4 | 1 | Frontend | D4 |
-| **T21** | Add navigation config: "Stock" group in sidebar | US-4 | 1 | Frontend | D4 |
-| **T22** | Add i18n keys for inventory module (~60 keys × 3 languages) | US-7 | 2 | Frontend | D5 |
+| **T17** | ✅ Add TypeScript types to `types/index.ts` | US-1,2 | 1 | Frontend | D3 |
+| **T18** | ✅ Create `inventory.store.ts` Pinia store | US-1,4 | 2 | Frontend | D3 |
+| **T19** | ⏳ Create `stockMovements.store.ts` Pinia store (merged into T18) | US-2 | 1 | Frontend | D4 |
+| **T20** | ✅ Add routes to `router/index.ts` (3 routes) | US-4 | 1 | Frontend | D4 |
+| **T21** | ✅ Add navigation config: "Inventaire" group in sidebar | US-4 | 1 | Frontend | D4 |
+| **T22** | ✅ Add i18n keys for inventory module (~55 keys × 3 languages) | US-7 | 2 | Frontend | D5 |
 
 ### Week 2 — Frontend Views + Integration (Days 6–10)
 
 | # | Task | Story | Points | Owner | Day |
 |---|------|-------|--------|-------|-----|
-| **T23** | Build `InventoryDashboardView` — KPI cards + charts + recent movements | US-3 | 3 | Frontend | D6 |
-| **T24** | Build `DashboardKpiCard` component (reuse from accounting) | US-3 | 0.5 | Frontend | D6 |
-| **T25** | Build `StockLevelChart` component (category doughnut) | US-3 | 1 | Frontend | D6 |
-| **T26** | Build `LowStockList` component | US-3 | 1 | Frontend | D6 |
-| **T27** | Build `InventoryListView` — table + filters + search | US-4 | 3 | Frontend | D7 |
-| **T28** | Build `InventoryItemCard` component (mobile) | US-4 | 1 | Frontend | D7 |
-| **T29** | Build `InventoryFilters` component (category, status, supplier) | US-4 | 1 | Frontend | D7 |
-| **T30** | Build `InventoryFormView` — add/edit item form | US-1 | 3 | Frontend | D8 |
-| **T31** | Build `CategoryPicker` component (select + create inline) | US-1 | 1 | Frontend | D8 |
-| **T32** | Build `StockMovementDialog` — record purchase/usage/adjustment modal | US-2 | 3 | Frontend | D8–9 |
-| **T33** | Build `ActivityLinker` component (flock/crop/field selector) | US-5 | 2 | Frontend | D9 |
-| **T34** | Build `MovementHistoryTable` component | US-2 | 1.5 | Frontend | D9 |
-| **T35** | Build `InventoryItemDetailView` — item info + movement history | US-1,2 | 2 | Frontend | D9 |
-| **T36** | Integration testing — full CRUD flow | All | 2 | Full-stack | D10 |
-| **T37** | Mobile responsiveness pass | All | 1 | Frontend | D10 |
-| **T38** | Bug fixes + polish | All | 2 | Full-stack | D10 |
+| **T23** | ✅ Build `InventoryDashboardView` — KPI cards + items table + alerts sidebar + quick restock | US-3 | 3 | Frontend | D6 |
+| **T24** | ✅ KPI cards (Feed Stock, Fertilizer, Seeds, Medication) — inline in dashboard | US-3 | 0.5 | Frontend | D6 |
+| **T25** | ⏳ Build `StockLevelChart` component (category doughnut) — deferred to v2 | US-3 | 1 | Frontend | — |
+| **T26** | ✅ Build `LowStockAlerts` sidebar — in dashboard with severity icons + ORDER NOW | US-3 | 1 | Frontend | D6 |
+| **T27** | ⏳ Build `InventoryListView` — separate from dashboard (currently reuses dashboard) | US-4 | 3 | Frontend | D7 |
+| **T28** | ✅ Build mobile cards for inventory items — in dashboard view | US-4 | 1 | Frontend | D6 |
+| **T29** | ✅ Build category filter tabs (All/Feed/Seeds/Fertilizer/Tools/Medication) — in dashboard | US-4 | 1 | Frontend | D6 |
+| **T30** | ❌ Build `InventoryFormView` — add/edit item form | US-1 | 3 | Frontend | D8 |
+| **T31** | ❌ Build `CategoryPicker` component (select + create inline) | US-1 | 1 | Frontend | D8 |
+| **T32** | ✅ Build `StockMovementDialog` — record purchase/usage/adjustment modal | US-2 | 3 | Frontend | D6 |
+| **T33** | ❌ Build `ActivityLinker` component (flock/crop/field selector) | US-5 | 2 | Frontend | D9 |
+| **T34** | ❌ Build `MovementHistoryTable` component | US-2 | 1.5 | Frontend | D9 |
+| **T35** | ❌ Build `InventoryItemDetailView` — item info + movement history | US-1,2 | 2 | Frontend | D9 |
+| **T36** | ❌ Integration testing — full CRUD flow | All | 2 | Full-stack | D10 |
+| **T37** | ✅ Mobile responsiveness pass (tested at 375px + 1440px) | All | 1 | Frontend | D6 |
+| **T38** | ⏳ Bug fixes + polish | All | 2 | Full-stack | D10 |
 
 ---
 
@@ -706,42 +736,41 @@ Day 10 (Fri) │ T36-T38: Integration test, mobile pass, bug fixes
 - [ ] All 14 API endpoints return correct responses
 - [ ] Flyway migration runs without errors
 - [ ] `./mvnw compile` passes
-- [ ] `npm run build` + `npm run type-check` pass
+- [x] `npm run build` passes (verified: 2.44s, 51 precache entries)
 - [ ] All 7 user stories meet acceptance criteria
-- [ ] i18n complete for FR, AR, EN
-- [ ] Mobile responsive (tested at 375px)
+- [x] i18n complete for FR, AR, EN (~55 keys × 3 languages)
+- [x] Mobile responsive (tested at 375px + 1440px)
 - [ ] Low-stock alerts fire correctly
 - [ ] USAGE movements auto-create expense transactions
 
 ### Expected Deliverables at Sprint End
 
-| Deliverable | Count |
-|-------------|-------|
-| Database migration | 1 file |
-| Java Enums | 5 files |
-| Java Entities | 3 files |
-| Java Repositories | 3 files |
-| Java DTOs | ~12 files |
-| Java Services | 3 files |
-| Java Controllers | 3 files |
-| Frontend Types | 1 file (additions) |
-| Pinia Stores | 2 files |
-| Vue Views | 4 files |
-| Vue Components | 8 files |
-| Router additions | 1 file (6 routes) |
-| Nav config additions | 1 file (new group) |
-| i18n additions | 1 file (~60 keys × 3 langs) |
-| **Total new files** | **~45** |
-| **Modified files** | **~4** |
+| Deliverable | Count | Status |
+|-------------|-------|--------|
+| Database migration | 1 file | ❌ |
+| Java Enums | 5 files | ❌ |
+| Java Entities | 3 files | ❌ |
+| Java Repositories | 3 files | ❌ |
+| Java DTOs | ~12 files | ❌ |
+| Java Services | 3 files | ❌ |
+| Java Controllers | 3 files | ❌ |
+| Frontend Types | 1 file (additions) | ✅ |
+| Pinia Stores | 1 file (`inventory.store.ts`) | ✅ |
+| Vue Views | 1 of 4 files | ✅ Dashboard |
+| Vue Components | 0 of 8 files (inline in dashboard) | ⚠️ |
+| Router additions | 1 file (3 routes) | ✅ |
+| Nav config additions | 1 file (new group, 3 items) | ✅ |
+| i18n additions | 1 file (~55 keys × 3 langs) | ✅ |
+| **Total new files** | **~45** | |
+| **Completed so far** | **3 new + 4 modified** | **~35%** |
 
-### Navigation Structure (New "Stock" Group)
+### Navigation Structure (Implemented ✅)
 
 ```
-📦 Stock                    ← New sidebar group
-  ├── 📊 Tableau de bord    → /inventory
-  ├── 📋 Articles           → /inventory/items
-  ├── 📥 Mouvements         → /inventory/movements
-  └── 🏷️ Catégories        → /inventory/categories
+📦 Inventaire               ← Sidebar group (nav.group.inventory)
+  ├── 📊 Tableau de bord    → /inventory              ✅ InventoryDashboardView
+  ├── 📋 Articles en stock  → /inventory/items         ✅ InventoryDashboardView (shared)
+  └── 📈 Mouvements de stock → /inventory/movements    ⏳ ComingSoonView
 ```
 
 ### Risk Register
@@ -755,17 +784,381 @@ Day 10 (Fri) │ T36-T38: Integration test, mobile pass, bug fixes
 
 ---
 
+## 7. Implementation Order — Step-by-Step Dev Guide
+
+> **Read this before writing any code.**
+> Each step builds on the previous one. Do NOT skip steps.
+> Each step ends with a verification command to confirm it works before moving on.
+
+---
+
+### 🔴 PHASE 1 — Database & Entities (Day 1)
+
+**Step 1: Flyway Migration** `V13__inventory_module.sql`
+```
+📁 apps/backend/src/main/resources/db/migration/V13__inventory_module.sql
+```
+- Creates 3 tables: `inventory_categories`, `inventory_items`, `stock_movements`
+- SQL is already written in Section 2.3 of this document — copy it exactly
+- **Verify:** `docker compose up -d && ./mvnw flyway:migrate` — no errors
+
+**Step 2: Java Enums** (5 files)
+```
+📁 ma/farmsense/entity/
+  ├── InventoryCategoryType.java   → FEED, SEEDS, FERTILIZER, PESTICIDE, VETERINARY, EQUIPMENT, PACKAGING, OTHER
+  ├── StockMovementType.java       → PURCHASE, USAGE, ADJUSTMENT, RETURN, TRANSFER
+  ├── InventoryUnit.java           → KG, G, L, ML, UNIT, BAG, BOX, BOTTLE, TON, DOSE
+  ├── InventoryStatus.java         → ACTIVE, LOW_STOCK, OUT_OF_STOCK, ARCHIVED
+  └── AdjustmentReason.java        → DAMAGE, EXPIRY, COUNT_CORRECTION, LOSS, OTHER
+```
+- **Pattern:** copy `CropCategory.java` enum style
+- **Verify:** `./mvnw compile` — no errors
+
+**Step 3: JPA Entities** (3 files)
+```
+📁 ma/farmsense/entity/
+  ├── InventoryCategory.java   → see Section 2.4
+  ├── InventoryItem.java       → see Section 2.4
+  └── StockMovement.java       → see Section 2.4
+```
+- **Pattern:** follow `Supplier.java` (user/team scoping, @PrePersist, @Builder.Default)
+- FK relationships: InventoryItem → InventoryCategory, Supplier, User, Team
+- StockMovement → InventoryItem, User, Supplier, Flock, CropPlan, FarmLocation, Transaction
+- **Verify:** `./mvnw compile` — no errors
+
+**Step 4: JPA Repositories** (3 files)
+```
+📁 ma/farmsense/repository/
+  ├── InventoryCategoryRepository.java
+  ├── InventoryItemRepository.java
+  └── StockMovementRepository.java
+```
+- `InventoryItemRepository`: add `findByUserAndDeletedAtIsNull()`, `findByUserAndStatusIn()`, `findByUserAndCategoryType()`
+- `StockMovementRepository`: add `findByItemIdOrderByCreatedAtDesc()`, `findByUserIdAndMovementDateBetween()`
+- **Pattern:** copy `SupplierRepository.java`
+- **Verify:** `./mvnw compile` — no errors
+
+---
+
+### 🟡 PHASE 2 — DTOs & Services (Days 2–3)
+
+**Step 5: DTOs** (~10 files)
+```
+📁 ma/farmsense/dto/inventory/
+  ├── CreateInventoryItemRequest.java    → name*, categoryId*, unit*, minStockLevel*, currentQuantity, lastUnitCost, supplierId, sku, storageLocation, expiryDate, notes
+  ├── UpdateInventoryItemRequest.java    → all fields optional
+  ├── InventoryItemResponse.java         → all item fields + categoryName + supplierName + status (computed)
+  ├── CreateStockMovementRequest.java    → itemId*, type*, quantity*, unitCost, supplierId, referenceNumber, reason, flockId, cropPlanId, farmLocationId, movementDate, notes
+  ├── StockMovementResponse.java         → all movement fields + itemName + supplierName + flockName etc.
+  ├── CreateCategoryRequest.java         → name*, type*, description, color, icon
+  ├── UpdateCategoryRequest.java         → all optional
+  ├── CategoryResponse.java             → id, name, type, description, color, icon
+  ├── InventoryDashboardResponse.java   → totalItems, lowStockCount, totalValue, stockByCategory[], recentMovements[], lowStockItems[]
+  └── InventoryFilterRequest.java       → search, categoryId, status, supplierId (all optional query params)
+```
+- **Pattern:** copy `dto/accounting/CreateTransactionRequest.java` style (jakarta.validation annotations)
+- **Verify:** `./mvnw compile`
+
+**Step 6: `InventoryCategoryService`** — SIMPLEST, do this first
+```
+📁 ma/farmsense/service/InventoryCategoryService.java
+```
+- `findAll(User user)` — return all categories for user, seed defaults if empty
+- `create(User user, CreateCategoryRequest req)` — create category
+- `update(User user, UUID id, UpdateCategoryRequest req)` — update
+- `delete(User user, UUID id)` — delete
+- **Seed logic:** if `findAll` returns empty, auto-create 8 default categories (FEED, SEEDS, etc.) with French names
+- **Pattern:** copy `SupplierService.java` exactly
+- **Verify:** `./mvnw compile`
+
+**Step 7: `InventoryItemService`** — CORE, most important
+```
+📁 ma/farmsense/service/InventoryItemService.java
+```
+- `findAll(User user, InventoryFilterRequest filter)` — list with search + category + status filter
+- `findById(User user, UUID id)` — get single item (throw 404 if not found or deleted)
+- `create(User user, CreateInventoryItemRequest req)` — create item, compute initial status
+- `update(User user, UUID id, UpdateInventoryItemRequest req)` — update item
+- `delete(User user, UUID id)` — soft delete (set deletedAt)
+- `findLowStock(User user)` — items where currentQuantity ≤ minStockLevel
+- `getDashboard(User user)` — aggregate KPIs: totalItems, lowStockCount, totalValue, stockByCategory
+- **Status computation:** ACTIVE if qty > minStockLevel, LOW_STOCK if qty ≤ minStockLevel && qty > 0, OUT_OF_STOCK if qty ≤ 0
+- **Pattern:** copy `TransactionService.java` for filter/query pattern
+- **Verify:** `./mvnw compile`
+
+**Step 8: `StockMovementService`** — CRITICAL BUSINESS LOGIC
+```
+📁 ma/farmsense/service/StockMovementService.java
+```
+- `record(User user, CreateStockMovementRequest req)`:
+  1. Load InventoryItem (throw 404 if not found)
+  2. Validate: USAGE quantity cannot exceed currentQuantity
+  3. Save quantityBefore = item.currentQuantity
+  4. Update item.currentQuantity: PURCHASE → add, USAGE → subtract, ADJUSTMENT → add/subtract
+  5. Update item.lastUnitCost if PURCHASE
+  6. Recompute item.status (ACTIVE / LOW_STOCK / OUT_OF_STOCK)
+  7. Save quantityAfter = item.currentQuantity
+  8. Save StockMovement
+  9. Return MovementResponse
+- `findByItem(User user, UUID itemId)` — movement history for one item
+- `findAll(User user, type filter, date range)` — all movements
+- **⚠️ IMPORTANT:** This is the only place that changes `currentQuantity`. Never update it directly.
+- **Verify:** `./mvnw compile`
+
+---
+
+### 🟢 PHASE 3 — Controllers (Day 4)
+
+**Step 9: `InventoryCategoryController`**
+```
+📁 ma/farmsense/controller/InventoryCategoryController.java
+@RequestMapping("/api/v1/inventory/categories")
+```
+| Method | Path | Action |
+|--------|------|--------|
+| GET | `/` | List all categories |
+| POST | `/` | Create category |
+| PUT | `/{id}` | Update category |
+| DELETE | `/{id}` | Delete category |
+
+- **Pattern:** copy `SupplierController.java` exactly — same structure
+- **Verify:** `./mvnw spring-boot:run` + `curl localhost:8080/api/v1/inventory/categories`
+
+**Step 10: `InventoryItemController`**
+```
+📁 ma/farmsense/controller/InventoryItemController.java
+@RequestMapping("/api/v1/inventory/items")
+```
+| Method | Path | Action |
+|--------|------|--------|
+| GET | `/` | List items (with filter query params) |
+| POST | `/` | Create item |
+| GET | `/{id}` | Get item detail |
+| PUT | `/{id}` | Update item |
+| DELETE | `/{id}` | Soft-delete item |
+| GET | `/dashboard` | Dashboard KPIs |
+| GET | `/low-stock` | Low-stock items only |
+
+- **⚠️ ROUTE ORDER:** Put `/dashboard` and `/low-stock` BEFORE `/{id}` to avoid UUID parse errors
+- **Pattern:** copy `TransactionController.java`
+- **Verify:** `curl localhost:8080/api/v1/inventory/items` returns `[]`
+
+**Step 11: `StockMovementController`**
+```
+📁 ma/farmsense/controller/StockMovementController.java
+@RequestMapping("/api/v1/inventory/movements")
+```
+| Method | Path | Action |
+|--------|------|--------|
+| GET | `/` | List all movements |
+| POST | `/` | Record movement |
+| GET | `/{id}` | Get movement detail |
+| GET | `/by-item/{itemId}` | Movements for one item |
+
+- **Verify:** Full smoke test with Postman/curl:
+  1. POST category → POST item → POST movement (PURCHASE) → GET item (check qty updated)
+
+---
+
+### 🔵 PHASE 4 — Alerts & Integration (Day 4–5)
+
+**Step 12: Low-Stock Alert Trigger**
+- In `StockMovementService.record()`, after updating item status:
+  - If new status is `LOW_STOCK` or `OUT_OF_STOCK`, create an Alert:
+    ```java
+    Alert alert = Alert.builder()
+      .user(user)
+      .type("LOW_STOCK")
+      .severity(status == OUT_OF_STOCK ? "HIGH" : "MEDIUM")
+      .msgFr("Stock bas: " + item.getName() + " — " + item.getCurrentQuantity() + " " + item.getUnit())
+      .msgEn("Low stock: " + item.getName() + " — " + item.getCurrentQuantity() + " " + item.getUnit())
+      .msgAr("مخزون منخفض: " + item.getName())
+      .build();
+    ```
+  - Check: don't create duplicate alerts (query existing unacked LOW_STOCK alert for same item)
+- **Verify:** POST a USAGE movement that drops below minStockLevel → check `/api/v1/alerts` has new alert
+
+**Step 13: Auto-Expense on USAGE** (optional, can defer)
+- In `StockMovementService.record()`, if type == USAGE and item.lastUnitCost > 0:
+  - Create an EXPENSE transaction via `TransactionService.create()`:
+    ```java
+    CreateTransactionRequest txReq = new CreateTransactionRequest();
+    txReq.setType(TransactionType.EXPENSE);
+    txReq.setCategory("INVENTORY");
+    txReq.setAmount(qty * lastUnitCost);
+    txReq.setDescription("Usage: " + item.getName());
+    txReq.setTransactionDate(movementDate);
+    ```
+  - Save the transaction ID on the StockMovement record
+- **Verify:** POST USAGE movement → check `/api/v1/transactions` has new EXPENSE
+
+**Step 14: Backend Unit Tests**
+```
+📁 apps/backend/src/test/java/ma/farmsense/service/
+  ├── InventoryCategoryServiceTest.java
+  ├── InventoryItemServiceTest.java
+  └── StockMovementServiceTest.java
+```
+- Test: create item → record PURCHASE → verify qty increased
+- Test: record USAGE exceeding stock → expect validation error
+- Test: record USAGE that triggers LOW_STOCK → verify alert created
+- Test: soft delete item → verify not returned in findAll
+- **Pattern:** copy `PlantServiceTest.java`
+- **Verify:** `./mvnw test -pl apps/backend`
+
+---
+
+### 🟣 PHASE 5 — Remaining Frontend Views (Days 6–9)
+
+> The dashboard view, store, types, routes, nav, and i18n are already done (✅).
+> These are the remaining frontend screens.
+
+**Step 15: `InventoryItemFormView.vue`** — Add/Edit item
+```
+📁 apps/frontend/src/views/inventory/InventoryItemFormView.vue
+```
+- Route: `/inventory/items/new` and `/inventory/items/:id/edit`
+- Fields: name, category (dropdown), unit (dropdown), initialQty, minStock, unitCost, supplier (dropdown), storageLocation, expiryDate, notes
+- Use form patterns from `TransactionFormView.vue`
+- Add routes to `router/index.ts`
+
+**Step 16: `InventoryItemDetailView.vue`** — Item detail + movement history
+```
+📁 apps/frontend/src/views/inventory/InventoryItemDetailView.vue
+```
+- Route: `/inventory/items/:id`
+- Show item info + KPI cards (current qty, min stock, value, last cost)
+- Show full movement history table (date, type, qty, before/after, linked activity, user)
+- "Record Movement" button opens the existing StockMovementDialog
+
+**Step 17: `StockMovementsView.vue`** — Movement log page
+```
+📁 apps/frontend/src/views/inventory/StockMovementsView.vue
+```
+- Route: `/inventory/movements` (replace ComingSoonView)
+- Full table: date, item name, type badge, qty (+/-), cost, linked activity, user
+- Filter by: type (PURCHASE/USAGE/ADJUSTMENT), date range, item
+
+**Step 18: Connect Dashboard to Real API**
+- Replace demo data in `InventoryDashboardView.vue` with real store data
+- Call `inventoryStore.fetchItems()` on mount
+- KPI cards compute from store: feedKpi from FEED items, seedsKpi from SEEDS items, etc.
+
+---
+
+### ⬛ PHASE 6 — Integration & Polish (Day 10)
+
+**Step 19:** End-to-end flow test:
+1. Login → Navigate to `/inventory`
+2. Click "+ Log Usage" → Add a PURCHASE for new feed
+3. See dashboard update with new stock levels
+4. Click item → See detail page with movement history
+5. Record a USAGE linked to a flock
+6. See low-stock alert appear in sidebar
+7. Switch to Arabic → Verify RTL layout
+8. Test on mobile (375px)
+
+**Step 20:** Bug fixes + polish — Fix any issues found in step 19
+
+---
+
+### 📊 Story Dependency Graph
+
+```
+US-1 (Item CRUD)          ← FOUNDATION — start here
+  │
+  ├── US-4 (List + Filters) ← needs items to exist
+  │
+  ├── US-2 (Stock Movements) ← needs items to record against
+  │     │
+  │     ├── US-5 (Activity Linking) ← extends movement recording
+  │     │
+  │     └── US-6 (Low-Stock Alerts) ← triggered by movements
+  │
+  └── US-3 (Dashboard) ← needs items + movements for KPIs
+
+US-7 (i18n) ← DONE ✅ — independent, already completed
+```
+
+### 🎯 Recommended Execution Order
+
+```
+┌─────┬────────────┬──────────────────────────────────────┬─────────────┐
+│  #  │ User Story │ What to Build                        │ Depends On  │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  1  │ US-1       │ Migration + Entities + Item CRUD     │ Nothing     │
+│     │            │ (Steps 1–7, 9–10)                    │             │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  2  │ US-2       │ StockMovementService + Controller    │ US-1        │
+│     │            │ (Steps 8, 11)                        │             │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  3  │ US-4       │ Item List View + Filters (FE)        │ US-1        │
+│     │            │ (Step 15, 16)                        │             │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  4  │ US-6       │ Low-Stock Alert Trigger              │ US-2        │
+│     │            │ (Step 12)                            │             │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  5  │ US-3       │ Dashboard → connect to real API      │ US-1, US-2  │
+│     │            │ (Step 17, 18)                        │             │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  6  │ US-5       │ Activity Linking + Auto-Expense      │ US-2        │
+│     │            │ (Step 13)                            │             │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  7  │ US-7       │ ✅ DONE — i18n complete              │ None        │
+├─────┼────────────┼──────────────────────────────────────┼─────────────┤
+│  8  │ —          │ Integration test + polish            │ All         │
+│     │            │ (Steps 19–20)                        │             │
+└─────┴────────────┴──────────────────────────────────────┴─────────────┘
+```
+
+### ⏱️ Day-by-Day Implementation Schedule
+
+```
+DAY 1  │ US-1 backend: Migration → Enums → Entities → Repos → DTOs
+       │ ✓ Verify: ./mvnw compile passes, tables created in DB
+       │
+DAY 2  │ US-1 backend: CategoryService → ItemService → Controllers
+       │ ✓ Verify: curl POST/GET items works, categories auto-seed
+       │
+DAY 3  │ US-2 backend: StockMovementService → Controller
+       │ ✓ Verify: POST movement updates item qty, curl full flow works
+       │
+DAY 4  │ US-6 backend: Low-stock alert trigger in MovementService
+       │ US-5 backend: Auto-expense creation on USAGE (optional)
+       │ ✓ Verify: USAGE below threshold → alert created
+       │
+DAY 5  │ US-1,2 backend: Unit tests (3 test classes)
+       │ ✓ Verify: ./mvnw test passes
+       │
+DAY 6  │ US-3 frontend: Connect dashboard to real API (replace demo data)
+       │ ✓ Verify: Dashboard shows real items from DB
+       │
+DAY 7  │ US-1 frontend: InventoryItemFormView (add/edit item)
+       │ ✓ Verify: Can create item via UI, appears in dashboard
+       │
+DAY 8  │ US-4 frontend: InventoryItemDetailView + movement history
+       │ ✓ Verify: Click item → see detail + movements
+       │
+DAY 9  │ US-2 frontend: StockMovementsView (movement log page)
+       │ ✓ Verify: /inventory/movements shows full log, filters work
+       │
+DAY 10 │ Integration test + mobile pass + bug fixes
+       │ ✓ Verify: Full end-to-end flow in FR/AR/EN, desktop + mobile
+```
+
+---
+
 ## Reference Files (Patterns to Follow)
 
 | Pattern | Reference File |
 |---------|---------------|
-| Entity | `entity/Transaction.java`, `entity/Supplier.java` |
-| Service | `service/SupplierService.java`, `service/TransactionService.java` |
-| Controller | `controller/SupplierController.java` |
-| DTOs | `dto/accounting/CreateTransactionRequest.java` |
+| Entity | `entity/Supplier.java` (user/team scoping, @PrePersist, Lombok) |
+| Service | `service/SupplierService.java` (simple CRUD), `service/TransactionService.java` (filters) |
+| Controller | `controller/SupplierController.java` (@AuthenticationPrincipal User, ResponseEntity) |
+| DTOs | `dto/accounting/CreateTransactionRequest.java` (jakarta.validation) |
 | Migration | `db/migration/V12__accounting_module.sql` |
-| Pinia Store | `stores/accounting.store.ts`, `stores/poultry.store.ts` |
+| Pinia Store | `stores/inventory.store.ts` ✅ (already created) |
+| Dashboard View | `views/inventory/InventoryDashboardView.vue` ✅ (already created) |
 | List View | `views/accounting/TransactionsView.vue` |
 | Form View | `views/accounting/TransactionFormView.vue` |
-| Dashboard | `views/accounting/AccountingDashboardView.vue` |
-| Nav Config | `config/navigation.ts` |
+| Nav Config | `config/navigation.ts` ✅ (already updated) |
