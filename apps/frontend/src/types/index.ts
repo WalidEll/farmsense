@@ -764,3 +764,136 @@ export interface CreateFieldRequest {
 }
 
 export interface UpdateFieldRequest extends Partial<CreateFieldRequest> {}
+
+// ── Inventory Module ────────────────────────────────────────
+export type InventoryCategoryType =
+  | 'FEED'
+  | 'SEEDS'
+  | 'FERTILIZER'
+  | 'PESTICIDE'
+  | 'VETERINARY'
+  | 'EQUIPMENT'
+  | 'PACKAGING'
+  | 'OTHER'
+
+export type StockMovementType = 'PURCHASE' | 'USAGE' | 'ADJUSTMENT' | 'TRANSFER' | 'LOSS'
+export type StockStatus = 'OPTIMAL' | 'LOW' | 'CRITICAL' | 'OUT_OF_STOCK'
+export type UnitOfMeasure = 'KG' | 'TONS' | 'LITERS' | 'UNITS' | 'BAGS' | 'BOXES' | 'PAIRS' | 'METERS'
+
+export interface InventoryCategory {
+  id: string
+  name: string
+  nameAr?: string
+  nameEn?: string
+  type: InventoryCategoryType
+  description?: string
+  createdAt: string
+}
+
+export interface InventoryItem {
+  id: string
+  name: string
+  nameAr?: string
+  nameEn?: string
+  categoryId: string
+  categoryName?: string
+  categoryType?: InventoryCategoryType
+  sku?: string
+  barcode?: string
+  unit: UnitOfMeasure
+  currentStock: number
+  minimumStock: number
+  maximumStock?: number
+  reorderPoint: number
+  unitCost?: number
+  supplierId?: string
+  supplierName?: string
+  farmLocationId?: string
+  farmLocationName?: string
+  expiryDate?: string
+  batchNumber?: string
+  notes?: string
+  imageUrl?: string
+  status: StockStatus
+  stockPercentage: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface StockMovement {
+  id: string
+  inventoryItemId: string
+  itemName?: string
+  type: StockMovementType
+  quantity: number
+  previousStock: number
+  newStock: number
+  unitCost?: number
+  totalCost?: number
+  reason?: string
+  referenceType?: 'FEEDING' | 'PLANTING' | 'TREATMENT' | 'IRRIGATION' | 'HARVEST' | 'OTHER'
+  referenceId?: string
+  flockId?: string
+  flockName?: string
+  cropPlanId?: string
+  cropPlanName?: string
+  supplierId?: string
+  supplierName?: string
+  performedBy?: string
+  performedAt: string
+  notes?: string
+  createdAt: string
+}
+
+export interface CreateInventoryItemRequest {
+  name: string
+  nameAr?: string
+  nameEn?: string
+  categoryId: string
+  sku?: string
+  barcode?: string
+  unit: UnitOfMeasure
+  currentStock?: number
+  minimumStock: number
+  maximumStock?: number
+  reorderPoint: number
+  unitCost?: number
+  supplierId?: string
+  farmLocationId?: string
+  expiryDate?: string
+  batchNumber?: string
+  notes?: string
+}
+
+export interface UpdateInventoryItemRequest extends Partial<CreateInventoryItemRequest> {}
+
+export interface CreateStockMovementRequest {
+  inventoryItemId: string
+  type: StockMovementType
+  quantity: number
+  unitCost?: number
+  reason?: string
+  referenceType?: 'FEEDING' | 'PLANTING' | 'TREATMENT' | 'IRRIGATION' | 'HARVEST' | 'OTHER'
+  referenceId?: string
+  flockId?: string
+  cropPlanId?: string
+  supplierId?: string
+  notes?: string
+}
+
+export interface InventoryDashboardResponse {
+  totalItems: number
+  lowStockCount: number
+  criticalStockCount: number
+  totalValue: number
+  stockByCategory: { category: string; categoryType: InventoryCategoryType; count: number; value: number }[]
+  recentMovements: StockMovement[]
+  lowStockItems: InventoryItem[]
+}
+
+export interface InventoryFilter {
+  categoryType?: InventoryCategoryType
+  status?: StockStatus
+  search?: string
+  supplierId?: string
+}

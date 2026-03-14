@@ -4,7 +4,7 @@
     <SideBar :open="sidebarOpen" @close="sidebarOpen = false" />
 
     <!-- Main area (shifted right on desktop for sidebar) -->
-    <div class="lg:ms-64 flex flex-col min-h-screen transition-all duration-300">
+    <div class="lg:ms-[17rem] flex flex-col min-h-screen transition-all duration-300">
       <!-- Mobile top bar (only visible below lg) -->
       <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 h-16 flex items-center justify-between px-4 lg:hidden">
         <div class="flex items-center gap-3">
@@ -17,7 +17,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span class="font-bold text-gray-800 text-lg">GreenAcres</span>
+          <span class="font-bold text-gray-800 text-lg">FarmSense</span>
         </div>
 
         <!-- Alerts bell (mobile) -->

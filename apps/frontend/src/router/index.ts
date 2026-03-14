@@ -44,6 +44,21 @@ const router = createRouter({
           component: ComingSoonView,
         },
         {
+          path: 'irrigation',
+          name: 'irrigation',
+          component: ComingSoonView,
+        },
+        {
+          path: 'harvests',
+          name: 'harvests',
+          component: ComingSoonView,
+        },
+        {
+          path: 'locations',
+          name: 'locations',
+          component: () => import('@/views/LocationsView.vue'),
+        },
+        {
           path: 'sensors',
           name: 'sensors',
           component: () => import('@/views/SensorsView.vue'),
@@ -129,6 +144,22 @@ const router = createRouter({
           name: 'team-management',
           component: () => import('@/views/accounting/TeamManagementView.vue'),
         },
+        // ── Inventory ──
+        {
+          path: 'inventory',
+          name: 'inventory-dashboard',
+          component: () => import('@/views/inventory/InventoryDashboardView.vue'),
+        },
+        {
+          path: 'inventory/items',
+          name: 'inventory-items',
+          component: () => import('@/views/inventory/InventoryDashboardView.vue'),
+        },
+        {
+          path: 'inventory/movements',
+          name: 'inventory-movements',
+          component: ComingSoonView,
+        },
         // ── Poultry ──
         {
           path: 'poultry',
@@ -144,6 +175,21 @@ const router = createRouter({
           path: 'poultry/flocks/:id',
           name: 'flock-detail',
           component: () => import('@/views/poultry/FlockDetailView.vue'),
+        },
+        {
+          path: 'poultry/eggs',
+          name: 'poultry-eggs',
+          component: ComingSoonView,
+        },
+        {
+          path: 'poultry/weight',
+          name: 'poultry-weight',
+          component: ComingSoonView,
+        },
+        {
+          path: 'poultry/feed',
+          name: 'poultry-feed',
+          component: ComingSoonView,
         },
         {
           path: 'poultry/suppliers',
