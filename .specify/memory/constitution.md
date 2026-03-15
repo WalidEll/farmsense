@@ -1,21 +1,20 @@
 <!--
 Sync Impact Report
-- Version change: 2.0.0 → 3.0.0
-- Modified principles:
-  - "III. Clean Layered Architecture" → updated DTO mapping to Records Mandate, removed MapStruct requirement
-- Added principles:
-  - "VIII. Records Mandate (NON-NEGOTIABLE)" — all DTOs MUST be Java records
-  - "IX. CSS-First Rule" — custom styling via @theme blocks, no JS-based config
-  - "X. Concurrency Standard" — virtual threads for all I/O
-  - "XI. Bundler Integrity" — no custom Rollup/Esbuild plugins
-- Modified sections:
-  - "Technology Constraints" — Java 21, Spring Boot 3.4.x, Vite 6, Tailwind 4
+- Version change: 3.0.0 → 3.1.0
+- Modified principles: None
+- Added sections: None
 - Removed sections: None
+- Modified sections:
+  - "Development Workflow" — specs tracked via GitHub Issues instead of
+    local `specs/` markdown files; `docs/USER_STORIES_V0.md` remains as
+    reference but GitHub Issues are the source of truth for active work
 - Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ no changes needed
-  - .specify/templates/spec-template.md ✅ no changes needed
-  - .specify/templates/tasks-template.md ✅ no changes needed
-- Follow-up TODOs: None — all violations remediated
+  - .specify/templates/plan-template.md ⚠ references local specs/ paths —
+    update Input/Documentation sections to reference GitHub Issues
+  - .specify/templates/spec-template.md ✅ no changes needed (generic)
+  - .specify/templates/tasks-template.md ⚠ references local specs/ paths —
+    update Input/Prerequisites to reference GitHub Issues
+- Follow-up TODOs: None
 -->
 
 # FarmSense Constitution
@@ -208,11 +207,18 @@ and `vite-plugin-pwa`).
 
 ## Development Workflow
 
-- Features are tracked via user stories in `docs/USER_STORIES_V0.md`.
-  Each implementation MUST trace back to at least one user story.
+- Features and specs MUST be tracked as GitHub Issues. Each issue
+  MUST use labels for categorization (e.g., `feature`, `bug`,
+  `epic`, `spec`). Local `specs/` markdown files MUST NOT be used
+  for tracking active work — GitHub Issues are the single source
+  of truth for planning and progress.
+- `docs/USER_STORIES_V0.md` remains as a reference document for
+  the original v0 user stories and acceptance criteria.
+- Each implementation MUST reference the GitHub Issue number in its
+  commit messages and PR description (e.g., `feat: add X (#42)`).
 - Commits MUST be atomic and scoped to a single logical change.
   Commit messages MUST use conventional format (`feat:`, `fix:`,
-  `chore:`, `docs:`).
+  `chore:`, `docs:`) with the issue number appended.
 - Environment-specific configuration MUST use `application.yml`
   profiles — never hardcoded values.
 - The AlertScheduler runs every 15 minutes. Alert suppression windows
@@ -225,6 +231,7 @@ and `vite-plugin-pwa`).
   4. No lint errors (`npm run lint`, no compiler warnings).
   5. Type check passes (`npm run type-check`).
   6. No architecture violations (controllers must not call repos).
+  7. PR description references the GitHub Issue it resolves.
 
 ## Governance
 
@@ -245,4 +252,4 @@ formally amended.
 principles. Deviations MUST be documented in the PR with explicit
 justification and a plan to converge back.
 
-**Version**: 3.0.0 | **Ratified**: 2026-03-15 | **Last Amended**: 2026-03-15
+**Version**: 3.1.0 | **Ratified**: 2026-03-15 | **Last Amended**: 2026-03-15
