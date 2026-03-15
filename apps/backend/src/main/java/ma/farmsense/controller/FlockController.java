@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.poultry.CreateFlockRequest;
 import ma.farmsense.dto.poultry.FlockResponse;
 import ma.farmsense.dto.poultry.UpdateFlockRequest;
@@ -18,10 +17,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/flocks")
-@RequiredArgsConstructor
 public class FlockController {
 
     private final FlockService flockService;
+
+    public FlockController(FlockService flockService) {
+        this.flockService = flockService;
+    }
 
     @GetMapping
     public ResponseEntity<List<FlockResponse>> getAll(

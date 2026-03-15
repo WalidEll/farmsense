@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.plant.*;
 import ma.farmsense.entity.User;
 import ma.farmsense.service.PlantService;
@@ -14,10 +13,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/plants")
-@RequiredArgsConstructor
 public class PlantController {
 
     private final PlantService plantService;
+
+    public PlantController(PlantService plantService) {
+        this.plantService = plantService;
+    }
 
     /** US-011: View all plants */
     @GetMapping

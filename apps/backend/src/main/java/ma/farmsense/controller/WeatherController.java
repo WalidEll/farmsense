@@ -1,6 +1,5 @@
 package ma.farmsense.controller;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.weather.WeatherResponse;
 import ma.farmsense.entity.User;
 import ma.farmsense.exception.AppException;
@@ -13,10 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/weather")
-@RequiredArgsConstructor
 public class WeatherController {
 
     private final WeatherService weatherService;
+
+    public WeatherController(WeatherService weatherService) {
+        this.weatherService = weatherService;
+    }
 
     @GetMapping
     public ResponseEntity<WeatherResponse> getWeather(@AuthenticationPrincipal User user) {

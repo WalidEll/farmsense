@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.device.ClaimRequest;
 import ma.farmsense.dto.device.DeviceConfigRequest;
 import ma.farmsense.dto.device.DeviceResponse;
@@ -21,12 +20,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class DeviceService {
 
     private final DeviceRepository deviceRepository;
     private final PlantRepository plantRepository;
     private final UserRepository userRepository;
+
+    public DeviceService(DeviceRepository deviceRepository, PlantRepository plantRepository,
+                         UserRepository userRepository) {
+        this.deviceRepository = deviceRepository;
+        this.plantRepository = plantRepository;
+        this.userRepository = userRepository;
+    }
 
     @Value("${farmsense.device.claim-token-expiry-minutes:15}")
     private int claimTokenExpiryMinutes;
@@ -59,7 +64,11 @@ public class DeviceService {
         }
 
         Device device = deviceRepository.findByDeviceId(req.deviceId())
-                .orElseGet(() -> Device.builder().deviceId(req.deviceId()).build());
+                .orElseGet(() -> {
+                    Device d = new Device();
+                    d.setDeviceId(req.deviceId());
+                    return d;
+                });
 
         device.setUser(owner);
         device.setClaimedAt(Instant.now());

@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.care.CareScheduleResponse;
 import ma.farmsense.entity.CareLog;
 import ma.farmsense.entity.Plant;
@@ -18,12 +17,18 @@ import java.time.Instant;
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 public class CareService {
 
     private final PlantRepository plantRepository;
     private final CareLogRepository careLogRepository;
     private final SensorReadingRepository sensorReadingRepository;
+
+    public CareService(PlantRepository plantRepository, CareLogRepository careLogRepository,
+                       SensorReadingRepository sensorReadingRepository) {
+        this.plantRepository = plantRepository;
+        this.careLogRepository = careLogRepository;
+        this.sensorReadingRepository = sensorReadingRepository;
+    }
 
     // ── Species defaults ────────────────────────────────────────
     private record Intervals(int water, int fertilise, int repot) {}
@@ -105,11 +110,10 @@ public class CareService {
         Instant now = Instant.now();
 
         // Create care log entry
-        CareLog log = CareLog.builder()
-                .plant(plant)
-                .taskType(taskType)
-                .doneAt(now)
-                .build();
+        CareLog log = new CareLog();
+        log.setPlant(plant);
+        log.setTaskType(taskType);
+        log.setDoneAt(now);
         careLogRepository.save(log);
 
         // Update plant's last-done timestamp

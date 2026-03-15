@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.inventory.*;
 import ma.farmsense.service.InventoryItemService;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +11,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/inventory-items")
-@RequiredArgsConstructor
 public class InventoryItemController {
 
     private final InventoryItemService inventoryItemService;
+
+    public InventoryItemController(InventoryItemService inventoryItemService) {
+        this.inventoryItemService = inventoryItemService;
+    }
 
     @GetMapping
     public ResponseEntity<List<InventoryItemResponse>> getAll(

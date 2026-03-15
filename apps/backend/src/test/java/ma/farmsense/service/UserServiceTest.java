@@ -25,7 +25,8 @@ class UserServiceTest {
 
     @Test
     void updateLocation_ShouldSetCoordinates_AndSave() {
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UpdateLocationRequest req = new UpdateLocationRequest(33.5731, -7.5898);
 
         userService.updateLocation(user, req);

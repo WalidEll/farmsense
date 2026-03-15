@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.device.DeviceResponse;
 import ma.farmsense.dto.sensor.*;
 import ma.farmsense.entity.User;
@@ -15,10 +14,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/readings")
-@RequiredArgsConstructor
 public class ReadingController {
 
     private final ReadingService readingService;
+
+    public ReadingController(ReadingService readingService) {
+        this.readingService = readingService;
+    }
 
     /**
      * US-020: ESP32 posts sensor data.

@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.plant.CreatePlantRequest;
 import ma.farmsense.dto.plant.PlantResponse;
 import ma.farmsense.dto.plant.UpdatePlantRequest;
@@ -16,11 +15,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class PlantService {
 
     private final PlantRepository plantRepository;
     private final CareService careService;
+
+    public PlantService(PlantRepository plantRepository, CareService careService) {
+        this.plantRepository = plantRepository;
+        this.careService = careService;
+    }
 
     public List<PlantResponse> findAll(User user) {
         return plantRepository.findByUserAndDeletedAtIsNull(user)
@@ -29,20 +32,20 @@ public class PlantService {
 
     @Transactional
     public PlantResponse create(User user, CreatePlantRequest req) {
-        Plant.PlantBuilder builder = Plant.builder()
-                .user(user)
-                .name(req.name())
-                .species(req.species())
-                .location(req.location())
-                .photoUrl(req.photoUrl());
+        Plant plant = new Plant();
+        plant.setUser(user);
+        plant.setName(req.name());
+        plant.setSpecies(req.species());
+        plant.setLocation(req.location());
+        plant.setPhotoUrl(req.photoUrl());
 
-        if (req.soilMin()  != null) builder.soilMin(req.soilMin());
-        if (req.soilMax()  != null) builder.soilMax(req.soilMax());
-        if (req.tempMin()  != null) builder.tempMin(req.tempMin());
-        if (req.tempMax()  != null) builder.tempMax(req.tempMax());
-        if (req.lightMin() != null) builder.lightMin(req.lightMin());
+        if (req.soilMin()  != null) plant.setSoilMin(req.soilMin());
+        if (req.soilMax()  != null) plant.setSoilMax(req.soilMax());
+        if (req.tempMin()  != null) plant.setTempMin(req.tempMin());
+        if (req.tempMax()  != null) plant.setTempMax(req.tempMax());
+        if (req.lightMin() != null) plant.setLightMin(req.lightMin());
 
-        Plant plant = plantRepository.save(builder.build());
+        plant = plantRepository.save(plant);
         careService.initSchedule(plant);
         return PlantResponse.from(plant);
     }

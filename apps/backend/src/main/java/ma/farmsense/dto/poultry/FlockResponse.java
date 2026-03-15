@@ -13,7 +13,9 @@ public record FlockResponse(
         String name,
         String nameAr,
         String nameEn,
-        String breed,
+        UUID breedId,
+        String breedName,
+        String breedImageUrl,
         Integer birdCount,
         Integer currentBirdCount,
         FlockPurpose purpose,
@@ -27,19 +29,31 @@ public record FlockResponse(
         Instant updatedAt
 ) {
     public static FlockResponse from(Flock f) {
+        var breed = f.getBreed();
+        var supplier = f.getSupplier();
+        
+        UUID breedId = breed != null ? breed.getId() : null;
+        String breedName = breed != null ? breed.getName() : null;
+        String breedImageUrl = breed != null ? breed.getImageUrl() : null;
+        
+        UUID supplierId = supplier != null ? supplier.getId() : null;
+        String supplierName = supplier != null ? supplier.getName() : null;
+        
         return new FlockResponse(
                 f.getId(),
                 f.getName(),
                 f.getNameAr(),
                 f.getNameEn(),
-                f.getBreed(),
+                breedId,
+                breedName,
+                breedImageUrl,
                 f.getBirdCount(),
                 f.getCurrentBirdCount(),
                 f.getPurpose(),
                 f.getStatus(),
                 f.getStartDate(),
-                f.getSupplier() != null ? f.getSupplier().getId() : null,
-                f.getSupplier() != null ? f.getSupplier().getName() : null,
+                supplierId,
+                supplierName,
                 f.getSource(),
                 f.getNotes(),
                 f.getCreatedAt(),

@@ -1,8 +1,6 @@
 package ma.farmsense.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ma.farmsense.dto.accounting.*;
 import ma.farmsense.entity.*;
 import ma.farmsense.exception.AppException;
@@ -13,6 +11,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
@@ -25,8 +25,9 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Service
-@Slf4j
 public class ReceiptService {
+
+    private static final Logger log = LoggerFactory.getLogger(ReceiptService.class);
 
     private final ReceiptRepository receiptRepository;
     private final TransactionService transactionService;
@@ -66,14 +67,13 @@ public class ReceiptService {
             Path filePath = root.resolve(filename);
             Files.copy(file.getInputStream(), filePath);
 
-            Receipt receipt = Receipt.builder()
-                    .user(user)
-                    .originalFilename(file.getOriginalFilename())
-                    .filePath(filePath.toString())
-                    .contentType(file.getContentType())
-                    .fileSizeBytes(file.getSize())
-                    .ocrStatus(OcrStatus.PENDING)
-                    .build();
+            Receipt receipt = new Receipt();
+            receipt.setUser(user);
+            receipt.setOriginalFilename(file.getOriginalFilename());
+            receipt.setFilePath(filePath.toString());
+            receipt.setContentType(file.getContentType());
+            receipt.setFileSizeBytes(file.getSize());
+            receipt.setOcrStatus(OcrStatus.PENDING);
 
             Receipt saved = receiptRepository.save(receipt);
             

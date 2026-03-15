@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.accounting.CreateTagRequest;
 import ma.farmsense.dto.accounting.TagResponse;
 import ma.farmsense.dto.accounting.UpdateTagRequest;
@@ -16,10 +15,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/tags")
-@RequiredArgsConstructor
 public class TagController {
 
     private final TagService tagService;
+
+    public TagController(TagService tagService) {
+        this.tagService = tagService;
+    }
 
     @GetMapping
     public ResponseEntity<List<TagResponse>> getAll(@AuthenticationPrincipal User user) {

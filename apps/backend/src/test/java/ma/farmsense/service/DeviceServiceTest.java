@@ -43,7 +43,8 @@ class DeviceServiceTest {
     void generateSetupCode_ShouldUpdateUserWithToken() {
         // Arrange
         ReflectionTestUtils.setField(deviceService, "claimTokenExpiryMinutes", 15);
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
 
         // Act
         SetupCodeResponse res = deviceService.generateSetupCode(user);
@@ -60,12 +61,11 @@ class DeviceServiceTest {
         ReflectionTestUtils.setField(deviceService, "offlineThresholdMinutes", 30);
         String token = "VALID-TOKEN";
         String deviceId = "FS-001";
-        User user = User.builder()
-                .id(UUID.randomUUID())
-                .claimToken(token)
-                .claimTokenExpiresAt(Instant.now().plusSeconds(600))
-                .build();
-        
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setClaimToken(token);
+        user.setClaimTokenExpiresAt(Instant.now().plusSeconds(600));
+
         ClaimRequest req = new ClaimRequest(deviceId, token);
         when(userRepository.findByClaimToken(token)).thenReturn(Optional.of(user));
         when(deviceRepository.findByDeviceId(deviceId)).thenReturn(Optional.empty());
@@ -83,8 +83,11 @@ class DeviceServiceTest {
     @Test
     void list_ShouldReturnUserDevices() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
-        Device device = Device.builder().id(UUID.randomUUID()).user(user).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        Device device = new Device();
+        device.setId(UUID.randomUUID());
+        device.setUser(user);
         when(deviceRepository.findByUser(user)).thenReturn(List.of(device));
 
         // Act
@@ -97,11 +100,16 @@ class DeviceServiceTest {
     @Test
     void assign_ShouldLinkDeviceToPlant() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID deviceId = UUID.randomUUID();
         UUID plantId = UUID.randomUUID();
-        Device device = Device.builder().id(deviceId).user(user).build();
-        Plant plant = Plant.builder().id(plantId).user(user).build();
+        Device device = new Device();
+        device.setId(deviceId);
+        device.setUser(user);
+        Plant plant = new Plant();
+        plant.setId(plantId);
+        plant.setUser(user);
 
         when(deviceRepository.findByIdAndUser(deviceId, user)).thenReturn(Optional.of(device));
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(plant));

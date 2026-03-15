@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.cropplan.*;
 import ma.farmsense.entity.User;
 import ma.farmsense.service.CropPlanService;
@@ -14,10 +13,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/locations")
-@RequiredArgsConstructor
 public class LocationController {
 
     private final CropPlanService cropPlanService;
+
+    public LocationController(CropPlanService cropPlanService) {
+        this.cropPlanService = cropPlanService;
+    }
 
     @GetMapping
     public ResponseEntity<List<LocationResponse>> getAll(@AuthenticationPrincipal User user) {

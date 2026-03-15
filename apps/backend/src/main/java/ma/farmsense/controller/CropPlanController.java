@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.cropplan.*;
 import ma.farmsense.entity.User;
 import ma.farmsense.service.CropPlanService;
@@ -15,11 +14,15 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/crop-plans")
-@RequiredArgsConstructor
 public class CropPlanController {
 
     private final CropPlanService cropPlanService;
     private final PlantingTaskService plantingTaskService;
+
+    public CropPlanController(CropPlanService cropPlanService, PlantingTaskService plantingTaskService) {
+        this.cropPlanService = cropPlanService;
+        this.plantingTaskService = plantingTaskService;
+    }
 
     // ── Plans ─────────────────────────────────────────────────────
 

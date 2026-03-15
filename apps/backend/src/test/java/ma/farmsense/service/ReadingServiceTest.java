@@ -45,9 +45,12 @@ class ReadingServiceTest {
         // Arrange
         ReflectionTestUtils.setField(readingService, "offlineThresholdMinutes", 30);
         String deviceId = "FS-001";
-        Plant plant = Plant.builder().id(UUID.randomUUID()).build();
-        Device device = Device.builder().deviceId(deviceId).plant(plant).build();
-        
+        Plant plant = new Plant();
+        plant.setId(UUID.randomUUID());
+        Device device = new Device();
+        device.setDeviceId(deviceId);
+        device.setPlant(plant);
+
         SensorReadingRequest req = new SensorReadingRequest(deviceId, null, 25.0, null, 60, null, null);
 
         when(deviceRepository.findByDeviceId(deviceId)).thenReturn(Optional.of(device));
@@ -64,10 +67,15 @@ class ReadingServiceTest {
     @Test
     void latest_ShouldReturnLatestReading() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID plantId = UUID.randomUUID();
-        Plant plant = Plant.builder().id(plantId).user(user).build();
-        SensorReading reading = SensorReading.builder().soilMoisture(55).recordedAt(Instant.now()).build();
+        Plant plant = new Plant();
+        plant.setId(plantId);
+        plant.setUser(user);
+        SensorReading reading = new SensorReading();
+        reading.setSoilMoisture(55);
+        reading.setRecordedAt(Instant.now());
 
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(plant));
         when(readingRepository.findLatestByPlantId(plantId)).thenReturn(Optional.of(reading));
@@ -82,10 +90,14 @@ class ReadingServiceTest {
     @Test
     void history_ShouldReturnList_ForTimeRange() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID plantId = UUID.randomUUID();
-        Plant plant = Plant.builder().id(plantId).user(user).build();
-        SensorReading reading = SensorReading.builder().recordedAt(Instant.now()).build();
+        Plant plant = new Plant();
+        plant.setId(plantId);
+        plant.setUser(user);
+        SensorReading reading = new SensorReading();
+        reading.setRecordedAt(Instant.now());
 
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(plant));
         when(readingRepository.findByPlantAndRecordedAtAfter(eq(plant), any(Instant.class))).thenReturn(List.of(reading));
@@ -100,9 +112,12 @@ class ReadingServiceTest {
     @Test
     void addManual_ShouldSaveManualReading() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID plantId = UUID.randomUUID();
-        Plant plant = Plant.builder().id(plantId).user(user).build();
+        Plant plant = new Plant();
+        plant.setId(plantId);
+        plant.setUser(user);
         ManualReadingRequest req = new ManualReadingRequest(plantId, null, null, 45, null);
 
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(plant));

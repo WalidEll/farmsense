@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.cropplan.PlantingTaskResponse;
 import ma.farmsense.dto.cropplan.UpdateTaskRequest;
 import ma.farmsense.entity.User;
@@ -15,10 +14,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
-@RequiredArgsConstructor
 public class TaskController {
 
     private final PlantingTaskService plantingTaskService;
+
+    public TaskController(PlantingTaskService plantingTaskService) {
+        this.plantingTaskService = plantingTaskService;
+    }
 
     @GetMapping("/today")
     public ResponseEntity<List<PlantingTaskResponse>> getTodayTasks(

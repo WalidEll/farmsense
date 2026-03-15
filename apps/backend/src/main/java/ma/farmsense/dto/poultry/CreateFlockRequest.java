@@ -13,7 +13,7 @@ public record CreateFlockRequest(
         @NotBlank @Size(max = 255) String name,
         @Size(max = 255) String nameAr,
         @Size(max = 255) String nameEn,
-        @Size(max = 255) String breed,
+        UUID breedId,
         @NotNull @Min(1) Integer birdCount,
         @NotNull FlockPurpose purpose,
         LocalDate startDate,

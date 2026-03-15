@@ -1,14 +1,13 @@
 package ma.farmsense.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "alerts")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Access(AccessType.FIELD)
 public class Alert {
 
     @Id
@@ -29,7 +28,6 @@ public class Alert {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private Severity severity = Severity.MEDIUM;
 
     private Double sensorValue;
@@ -38,14 +36,54 @@ public class Alert {
     private String msgFr;
     private String msgAr;
 
-    @Builder.Default private boolean waSent = false;
-    @Builder.Default private boolean pushSent = false;
+    private boolean waSent = false;
+    private boolean pushSent = false;
 
     @Column(nullable = false)
-    @Builder.Default
     private Instant triggeredAt = Instant.now();
 
     private Instant ackAt;
+
+    public Alert() {}
+
+    public UUID getId() { return this.id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public User getUser() { return this.user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Plant getPlant() { return this.plant; }
+    public void setPlant(Plant plant) { this.plant = plant; }
+
+    public AlertType getType() { return this.type; }
+    public void setType(AlertType type) { this.type = type; }
+
+    public Severity getSeverity() { return this.severity; }
+    public void setSeverity(Severity severity) { this.severity = severity; }
+
+    public Double getSensorValue() { return this.sensorValue; }
+    public void setSensorValue(Double sensorValue) { this.sensorValue = sensorValue; }
+
+    public String getMsgEn() { return this.msgEn; }
+    public void setMsgEn(String msgEn) { this.msgEn = msgEn; }
+
+    public String getMsgFr() { return this.msgFr; }
+    public void setMsgFr(String msgFr) { this.msgFr = msgFr; }
+
+    public String getMsgAr() { return this.msgAr; }
+    public void setMsgAr(String msgAr) { this.msgAr = msgAr; }
+
+    public boolean isWaSent() { return this.waSent; }
+    public void setWaSent(boolean waSent) { this.waSent = waSent; }
+
+    public boolean isPushSent() { return this.pushSent; }
+    public void setPushSent(boolean pushSent) { this.pushSent = pushSent; }
+
+    public Instant getTriggeredAt() { return this.triggeredAt; }
+    public void setTriggeredAt(Instant triggeredAt) { this.triggeredAt = triggeredAt; }
+
+    public Instant getAckAt() { return this.ackAt; }
+    public void setAckAt(Instant ackAt) { this.ackAt = ackAt; }
 
     public enum AlertType {
         SOIL_DRY, SOIL_WET, TEMP_HIGH, TEMP_LOW, LIGHT_LOW, DEVICE_OFFLINE

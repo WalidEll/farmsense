@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.device.*;
 import ma.farmsense.entity.User;
 import ma.farmsense.service.DeviceService;
@@ -14,10 +13,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/devices")
-@RequiredArgsConstructor
 public class DeviceController {
 
     private final DeviceService deviceService;
+
+    public DeviceController(DeviceService deviceService) {
+        this.deviceService = deviceService;
+    }
 
     /** US-030: Generate one-time setup code */
     @PostMapping("/setup-code")

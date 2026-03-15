@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.alert.AlertPreferenceRequest;
 import ma.farmsense.dto.alert.AlertPreferenceResponse;
 import ma.farmsense.dto.alert.AlertResponse;
@@ -16,10 +15,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/alerts")
-@RequiredArgsConstructor
 public class AlertController {
 
     private final AlertService alertService;
+
+    public AlertController(AlertService alertService) {
+        this.alertService = alertService;
+    }
 
     @GetMapping
     public ResponseEntity<List<AlertResponse>> list(@AuthenticationPrincipal User user) {

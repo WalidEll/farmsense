@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.poultry.CreateSupplierRequest;
 import ma.farmsense.dto.poultry.SupplierResponse;
 import ma.farmsense.dto.poultry.UpdateSupplierRequest;
@@ -15,10 +14,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class SupplierService {
 
     private final SupplierRepository supplierRepository;
+
+    public SupplierService(SupplierRepository supplierRepository) {
+        this.supplierRepository = supplierRepository;
+    }
 
     public List<SupplierResponse> findAll(User user, String search) {
         List<Supplier> suppliers;
@@ -36,15 +38,14 @@ public class SupplierService {
 
     @Transactional
     public SupplierResponse create(User user, CreateSupplierRequest req) {
-        Supplier supplier = Supplier.builder()
-                .user(user)
-                .name(req.name())
-                .phone(req.phone())
-                .email(req.email())
-                .address(req.address())
-                .productsSupplied(req.productsSupplied())
-                .notes(req.notes())
-                .build();
+        Supplier supplier = new Supplier();
+        supplier.setUser(user);
+        supplier.setName(req.name());
+        supplier.setPhone(req.phone());
+        supplier.setEmail(req.email());
+        supplier.setAddress(req.address());
+        supplier.setProductsSupplied(req.productsSupplied());
+        supplier.setNotes(req.notes());
         return SupplierResponse.from(supplierRepository.save(supplier));
     }
 

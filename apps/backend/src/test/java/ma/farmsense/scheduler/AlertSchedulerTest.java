@@ -55,20 +55,27 @@ class AlertSchedulerTest {
 
     @Test
     void checkThresholds_ShouldFireAlert_WhenConsecutiveBreaches() {
-        User user = User.builder().id(UUID.randomUUID()).phoneWa("123").lang(User.Language.EN).build();
-        Plant plant = Plant.builder()
-                .id(UUID.randomUUID())
-                .user(user)
-                .name("Lily")
-                .soilMin(30)
-                .build();
-        Device device = Device.builder().deviceId("DEV-1").build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setPhoneWa("123");
+        user.setLang(User.Language.EN);
+        Plant plant = new Plant();
+        plant.setId(UUID.randomUUID());
+        plant.setUser(user);
+        plant.setName("Lily");
+        plant.setSoilMin(30);
+        Device device = new Device();
+        device.setDeviceId("DEV-1");
 
         when(plantRepo.findAllActive()).thenReturn(List.of(plant));
         when(deviceRepo.findByPlantId(plant.getId())).thenReturn(List.of(device));
 
-        SensorReading r1 = SensorReading.builder().soilMoisture(25).recordedAt(Instant.now()).build();
-        SensorReading r2 = SensorReading.builder().soilMoisture(20).recordedAt(Instant.now().minusSeconds(600)).build();
+        SensorReading r1 = new SensorReading();
+        r1.setSoilMoisture(25);
+        r1.setRecordedAt(Instant.now());
+        SensorReading r2 = new SensorReading();
+        r2.setSoilMoisture(20);
+        r2.setRecordedAt(Instant.now().minusSeconds(600));
 
         when(readingRepo.findLatest2ByPlantAndDeviceId(plant.getId(), "DEV-1")).thenReturn(List.of(r1, r2));
         when(alertPrefRepo.findByUser(user)).thenReturn(Optional.empty());
@@ -82,14 +89,19 @@ class AlertSchedulerTest {
 
     @Test
     void checkThresholds_ShouldNotFire_WhenOnlyOneBreach() {
-        Plant plant = Plant.builder().id(UUID.randomUUID()).soilMin(30).build();
-        Device device = Device.builder().deviceId("DEV-1").build();
+        Plant plant = new Plant();
+        plant.setId(UUID.randomUUID());
+        plant.setSoilMin(30);
+        Device device = new Device();
+        device.setDeviceId("DEV-1");
 
         when(plantRepo.findAllActive()).thenReturn(List.of(plant));
         when(deviceRepo.findByPlantId(plant.getId())).thenReturn(List.of(device));
 
-        SensorReading r1 = SensorReading.builder().soilMoisture(25).build();
-        SensorReading r2 = SensorReading.builder().soilMoisture(35).build();
+        SensorReading r1 = new SensorReading();
+        r1.setSoilMoisture(25);
+        SensorReading r2 = new SensorReading();
+        r2.setSoilMoisture(35);
 
         when(readingRepo.findLatest2ByPlantAndDeviceId(plant.getId(), "DEV-1")).thenReturn(List.of(r1, r2));
 
@@ -100,15 +112,22 @@ class AlertSchedulerTest {
 
     @Test
     void checkThresholds_ShouldSuppressAlert_WhenFiredRecently() {
-        User user = User.builder().id(UUID.randomUUID()).build();
-        Plant plant = Plant.builder().id(UUID.randomUUID()).user(user).soilMin(30).build();
-        Device device = Device.builder().deviceId("DEV-1").build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        Plant plant = new Plant();
+        plant.setId(UUID.randomUUID());
+        plant.setUser(user);
+        plant.setSoilMin(30);
+        Device device = new Device();
+        device.setDeviceId("DEV-1");
 
         when(plantRepo.findAllActive()).thenReturn(List.of(plant));
         when(deviceRepo.findByPlantId(plant.getId())).thenReturn(List.of(device));
 
-        SensorReading r1 = SensorReading.builder().soilMoisture(20).build();
-        SensorReading r2 = SensorReading.builder().soilMoisture(20).build();
+        SensorReading r1 = new SensorReading();
+        r1.setSoilMoisture(20);
+        SensorReading r2 = new SensorReading();
+        r2.setSoilMoisture(20);
 
         when(readingRepo.findLatest2ByPlantAndDeviceId(plant.getId(), "DEV-1")).thenReturn(List.of(r1, r2));
         when(alertPrefRepo.findByUser(user)).thenReturn(Optional.empty());

@@ -1,18 +1,20 @@
 package ma.farmsense.service;
 
-import lombok.extern.slf4j.Slf4j;
 import ma.farmsense.dto.weather.WeatherResponse;
 import ma.farmsense.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
 
 @Service
-@Slf4j
 public class WeatherService {
+
+    private static final Logger log = LoggerFactory.getLogger(WeatherService.class);
 
     private final WebClient webClient;
 

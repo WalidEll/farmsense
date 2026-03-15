@@ -1,7 +1,6 @@
 package ma.farmsense.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -10,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "inventory_items")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Access(AccessType.FIELD)
 public class InventoryItem {
 
     @Id
@@ -46,7 +45,6 @@ public class InventoryItem {
     private String description;
 
     @Column(name = "unit_of_measure", nullable = false)
-    @Builder.Default
     private String unitOfMeasure = "pcs"; // pcs, kg, liters, boxes, packs
 
     @Column(name = "current_quantity", nullable = false, precision = 12, scale = 2)
@@ -86,11 +84,9 @@ public class InventoryItem {
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
-    @Builder.Default
     @Column(name = "is_tracked", nullable = false)
     private Boolean isTracked = false; // Track individual serial numbers
 
-    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
@@ -98,15 +94,97 @@ public class InventoryItem {
     private String notes;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Builder.Default
     private LocalDate createdAt = LocalDate.now();
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "timestamptz")
-    @Builder.Default
     private Instant updatedAt = Instant.now();
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
+
+    public UUID getId() { return this.id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public UUID getUser_id() { return this.user_id; }
+    public void setUser_id(UUID user_id) { this.user_id = user_id; }
+
+    public Team getTeam() { return this.team; }
+    public void setTeam(Team team) { this.team = team; }
+
+    public String getSku() { return this.sku; }
+    public void setSku(String sku) { this.sku = sku; }
+
+    public String getName() { return this.name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getNameAr() { return this.nameAr; }
+    public void setNameAr(String nameAr) { this.nameAr = nameAr; }
+
+    public String getNameEn() { return this.nameEn; }
+    public void setNameEn(String nameEn) { this.nameEn = nameEn; }
+
+    public String getCategory() { return this.category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public String getSubCategory() { return this.subCategory; }
+    public void setSubCategory(String subCategory) { this.subCategory = subCategory; }
+
+    public String getDescription() { return this.description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getUnitOfMeasure() { return this.unitOfMeasure; }
+    public void setUnitOfMeasure(String unitOfMeasure) { this.unitOfMeasure = unitOfMeasure; }
+
+    public BigDecimal getCurrentQuantity() { return this.currentQuantity; }
+    public void setCurrentQuantity(BigDecimal currentQuantity) { this.currentQuantity = currentQuantity; }
+
+    public BigDecimal getMinQuantity() { return this.minQuantity; }
+    public void setMinQuantity(BigDecimal minQuantity) { this.minQuantity = minQuantity; }
+
+    public BigDecimal getMaxQuantity() { return this.maxQuantity; }
+    public void setMaxQuantity(BigDecimal maxQuantity) { this.maxQuantity = maxQuantity; }
+
+    public BigDecimal getReorderLevel() { return this.reorderLevel; }
+    public void setReorderLevel(BigDecimal reorderLevel) { this.reorderLevel = reorderLevel; }
+
+    public BigDecimal getUnitCost() { return this.unitCost; }
+    public void setUnitCost(BigDecimal unitCost) { this.unitCost = unitCost; }
+
+    public BigDecimal getPurchasePrice() { return this.purchasePrice; }
+    public void setPurchasePrice(BigDecimal purchasePrice) { this.purchasePrice = purchasePrice; }
+
+    public BigDecimal getSalePrice() { return this.salePrice; }
+    public void setSalePrice(BigDecimal salePrice) { this.salePrice = salePrice; }
+
+    public LocalDate getExpiryDate() { return this.expiryDate; }
+    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
+
+    public String getBatchNumber() { return this.batchNumber; }
+    public void setBatchNumber(String batchNumber) { this.batchNumber = batchNumber; }
+
+    public UUID[] getSerialNumbers() { return this.serialNumbers; }
+    public void setSerialNumbers(UUID[] serialNumbers) { this.serialNumbers = serialNumbers; }
+
+    public String getLocation() { return this.location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public Supplier getSupplier() { return this.supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+
+    public Boolean getIsTracked() { return this.isTracked; }
+    public void setIsTracked(Boolean isTracked) { this.isTracked = isTracked; }
+
+    public Boolean getIsActive() { return this.isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public String getNotes() { return this.notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public LocalDate getCreatedAt() { return this.createdAt; }
+    public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return this.updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 
     // ── ENUMS ───────────────────────────────────────────────────────────────────────────
 

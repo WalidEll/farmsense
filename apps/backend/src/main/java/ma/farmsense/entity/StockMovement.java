@@ -1,7 +1,6 @@
 package ma.farmsense.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -10,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "stock_movements")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Access(AccessType.FIELD)
 public class StockMovement {
 
     @Id
@@ -82,15 +81,93 @@ public class StockMovement {
     private String notes;
 
     @Column(nullable = false, updatable = false)
-    @Builder.Default
     private Instant createdAt = Instant.now();
 
     @Column(nullable = false)
-    @Builder.Default
     private Instant updatedAt = Instant.now();
+
+    public StockMovement() {}
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
+
+    public UUID getId() { return this.id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public User getUser() { return this.user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Team getTeam() { return this.team; }
+    public void setTeam(Team team) { this.team = team; }
+
+    public InventoryItem getInventoryItem() { return this.inventoryItem; }
+    public void setInventoryItem(InventoryItem inventoryItem) { this.inventoryItem = inventoryItem; }
+
+    public MovementType getType() { return this.type; }
+    public void setType(MovementType type) { this.type = type; }
+
+    public String getReferenceNumber() { return this.referenceNumber; }
+    public void setReferenceNumber(String referenceNumber) { this.referenceNumber = referenceNumber; }
+
+    public String getBatchNumber() { return this.batchNumber; }
+    public void setBatchNumber(String batchNumber) { this.batchNumber = batchNumber; }
+
+    public String getSerialNumber() { return this.serialNumber; }
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public BigDecimal getQuantity() { return this.quantity; }
+    public void setQuantity(BigDecimal quantity) { this.quantity = quantity; }
+
+    public BigDecimal getUnitPrice() { return this.unitPrice; }
+    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+
+    public BigDecimal getTotalValue() { return this.totalValue; }
+    public void setTotalValue(BigDecimal totalValue) { this.totalValue = totalValue; }
+
+    public Double getWeight() { return this.weight; }
+    public void setWeight(Double weight) { this.weight = weight; }
+
+    public String getLocation() { return this.location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public QualityGrade getQualityGrade() { return this.qualityGrade; }
+    public void setQualityGrade(QualityGrade qualityGrade) { this.qualityGrade = qualityGrade; }
+
+    public String getCondition() { return this.condition; }
+    public void setCondition(String condition) { this.condition = condition; }
+
+    public LocalDate getMovementDate() { return this.movementDate; }
+    public void setMovementDate(LocalDate movementDate) { this.movementDate = movementDate; }
+
+    public String getDescription() { return this.description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getSource() { return this.source; }
+    public void setSource(String source) { this.source = source; }
+
+    public String getDestination() { return this.destination; }
+    public void setDestination(String destination) { this.destination = destination; }
+
+    public Supplier getSupplier() { return this.supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+
+    public Customer getCustomer() { return this.customer; }
+    public void setCustomer(Customer customer) { this.customer = customer; }
+
+    public Flock getFlock() { return this.flock; }
+    public void setFlock(Flock flock) { this.flock = flock; }
+
+    public MovementReason getReason() { return this.reason; }
+    public void setReason(MovementReason reason) { this.reason = reason; }
+
+    public String getNotes() { return this.notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public Instant getCreatedAt() { return this.createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return this.updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 
     public enum MovementType {
         IN, OUT, ADJUSTMENT, TRANSFER, CONSUMPTION, WASTAGE, RETURN, SALE, PURCHASE

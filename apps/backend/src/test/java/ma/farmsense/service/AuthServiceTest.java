@@ -75,11 +75,10 @@ class AuthServiceTest {
     void login_ShouldReturnResponse_WhenCredentialsAreValid() {
         // Arrange
         LoginRequest req = new LoginRequest("test@example.com", "password123");
-        User user = User.builder()
-                .id(UUID.randomUUID())
-                .email("test@example.com")
-                .name("Test User")
-                .build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setEmail("test@example.com");
+        user.setName("Test User");
 
         when(userRepository.findByEmail(req.email())).thenReturn(Optional.of(user));
         when(jwtService.generateAccessToken(user)).thenReturn("access_token");
@@ -98,9 +97,8 @@ class AuthServiceTest {
     void refresh_ShouldReturnNewTokens_WhenRefreshTokenIsValid() {
         // Arrange
         String refreshToken = "valid_refresh_token";
-        User user = User.builder()
-                .email("test@example.com")
-                .build();
+        User user = new User();
+        user.setEmail("test@example.com");
 
         when(jwtService.isRefreshToken(refreshToken)).thenReturn(true);
         when(jwtService.extractUsername(refreshToken)).thenReturn("test@example.com");

@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.accounting.CreateTagRequest;
 import ma.farmsense.dto.accounting.TagResponse;
 import ma.farmsense.dto.accounting.UpdateTagRequest;
@@ -15,10 +14,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class TagService {
 
     private final TagRepository tagRepository;
+
+    public TagService(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
+    }
 
     public List<TagResponse> findAll(User user) {
         return tagRepository.findByUserOrderByNameAsc(user).stream()
@@ -32,11 +34,10 @@ public class TagService {
             throw AppException.conflict("Tag with name '" + req.name() + "' already exists");
         }
 
-        Tag tag = Tag.builder()
-                .user(user)
-                .name(req.name())
-                .color(req.color())
-                .build();
+        Tag tag = new Tag();
+        tag.setUser(user);
+        tag.setName(req.name());
+        if (req.color() != null) tag.setColor(req.color());
 
         return mapToResponse(tagRepository.save(tag));
     }

@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.crop.*;
 import ma.farmsense.entity.CropCategory;
 import ma.farmsense.service.CropService;
@@ -13,10 +12,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/crops")
-@RequiredArgsConstructor
 public class CropController {
 
     private final CropService cropService;
+
+    public CropController(CropService cropService) {
+        this.cropService = cropService;
+    }
 
     @GetMapping
     public ResponseEntity<List<CropResponse>> getAll(

@@ -12,7 +12,7 @@ public record UpdateFlockRequest(
         @Size(max = 255) String name,
         @Size(max = 255) String nameAr,
         @Size(max = 255) String nameEn,
-        @Size(max = 255) String breed,
+        UUID breedId,
         @Min(1) Integer birdCount,
         FlockPurpose purpose,
         FlockStatus status,
