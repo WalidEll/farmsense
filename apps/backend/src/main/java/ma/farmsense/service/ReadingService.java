@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.device.DeviceResponse;
 import ma.farmsense.dto.sensor.ManualReadingRequest;
 import ma.farmsense.dto.sensor.SensorReadingRequest;
@@ -22,12 +21,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class ReadingService {
 
     private final SensorReadingRepository readingRepository;
     private final DeviceRepository deviceRepository;
     private final PlantRepository plantRepository;
+
+    public ReadingService(SensorReadingRepository readingRepository, DeviceRepository deviceRepository,
+                          PlantRepository plantRepository) {
+        this.readingRepository = readingRepository;
+        this.deviceRepository = deviceRepository;
+        this.plantRepository = plantRepository;
+    }
 
     @Value("${farmsense.alert.offline-threshold-minutes:30}")
     private int offlineThresholdMinutes;
@@ -45,16 +50,15 @@ public class ReadingService {
         if (plant == null)
             return DeviceResponse.from(device, offlineThresholdMinutes); // device not yet assigned — drop reading
 
-        SensorReading reading = SensorReading.builder()
-                .deviceId(req.deviceId())
-                .plant(plant)
-                .temperature(req.temperature())
-                .humidity(req.humidity())
-                .soilMoisture(req.soilMoisture())
-                .lightLux(req.lightLux())
-                .source(SensorReading.Source.SENSOR)
-                .recordedAt(req.recordedAt() != null ? req.recordedAt() : Instant.now())
-                .build();
+        SensorReading reading = new SensorReading();
+        reading.setDeviceId(req.deviceId());
+        reading.setPlant(plant);
+        reading.setTemperature(req.temperature());
+        reading.setHumidity(req.humidity());
+        reading.setSoilMoisture(req.soilMoisture());
+        reading.setLightLux(req.lightLux());
+        reading.setSource(SensorReading.Source.SENSOR);
+        reading.setRecordedAt(req.recordedAt() != null ? req.recordedAt() : Instant.now());
 
         readingRepository.save(reading);
 
@@ -79,15 +83,14 @@ public class ReadingService {
     public SensorReadingResponse addManual(User user, ManualReadingRequest req) {
         Plant plant = getOwnedPlant(user, req.plantId());
 
-        SensorReading reading = SensorReading.builder()
-                .deviceId("MANUAL")
-                .plant(plant)
-                .temperature(req.temperature())
-                .humidity(req.humidity())
-                .soilMoisture(req.soilMoisture())
-                .lightLux(req.lightLux())
-                .source(SensorReading.Source.MANUAL)
-                .build();
+        SensorReading reading = new SensorReading();
+        reading.setDeviceId("MANUAL");
+        reading.setPlant(plant);
+        reading.setTemperature(req.temperature());
+        reading.setHumidity(req.humidity());
+        reading.setSoilMoisture(req.soilMoisture());
+        reading.setLightLux(req.lightLux());
+        reading.setSource(SensorReading.Source.MANUAL);
 
         return SensorReadingResponse.from(readingRepository.save(reading));
     }

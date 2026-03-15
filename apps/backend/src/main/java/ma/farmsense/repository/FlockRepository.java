@@ -18,4 +18,6 @@ public interface FlockRepository extends JpaRepository<Flock, UUID> {
     List<Flock> findByUserAndPurposeOrderByCreatedAtDesc(User user, FlockPurpose purpose);
 
     long countByUserAndStatus(User user, FlockStatus status);
+
+    long countByBreedIdAndStatus(UUID breedId, FlockStatus status);
 }

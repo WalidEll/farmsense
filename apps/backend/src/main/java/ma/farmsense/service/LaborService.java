@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.accounting.*;
 import ma.farmsense.entity.*;
 import ma.farmsense.exception.AppException;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class LaborService {
 
     private final LaborLogRepository laborLogRepository;
@@ -21,6 +19,16 @@ public class LaborService {
     private final FlockRepository flockRepository;
     private final CropPlanRepository cropPlanRepository;
     private final FarmLocationRepository farmLocationRepository;
+
+    public LaborService(LaborLogRepository laborLogRepository, TransactionRepository transactionRepository,
+                        FlockRepository flockRepository, CropPlanRepository cropPlanRepository,
+                        FarmLocationRepository farmLocationRepository) {
+        this.laborLogRepository = laborLogRepository;
+        this.transactionRepository = transactionRepository;
+        this.flockRepository = flockRepository;
+        this.cropPlanRepository = cropPlanRepository;
+        this.farmLocationRepository = farmLocationRepository;
+    }
 
     public List<LaborLogResponse> findAll(User user) {
         return laborLogRepository.findByUserOrderByWorkDateDesc(user).stream()
@@ -38,34 +46,32 @@ public class LaborService {
         BigDecimal totalAmount = req.hourlyRate().multiply(BigDecimal.valueOf(req.hoursWorked()));
 
         // Create auto-synced transaction
-        Transaction transaction = Transaction.builder()
-                .user(user)
-                .type(TransactionType.EXPENSE)
-                .category("Labor")
-                .subcategory(req.workerRole())
-                .amount(totalAmount)
-                .quantity(req.hoursWorked())
-                .unitPrice(req.hourlyRate())
-                .transactionDate(req.workDate())
-                .description("Labor: " + req.workerName() + " - " + req.activity())
-                .approvalStatus(ApprovalStatus.APPROVED)
-                .notes(req.notes())
-                .build();
+        Transaction transaction = new Transaction();
+        transaction.setUser(user);
+        transaction.setType(TransactionType.EXPENSE);
+        transaction.setCategory("Labor");
+        transaction.setSubcategory(req.workerRole());
+        transaction.setAmount(totalAmount);
+        transaction.setQuantity(req.hoursWorked());
+        transaction.setUnitPrice(req.hourlyRate());
+        transaction.setTransactionDate(req.workDate());
+        transaction.setDescription("Labor: " + req.workerName() + " - " + req.activity());
+        transaction.setApprovalStatus(ApprovalStatus.APPROVED);
+        transaction.setNotes(req.notes());
 
         updateTransactionRelations(transaction, req.flockId(), req.cropPlanId(), req.farmLocationId());
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        LaborLog laborLog = LaborLog.builder()
-                .user(user)
-                .workerName(req.workerName())
-                .workerRole(req.workerRole())
-                .hourlyRate(req.hourlyRate())
-                .hoursWorked(req.hoursWorked())
-                .workDate(req.workDate())
-                .activity(req.activity())
-                .transaction(savedTransaction)
-                .notes(req.notes())
-                .build();
+        LaborLog laborLog = new LaborLog();
+        laborLog.setUser(user);
+        laborLog.setWorkerName(req.workerName());
+        laborLog.setWorkerRole(req.workerRole());
+        laborLog.setHourlyRate(req.hourlyRate());
+        laborLog.setHoursWorked(req.hoursWorked());
+        laborLog.setWorkDate(req.workDate());
+        laborLog.setActivity(req.activity());
+        laborLog.setTransaction(savedTransaction);
+        laborLog.setNotes(req.notes());
 
         updateLaborRelations(laborLog, req.flockId(), req.cropPlanId(), req.farmLocationId());
         

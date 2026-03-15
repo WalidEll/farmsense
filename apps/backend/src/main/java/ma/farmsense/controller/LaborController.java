@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.accounting.CreateLaborLogRequest;
 import ma.farmsense.dto.accounting.LaborLogResponse;
 import ma.farmsense.dto.accounting.UpdateLaborLogRequest;
@@ -16,10 +15,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/labor")
-@RequiredArgsConstructor
 public class LaborController {
 
     private final LaborService laborService;
+
+    public LaborController(LaborService laborService) {
+        this.laborService = laborService;
+    }
 
     @GetMapping
     public List<LaborLogResponse> getAll(@AuthenticationPrincipal User user) {

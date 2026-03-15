@@ -1,10 +1,10 @@
 package ma.farmsense.scheduler;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ma.farmsense.entity.*;
 import ma.farmsense.repository.*;
 import ma.farmsense.service.WhatsAppService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,9 +23,9 @@ import java.util.Optional;
  * 5. Respect user alert preferences (enabled types + quiet hours)
  */
 @Component
-@RequiredArgsConstructor
-@Slf4j
 public class AlertScheduler {
+
+    private static final Logger log = LoggerFactory.getLogger(AlertScheduler.class);
 
     private final PlantRepository plantRepo;
     private final DeviceRepository deviceRepo;
@@ -33,6 +33,17 @@ public class AlertScheduler {
     private final AlertRepository alertRepo;
     private final AlertPreferenceRepository alertPrefRepo;
     private final WhatsAppService whatsApp;
+
+    public AlertScheduler(PlantRepository plantRepo, DeviceRepository deviceRepo,
+                          SensorReadingRepository readingRepo, AlertRepository alertRepo,
+                          AlertPreferenceRepository alertPrefRepo, WhatsAppService whatsApp) {
+        this.plantRepo = plantRepo;
+        this.deviceRepo = deviceRepo;
+        this.readingRepo = readingRepo;
+        this.alertRepo = alertRepo;
+        this.alertPrefRepo = alertPrefRepo;
+        this.whatsApp = whatsApp;
+    }
 
     @Value("${farmsense.alert.suppress-hours:4}")
     private int suppressHours;
@@ -121,16 +132,15 @@ public class AlertScheduler {
             return;
         }
 
-        Alert alert = Alert.builder()
-                .user(user)
-                .plant(plant)
-                .type(type)
-                .severity(Alert.Severity.MEDIUM)
-                .sensorValue(value)
-                .msgEn(buildMsg(type, value, "en", plant.getName()))
-                .msgFr(buildMsg(type, value, "fr", plant.getName()))
-                .msgAr(buildMsg(type, value, "ar", plant.getName()))
-                .build();
+        Alert alert = new Alert();
+        alert.setUser(user);
+        alert.setPlant(plant);
+        alert.setType(type);
+        alert.setSeverity(Alert.Severity.MEDIUM);
+        alert.setSensorValue(value);
+        alert.setMsgEn(buildMsg(type, value, "en", plant.getName()));
+        alert.setMsgFr(buildMsg(type, value, "fr", plant.getName()));
+        alert.setMsgAr(buildMsg(type, value, "ar", plant.getName()));
 
         alertRepo.save(alert);
         log.info("Alert fired: {} for plant {} ({})", type, plant.getName(), value);

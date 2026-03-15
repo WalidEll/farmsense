@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.team.*;
 import ma.farmsense.entity.User;
 import ma.farmsense.service.TeamService;
@@ -14,10 +13,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/teams")
-@RequiredArgsConstructor
 public class TeamController {
 
     private final TeamService teamService;
+
+    public TeamController(TeamService teamService) {
+        this.teamService = teamService;
+    }
 
     @GetMapping
     public ResponseEntity<List<TeamResponse>> getOwnedTeams(@AuthenticationPrincipal User user) {

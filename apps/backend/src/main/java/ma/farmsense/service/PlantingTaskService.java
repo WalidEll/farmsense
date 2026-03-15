@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.cropplan.PlantingTaskResponse;
 import ma.farmsense.dto.cropplan.UpdateTaskRequest;
 import ma.farmsense.entity.PlantingTask;
@@ -17,10 +16,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class PlantingTaskService {
 
     private final PlantingTaskRepository plantingTaskRepository;
+
+    public PlantingTaskService(PlantingTaskRepository plantingTaskRepository) {
+        this.plantingTaskRepository = plantingTaskRepository;
+    }
 
     public List<PlantingTaskResponse> getTasksForPlan(UUID planId) {
         return plantingTaskRepository.findByPlanId(planId).stream()

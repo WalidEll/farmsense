@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.auth.AuthResponse;
 import ma.farmsense.dto.auth.LoginRequest;
 import ma.farmsense.dto.auth.RegisterRequest;
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -22,18 +20,25 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       JwtService jwtService, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+    }
+
     public AuthResponse register(RegisterRequest req) {
         if (userRepository.existsByEmail(req.email())) {
             throw AppException.conflict("Email already registered");
         }
 
-        User user = User.builder()
-                .email(req.email())
-                .passwordHash(passwordEncoder.encode(req.password()))
-                .name(req.name())
-                .phoneWa(req.phoneWa())
-                .lang(req.lang() != null ? req.lang() : User.Language.FR)
-                .build();
+        User user = new User();
+        user.setEmail(req.email());
+        user.setPasswordHash(passwordEncoder.encode(req.password()));
+        user.setName(req.name());
+        user.setPhoneWa(req.phoneWa());
+        user.setLang(req.lang() != null ? req.lang() : User.Language.FR);
 
         userRepository.save(user);
         return buildResponse(user);

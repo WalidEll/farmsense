@@ -37,15 +37,17 @@ class AlertServiceTest {
 
     @Test
     void findAll_ShouldReturnAlerts_ForUser() {
-        User user = User.builder().id(UUID.randomUUID()).build();
-        Plant plant = Plant.builder().id(UUID.randomUUID()).name("Rose").build();
-        Alert alert = Alert.builder()
-                .id(UUID.randomUUID())
-                .user(user)
-                .plant(plant)
-                .type(Alert.AlertType.SOIL_DRY)
-                .severity(Alert.Severity.HIGH)
-                .build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        Plant plant = new Plant();
+        plant.setId(UUID.randomUUID());
+        plant.setName("Rose");
+        Alert alert = new Alert();
+        alert.setId(UUID.randomUUID());
+        alert.setUser(user);
+        alert.setPlant(plant);
+        alert.setType(Alert.AlertType.SOIL_DRY);
+        alert.setSeverity(Alert.Severity.HIGH);
         when(alertRepository.findByUserOrderByTriggeredAtDesc(user)).thenReturn(List.of(alert));
 
         List<AlertResponse> result = alertService.findAll(user);
@@ -56,14 +58,14 @@ class AlertServiceTest {
 
     @Test
     void acknowledge_ShouldSetAckAt_WhenOwned() {
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID alertId = UUID.randomUUID();
-        Alert alert = Alert.builder()
-                .id(alertId)
-                .user(user)
-                .type(Alert.AlertType.TEMP_HIGH)
-                .severity(Alert.Severity.MEDIUM)
-                .build();
+        Alert alert = new Alert();
+        alert.setId(alertId);
+        alert.setUser(user);
+        alert.setType(Alert.AlertType.TEMP_HIGH);
+        alert.setSeverity(Alert.Severity.MEDIUM);
         when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
         when(alertRepository.save(any(Alert.class))).thenAnswer(i -> i.getArguments()[0]);
 
@@ -74,15 +76,16 @@ class AlertServiceTest {
 
     @Test
     void acknowledge_ShouldThrowNotFound_WhenNotOwned() {
-        User owner = User.builder().id(UUID.randomUUID()).build();
-        User other = User.builder().id(UUID.randomUUID()).build();
+        User owner = new User();
+        owner.setId(UUID.randomUUID());
+        User other = new User();
+        other.setId(UUID.randomUUID());
         UUID alertId = UUID.randomUUID();
-        Alert alert = Alert.builder()
-                .id(alertId)
-                .user(owner)
-                .type(Alert.AlertType.SOIL_DRY)
-                .severity(Alert.Severity.LOW)
-                .build();
+        Alert alert = new Alert();
+        alert.setId(alertId);
+        alert.setUser(owner);
+        alert.setType(Alert.AlertType.SOIL_DRY);
+        alert.setSeverity(Alert.Severity.LOW);
         when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
 
         assertThrows(AppException.class, () -> alertService.acknowledge(other, alertId));
@@ -90,7 +93,8 @@ class AlertServiceTest {
 
     @Test
     void getUnreadCount_ShouldDelegateToRepository() {
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         when(alertRepository.countByUserAndAckAtIsNull(user)).thenReturn(5L);
 
         assertEquals(5L, alertService.getUnreadCount(user));
@@ -98,8 +102,10 @@ class AlertServiceTest {
 
     @Test
     void getPreferences_ShouldCreateDefaults_WhenNoneExist() {
-        User user = User.builder().id(UUID.randomUUID()).build();
-        AlertPreference defaultPref = AlertPreference.builder().user(user).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        AlertPreference defaultPref = new AlertPreference();
+        defaultPref.setUser(user);
         when(alertPreferenceRepository.findByUser(user)).thenReturn(Optional.empty());
         when(alertPreferenceRepository.save(any(AlertPreference.class))).thenReturn(defaultPref);
 
@@ -111,8 +117,10 @@ class AlertServiceTest {
 
     @Test
     void updatePreferences_ShouldPersistChanges() {
-        User user = User.builder().id(UUID.randomUUID()).build();
-        AlertPreference existing = AlertPreference.builder().user(user).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        AlertPreference existing = new AlertPreference();
+        existing.setUser(user);
         when(alertPreferenceRepository.findByUser(user)).thenReturn(Optional.of(existing));
         when(alertPreferenceRepository.save(any(AlertPreference.class))).thenAnswer(i -> i.getArguments()[0]);
 

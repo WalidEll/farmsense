@@ -37,22 +37,21 @@ class CareServiceTest {
     void getSchedule_ShouldAdjustWatering_WhenSoilIsDry() {
         // Arrange
         UUID plantId = UUID.randomUUID();
-        User user = User.builder().id(UUID.randomUUID()).build();
-        Plant plant = Plant.builder()
-                .id(plantId)
-                .user(user)
-                .soilMin(40)
-                .wateringIntervalDays(7)
-                .lastWateredAt(Instant.now().minus(5, ChronoUnit.DAYS))
-                .build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        Plant plant = new Plant();
+        plant.setId(plantId);
+        plant.setUser(user);
+        plant.setSoilMin(40);
+        plant.setWateringIntervalDays(7);
+        plant.setLastWateredAt(Instant.now().minus(5, ChronoUnit.DAYS));
 
         when(plantRepo.findByIdAndUserAndDeletedAtIsNull(eq(plantId), eq(user))).thenReturn(Optional.of(plant));
 
         // Latest reading shows 30% (below 40% min)
-        SensorReading latest = SensorReading.builder()
-                .soilMoisture(30)
-                .recordedAt(Instant.now())
-                .build();
+        SensorReading latest = new SensorReading();
+        latest.setSoilMoisture(30);
+        latest.setRecordedAt(Instant.now());
         when(readingRepo.findLatestByPlantId(plantId)).thenReturn(Optional.of(latest));
 
         // Act
@@ -66,22 +65,21 @@ class CareServiceTest {
     @Test
     void getSchedule_ShouldNotAdjustWatering_WhenSoilIsWet() {
         UUID plantId = UUID.randomUUID();
-        User user = User.builder().id(UUID.randomUUID()).build();
-        Plant plant = Plant.builder()
-                .id(plantId)
-                .user(user)
-                .soilMin(40)
-                .wateringIntervalDays(7)
-                .lastWateredAt(Instant.now().minus(2, ChronoUnit.DAYS))
-                .build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        Plant plant = new Plant();
+        plant.setId(plantId);
+        plant.setUser(user);
+        plant.setSoilMin(40);
+        plant.setWateringIntervalDays(7);
+        plant.setLastWateredAt(Instant.now().minus(2, ChronoUnit.DAYS));
 
         when(plantRepo.findByIdAndUserAndDeletedAtIsNull(eq(plantId), eq(user))).thenReturn(Optional.of(plant));
 
         // Latest reading shows 60% (above 40% min)
-        SensorReading latest = SensorReading.builder()
-                .soilMoisture(60)
-                .recordedAt(Instant.now())
-                .build();
+        SensorReading latest = new SensorReading();
+        latest.setSoilMoisture(60);
+        latest.setRecordedAt(Instant.now());
         when(readingRepo.findLatestByPlantId(plantId)).thenReturn(Optional.of(latest));
 
         var schedule = careService.getSchedule(user, plantId);

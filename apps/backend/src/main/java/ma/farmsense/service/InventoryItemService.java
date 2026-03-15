@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.inventory.*;
 import ma.farmsense.entity.InventoryItem;
 import ma.farmsense.repository.InventoryItemRepository;
@@ -12,10 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class InventoryItemService {
 
     private final InventoryItemRepository inventoryItemRepository;
+
+    public InventoryItemService(InventoryItemRepository inventoryItemRepository) {
+        this.inventoryItemRepository = inventoryItemRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<InventoryItemResponse> findAll(String category, String search) {

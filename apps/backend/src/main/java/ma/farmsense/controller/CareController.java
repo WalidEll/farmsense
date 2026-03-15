@@ -1,6 +1,5 @@
 package ma.farmsense.controller;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.care.CareScheduleResponse;
 import ma.farmsense.entity.CareLog;
 import ma.farmsense.entity.User;
@@ -13,10 +12,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/plants/{plantId}/care")
-@RequiredArgsConstructor
 public class CareController {
 
     private final CareService careService;
+
+    public CareController(CareService careService) {
+        this.careService = careService;
+    }
 
     @GetMapping
     public ResponseEntity<CareScheduleResponse> getSchedule(

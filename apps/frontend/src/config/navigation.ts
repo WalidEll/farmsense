@@ -38,6 +38,7 @@ const icons = {
   eggs:       s('<ellipse cx="12" cy="12" rx="5" ry="7"/><path d="M12 5V2M12 19v3"/>'),
   weight:     s('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>'),
   feed:       s('<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>'),
+  breeds:     s('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'),
 
   // Finance
   dashboard$: s('<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
@@ -89,6 +90,7 @@ export const navigationConfig: NavGroup[] = [
     icon: icons.poultry,
     items: [
       { icon: icons.flocks, labelKey: 'nav.flocks',          to: '/poultry/flocks' },
+      { icon: icons.breeds,  labelKey: 'nav.breeds',          to: '/poultry/breeds' },
       { icon: icons.eggs,   labelKey: 'nav.egg_collection',  to: '/poultry/eggs' },
       { icon: icons.feed,   labelKey: 'nav.feed_records',    to: '/poultry/feed' },
       { icon: icons.weight, labelKey: 'nav.bird_weight',     to: '/poultry/weight' },

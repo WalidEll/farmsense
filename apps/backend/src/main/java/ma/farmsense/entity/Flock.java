@@ -1,7 +1,6 @@
 package ma.farmsense.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -9,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "flocks")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Access(AccessType.FIELD)
 public class Flock {
 
     @Id
@@ -32,7 +31,10 @@ public class Flock {
 
     @Column(name = "name_en")
     private String nameEn;
-    private String breed;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "breed_id")
+    private Breed breed;
 
     @Column(nullable = false)
     private Integer birdCount;
@@ -46,7 +48,6 @@ public class Flock {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private FlockStatus status = FlockStatus.ACTIVE;
 
     private LocalDate startDate;
@@ -56,13 +57,61 @@ public class Flock {
     private String notes;
 
     @Column(nullable = false, updatable = false)
-    @Builder.Default
     private Instant createdAt = Instant.now();
 
     @Column(nullable = false)
-    @Builder.Default
     private Instant updatedAt = Instant.now();
+
+    public Flock() {}
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
+
+    public UUID getId() { return this.id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public User getUser() { return this.user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Supplier getSupplier() { return this.supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+
+    public String getName() { return this.name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getNameAr() { return this.nameAr; }
+    public void setNameAr(String nameAr) { this.nameAr = nameAr; }
+
+    public String getNameEn() { return this.nameEn; }
+    public void setNameEn(String nameEn) { this.nameEn = nameEn; }
+
+    public Breed getBreed() { return this.breed; }
+    public void setBreed(Breed breed) { this.breed = breed; }
+
+    public Integer getBirdCount() { return this.birdCount; }
+    public void setBirdCount(Integer birdCount) { this.birdCount = birdCount; }
+
+    public Integer getCurrentBirdCount() { return this.currentBirdCount; }
+    public void setCurrentBirdCount(Integer currentBirdCount) { this.currentBirdCount = currentBirdCount; }
+
+    public FlockPurpose getPurpose() { return this.purpose; }
+    public void setPurpose(FlockPurpose purpose) { this.purpose = purpose; }
+
+    public FlockStatus getStatus() { return this.status; }
+    public void setStatus(FlockStatus status) { this.status = status; }
+
+    public LocalDate getStartDate() { return this.startDate; }
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+
+    public String getSource() { return this.source; }
+    public void setSource(String source) { this.source = source; }
+
+    public String getNotes() { return this.notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public Instant getCreatedAt() { return this.createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return this.updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }

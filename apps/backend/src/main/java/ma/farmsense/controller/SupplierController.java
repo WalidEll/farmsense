@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.poultry.CreateSupplierRequest;
 import ma.farmsense.dto.poultry.SupplierResponse;
 import ma.farmsense.dto.poultry.UpdateSupplierRequest;
@@ -16,10 +15,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/suppliers")
-@RequiredArgsConstructor
 public class SupplierController {
 
     private final SupplierService supplierService;
+
+    public SupplierController(SupplierService supplierService) {
+        this.supplierService = supplierService;
+    }
 
     @GetMapping
     public ResponseEntity<List<SupplierResponse>> getAll(

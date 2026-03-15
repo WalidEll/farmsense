@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.accounting.*;
 import ma.farmsense.dto.team.ApprovalLogResponse;
 import ma.farmsense.dto.team.ApprovalRequest;
@@ -20,7 +19,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
@@ -33,6 +31,23 @@ public class TransactionService {
     private final FarmLocationRepository farmLocationRepository;
     private final TagRepository tagRepository;
     private final ApprovalLogRepository approvalLogRepository;
+
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository,
+                               SupplierRepository supplierRepository, CustomerRepository customerRepository,
+                               ReceiptRepository receiptRepository, FlockRepository flockRepository,
+                               CropPlanRepository cropPlanRepository, FarmLocationRepository farmLocationRepository,
+                               TagRepository tagRepository, ApprovalLogRepository approvalLogRepository) {
+        this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.supplierRepository = supplierRepository;
+        this.customerRepository = customerRepository;
+        this.receiptRepository = receiptRepository;
+        this.flockRepository = flockRepository;
+        this.cropPlanRepository = cropPlanRepository;
+        this.farmLocationRepository = farmLocationRepository;
+        this.tagRepository = tagRepository;
+        this.approvalLogRepository = approvalLogRepository;
+    }
 
     public List<TransactionResponse> findAll(User user, TransactionFilterRequest filters) {
         List<Transaction> transactions;
@@ -65,21 +80,20 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponse create(User user, CreateTransactionRequest req) {
-        Transaction transaction = Transaction.builder()
-                .user(user)
-                .type(req.type())
-                .category(req.category())
-                .subcategory(req.subcategory())
-                .amount(req.amount())
-                .quantity(req.quantity())
-                .unitPrice(req.unitPrice())
-                .transactionDate(req.transactionDate())
-                .description(req.description())
-                .paymentMethod(req.paymentMethod())
-                .referenceNumber(req.referenceNumber())
-                .notes(req.notes())
-                .approvalStatus(ApprovalStatus.APPROVED) // Default to approved for personal transactions
-                .build();
+        Transaction transaction = new Transaction();
+        transaction.setUser(user);
+        transaction.setType(req.type());
+        transaction.setCategory(req.category());
+        transaction.setSubcategory(req.subcategory());
+        transaction.setAmount(req.amount());
+        transaction.setQuantity(req.quantity());
+        transaction.setUnitPrice(req.unitPrice());
+        transaction.setTransactionDate(req.transactionDate());
+        transaction.setDescription(req.description());
+        transaction.setPaymentMethod(req.paymentMethod());
+        transaction.setReferenceNumber(req.referenceNumber());
+        transaction.setNotes(req.notes());
+        transaction.setApprovalStatus(ApprovalStatus.APPROVED); // Default to approved for personal transactions
 
         updateRelations(transaction, req.supplierId(), req.customerId(), req.receiptId(),
                         req.flockId(), req.cropPlanId(), req.farmLocationId(), req.tagIds());
@@ -169,12 +183,11 @@ public class TransactionService {
             transaction.setApprovedAt(Instant.now());
         }
 
-        ApprovalLog log = ApprovalLog.builder()
-                .transaction(transaction)
-                .user(user)
-                .action(req.action())
-                .comment(req.comment())
-                .build();
+        ApprovalLog log = new ApprovalLog();
+        log.setTransaction(transaction);
+        log.setUser(user);
+        log.setAction(req.action());
+        log.setComment(req.comment());
         approvalLogRepository.save(log);
 
         return mapToResponse(transactionRepository.save(transaction));

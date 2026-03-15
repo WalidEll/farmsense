@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.cropplan.*;
 import ma.farmsense.entity.*;
 import ma.farmsense.exception.AppException;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class CropPlanService {
 
     private final CropPlanRepository cropPlanRepository;
@@ -21,6 +19,16 @@ public class CropPlanService {
     private final FarmLocationRepository farmLocationRepository;
     private final PlantingNoteRepository plantingNoteRepository;
     private final CropRepository cropRepository;
+
+    public CropPlanService(CropPlanRepository cropPlanRepository, PlantingRepository plantingRepository,
+                           FarmLocationRepository farmLocationRepository, PlantingNoteRepository plantingNoteRepository,
+                           CropRepository cropRepository) {
+        this.cropPlanRepository = cropPlanRepository;
+        this.plantingRepository = plantingRepository;
+        this.farmLocationRepository = farmLocationRepository;
+        this.plantingNoteRepository = plantingNoteRepository;
+        this.cropRepository = cropRepository;
+    }
 
     // ── Crop Plans ────────────────────────────────────────────────
 
@@ -38,17 +46,16 @@ public class CropPlanService {
 
     @Transactional
     public CropPlanResponse createPlan(User user, CreateCropPlanRequest req) {
-        CropPlan plan = CropPlan.builder()
-                .user(user)
-                .name(req.name())
-                .nameAr(req.nameAr())
-                .nameEn(req.nameEn())
-                .description(req.description())
-                .descriptionAr(req.descriptionAr())
-                .descriptionEn(req.descriptionEn())
-                .season(req.season())
-                .year(req.year())
-                .build();
+        CropPlan plan = new CropPlan();
+        plan.setUser(user);
+        plan.setName(req.name());
+        plan.setNameAr(req.nameAr());
+        plan.setNameEn(req.nameEn());
+        plan.setDescription(req.description());
+        plan.setDescriptionAr(req.descriptionAr());
+        plan.setDescriptionEn(req.descriptionEn());
+        plan.setSeason(req.season());
+        plan.setYear(req.year());
         return CropPlanResponse.from(cropPlanRepository.save(plan), 0);
     }
 
@@ -90,19 +97,18 @@ public class CropPlanService {
 
     @Transactional
     public LocationResponse createLocation(User user, CreateLocationRequest req) {
-        FarmLocation location = FarmLocation.builder()
-                .user(user)
-                .name(req.name())
-                .nameAr(req.nameAr())
-                .nameEn(req.nameEn())
-                .description(req.description())
-                .descriptionAr(req.descriptionAr())
-                .descriptionEn(req.descriptionEn())
-                .locationType(req.locationType())
-                .areaM2(req.areaM2())
-                .latitude(req.latitude())
-                .longitude(req.longitude())
-                .build();
+        FarmLocation location = new FarmLocation();
+        location.setUser(user);
+        location.setName(req.name());
+        location.setNameAr(req.nameAr());
+        location.setNameEn(req.nameEn());
+        location.setDescription(req.description());
+        location.setDescriptionAr(req.descriptionAr());
+        location.setDescriptionEn(req.descriptionEn());
+        location.setLocationType(req.locationType());
+        location.setAreaM2(req.areaM2());
+        location.setLatitude(req.latitude());
+        location.setLongitude(req.longitude());
         return LocationResponse.from(farmLocationRepository.save(location));
     }
 
@@ -158,17 +164,16 @@ public class CropPlanService {
             plannedHarvest = req.plannedSowDate().plusDays(crop.getDaysToHarvest());
         }
 
-        Planting planting = Planting.builder()
-                .cropPlan(plan)
-                .crop(crop)
-                .farmLocation(location)
-                .quantity(req.quantity())
-                .areaM2(req.areaM2())
-                .notes(req.notes())
-                .plannedSowDate(req.plannedSowDate())
-                .plannedTransplantDate(req.plannedTransplantDate())
-                .plannedHarvestDate(plannedHarvest)
-                .build();
+        Planting planting = new Planting();
+        planting.setCropPlan(plan);
+        planting.setCrop(crop);
+        planting.setFarmLocation(location);
+        planting.setQuantity(req.quantity());
+        planting.setAreaM2(req.areaM2());
+        planting.setNotes(req.notes());
+        planting.setPlannedSowDate(req.plannedSowDate());
+        planting.setPlannedTransplantDate(req.plannedTransplantDate());
+        planting.setPlannedHarvestDate(plannedHarvest);
         return PlantingResponse.from(plantingRepository.save(planting));
     }
 
@@ -225,10 +230,9 @@ public class CropPlanService {
     @Transactional
     public PlantingNoteResponse addNote(User user, UUID planId, UUID plantingId, CreatePlantingNoteRequest req) {
         Planting planting = getOwnedPlanting(user, planId, plantingId);
-        PlantingNote note = PlantingNote.builder()
-                .planting(planting)
-                .content(req.content())
-                .build();
+        PlantingNote note = new PlantingNote();
+        note.setPlanting(planting);
+        note.setContent(req.content());
         return PlantingNoteResponse.from(plantingNoteRepository.save(note));
     }
 

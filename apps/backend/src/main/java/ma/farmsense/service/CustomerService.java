@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.poultry.CreateCustomerRequest;
 import ma.farmsense.dto.poultry.CustomerResponse;
 import ma.farmsense.dto.poultry.UpdateCustomerRequest;
@@ -15,10 +14,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     public List<CustomerResponse> findAll(User user, String search) {
         List<Customer> customers;
@@ -36,14 +38,13 @@ public class CustomerService {
 
     @Transactional
     public CustomerResponse create(User user, CreateCustomerRequest req) {
-        Customer customer = Customer.builder()
-                .user(user)
-                .name(req.name())
-                .phone(req.phone())
-                .email(req.email())
-                .address(req.address())
-                .notes(req.notes())
-                .build();
+        Customer customer = new Customer();
+        customer.setUser(user);
+        customer.setName(req.name());
+        customer.setPhone(req.phone());
+        customer.setEmail(req.email());
+        customer.setAddress(req.address());
+        customer.setNotes(req.notes());
         return CustomerResponse.from(customerRepository.save(customer));
     }
 

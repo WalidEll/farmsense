@@ -1,6 +1,7 @@
 package ma.farmsense.service;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -9,8 +10,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Map;
 
 @Service
-@Slf4j
 public class WhatsAppService {
+
+    private static final Logger log = LoggerFactory.getLogger(WhatsAppService.class);
 
     private final WebClient webClient;
     private final String phoneNumberId;

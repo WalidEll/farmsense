@@ -35,8 +35,12 @@ class PlantServiceTest {
     @Test
     void findAll_ShouldReturnList_ForUser() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
-        Plant plant = Plant.builder().id(UUID.randomUUID()).user(user).name("Lily").build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        Plant plant = new Plant();
+        plant.setId(UUID.randomUUID());
+        plant.setUser(user);
+        plant.setName("Lily");
         when(plantRepository.findByUserAndDeletedAtIsNull(user)).thenReturn(List.of(plant));
 
         // Act
@@ -50,15 +54,15 @@ class PlantServiceTest {
     @Test
     void create_ShouldSavePlant_AndInitSchedule() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         CreatePlantRequest req = new CreatePlantRequest("Basil", "Basil", null, null, 50, null, null, null, null);
-        
-        Plant savedPlant = Plant.builder()
-                .id(UUID.randomUUID())
-                .user(user)
-                .name("Basil")
-                .build();
-        
+
+        Plant savedPlant = new Plant();
+        savedPlant.setId(UUID.randomUUID());
+        savedPlant.setUser(user);
+        savedPlant.setName("Basil");
+
         when(plantRepository.save(any(Plant.class))).thenReturn(savedPlant);
 
         // Act
@@ -73,12 +77,16 @@ class PlantServiceTest {
     @Test
     void update_ShouldModifyFields_WhenOwned() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID plantId = UUID.randomUUID();
-        Plant existing = Plant.builder().id(plantId).user(user).name("Old Name").build();
-        
+        Plant existing = new Plant();
+        existing.setId(plantId);
+        existing.setUser(user);
+        existing.setName("Old Name");
+
         UpdatePlantRequest req = new UpdatePlantRequest("New Name", null, null, null, null, null, null, null, null);
-        
+
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(existing));
         when(plantRepository.save(any(Plant.class))).thenAnswer(i -> i.getArguments()[0]);
 
@@ -92,10 +100,13 @@ class PlantServiceTest {
     @Test
     void softDelete_ShouldSetDeletedAt() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID plantId = UUID.randomUUID();
-        Plant existing = Plant.builder().id(plantId).user(user).build();
-        
+        Plant existing = new Plant();
+        existing.setId(plantId);
+        existing.setUser(user);
+
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(existing));
 
         // Act
@@ -109,7 +120,8 @@ class PlantServiceTest {
     @Test
     void getOwned_ShouldThrowNotFound_WhenMissing() {
         // Arrange
-        User user = User.builder().id(UUID.randomUUID()).build();
+        User user = new User();
+        user.setId(UUID.randomUUID());
         UUID plantId = UUID.randomUUID();
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.empty());
 

@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.team.*;
 import ma.farmsense.entity.*;
 import ma.farmsense.exception.AppException;
@@ -15,12 +14,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final UserRepository userRepository;
+
+    public TeamService(TeamRepository teamRepository, TeamMemberRepository teamMemberRepository,
+                       UserRepository userRepository) {
+        this.teamRepository = teamRepository;
+        this.teamMemberRepository = teamMemberRepository;
+        this.userRepository = userRepository;
+    }
 
     public List<TeamResponse> findAllOwned(User user) {
         return teamRepository.findByOwnerOrderByCreatedAtDesc(user).stream()
@@ -58,22 +63,20 @@ public class TeamService {
 
     @Transactional
     public TeamResponse create(User user, CreateTeamRequest req) {
-        Team team = Team.builder()
-                .owner(user)
-                .name(req.name())
-                .description(req.description())
-                .build();
-        
+        Team team = new Team();
+        team.setOwner(user);
+        team.setName(req.name());
+        team.setDescription(req.description());
+
         Team saved = teamRepository.save(team);
-        
+
         // Add owner as admin member
-        TeamMember ownerMember = TeamMember.builder()
-                .team(saved)
-                .user(user)
-                .role(TeamRole.OWNER)
-                .status(MemberStatus.ACTIVE)
-                .joinedAt(Instant.now())
-                .build();
+        TeamMember ownerMember = new TeamMember();
+        ownerMember.setTeam(saved);
+        ownerMember.setUser(user);
+        ownerMember.setRole(TeamRole.OWNER);
+        ownerMember.setStatus(MemberStatus.ACTIVE);
+        ownerMember.setJoinedAt(Instant.now());
         teamMemberRepository.save(ownerMember);
         
         return mapToResponse(saved);
@@ -117,14 +120,13 @@ public class TeamService {
             throw AppException.conflict("User is already a member or has a pending invitation");
         }
         
-        TeamMember member = TeamMember.builder()
-                .team(team)
-                .user(invitee)
-                .role(req.role())
-                .status(MemberStatus.PENDING)
-                .invitedBy(user)
-                .invitedAt(Instant.now())
-                .build();
+        TeamMember member = new TeamMember();
+        member.setTeam(team);
+        member.setUser(invitee);
+        member.setRole(req.role());
+        member.setStatus(MemberStatus.PENDING);
+        member.setInvitedBy(user);
+        member.setInvitedAt(Instant.now());
         
         return mapToMemberResponse(teamMemberRepository.save(member));
     }

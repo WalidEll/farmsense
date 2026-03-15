@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.alert.AlertPreferenceRequest;
 import ma.farmsense.dto.alert.AlertPreferenceResponse;
 import ma.farmsense.dto.alert.AlertResponse;
@@ -18,11 +17,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class AlertService {
 
     private final AlertRepository alertRepository;
     private final AlertPreferenceRepository alertPreferenceRepository;
+
+    public AlertService(AlertRepository alertRepository, AlertPreferenceRepository alertPreferenceRepository) {
+        this.alertRepository = alertRepository;
+        this.alertPreferenceRepository = alertPreferenceRepository;
+    }
 
     public List<AlertResponse> findAll(User user) {
         return alertRepository.findByUserOrderByTriggeredAtDesc(user)
@@ -45,16 +48,22 @@ public class AlertService {
 
     public AlertPreferenceResponse getPreferences(User user) {
         AlertPreference pref = alertPreferenceRepository.findByUser(user)
-                .orElseGet(() -> alertPreferenceRepository.save(
-                        AlertPreference.builder().user(user).build()
-                ));
+                .orElseGet(() -> {
+                    AlertPreference p = new AlertPreference();
+                    p.setUser(user);
+                    return alertPreferenceRepository.save(p);
+                });
         return AlertPreferenceResponse.from(pref);
     }
 
     @Transactional
     public AlertPreferenceResponse updatePreferences(User user, AlertPreferenceRequest req) {
         AlertPreference pref = alertPreferenceRepository.findByUser(user)
-                .orElseGet(() -> AlertPreference.builder().user(user).build());
+                .orElseGet(() -> {
+                    AlertPreference p = new AlertPreference();
+                    p.setUser(user);
+                    return p;
+                });
 
         pref.setSoilDryEnabled(req.soilDryEnabled());
         pref.setSoilWetEnabled(req.soilWetEnabled());

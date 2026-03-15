@@ -423,7 +423,9 @@ export interface Flock {
   name: string
   nameAr?: string
   nameEn?: string
-  breed?: string
+  breedId?: string
+  breedName?: string
+  breedImageUrl?: string
   birdCount: number
   currentBirdCount: number
   purpose: FlockPurpose
@@ -464,7 +466,7 @@ export interface CreateFlockRequest {
   name: string
   nameAr?: string
   nameEn?: string
-  breed?: string
+  breedId?: string
   birdCount: number
   purpose: FlockPurpose
   startDate?: string
@@ -476,6 +478,105 @@ export interface CreateFlockRequest {
 export interface UpdateFlockRequest extends Partial<CreateFlockRequest> {
   status?: FlockStatus
 }
+
+// ── Breed Catalogue ────────────────────────────────────────
+export type BreedCategory = 'COMMERCIAL' | 'HERITAGE' | 'CUSTOM'
+export type BreedPurpose = 'LAYERS' | 'BROILERS' | 'DUAL_PURPOSE'
+export type GrowthStage = 'STARTER' | 'GROWER' | 'FINISHER'
+export type AdministrationRoute = 'ORAL' | 'INJECTION' | 'EYE_DROP' | 'SPRAY' | 'DRINKING_WATER'
+
+export interface FeedingProgramTemplate {
+  id: string
+  growthStage: GrowthStage
+  ageStartDays: number
+  ageEndDays: number
+  feedType: string
+  dailyQuantityGrams: number
+  feedingFrequency: number
+  notes?: string
+  sortOrder: number
+}
+
+export interface VaccinationTemplate {
+  id: string
+  vaccineName: string
+  recommendedAgeDays: number
+  dosage?: string
+  administrationRoute: AdministrationRoute
+  isMandatory: boolean
+  notes?: string
+  sortOrder: number
+}
+
+export interface ProductionBenchmark {
+  id: string
+  metricType: string
+  expectedValue: number
+  unit: string
+  ageStartDays?: number
+  ageEndDays?: number
+  notes?: string
+  sortOrder: number
+}
+
+export interface HousingGuideline {
+  id: string
+  parameterName: string
+  recommendedValue: string
+  unit?: string
+  growthStage?: GrowthStage
+  notes?: string
+  sortOrder: number
+}
+
+export interface BreedSummary {
+  id: string
+  name: string
+  nameAr?: string
+  nameEn?: string
+  category: BreedCategory
+  purpose: BreedPurpose
+  origin?: string
+  imageUrl?: string
+  isSystem: boolean
+  climateSuitability?: string
+  avgWeightMaleKg?: number
+  avgWeightFemaleKg?: number
+}
+
+export interface BreedDetail extends BreedSummary {
+  description?: string
+  descriptionAr?: string
+  descriptionEn?: string
+  feedingPrograms: FeedingProgramTemplate[]
+  vaccinationSchedule: VaccinationTemplate[]
+  productionBenchmarks: ProductionBenchmark[]
+  housingGuidelines: HousingGuideline[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateBreedRequest {
+  name: string
+  nameAr?: string
+  nameEn?: string
+  category: BreedCategory
+  purpose: BreedPurpose
+  origin?: string
+  description?: string
+  descriptionAr?: string
+  descriptionEn?: string
+  imageUrl?: string
+  climateSuitability?: string
+  avgWeightMaleKg?: number
+  avgWeightFemaleKg?: number
+  feedingPrograms?: FeedingProgramTemplate[]
+  vaccinationSchedule?: VaccinationTemplate[]
+  productionBenchmarks?: ProductionBenchmark[]
+  housingGuidelines?: HousingGuideline[]
+}
+
+export interface UpdateBreedRequest extends Partial<CreateBreedRequest> {}
 
 export interface CreateSupplierRequest {
   name: string

@@ -1,6 +1,5 @@
 package ma.farmsense.controller;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.diagnose.*;
 import ma.farmsense.entity.User;
 import ma.farmsense.service.DiagnoseService;
@@ -15,10 +14,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/diagnose")
-@RequiredArgsConstructor
 public class DiagnoseController {
 
     private final DiagnoseService diagnoseService;
+
+    public DiagnoseController(DiagnoseService diagnoseService) {
+        this.diagnoseService = diagnoseService;
+    }
 
     /** US-050: Diagnose plant from photo */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

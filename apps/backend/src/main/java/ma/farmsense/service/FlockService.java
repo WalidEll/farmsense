@@ -1,11 +1,11 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.poultry.CreateFlockRequest;
 import ma.farmsense.dto.poultry.FlockResponse;
 import ma.farmsense.dto.poultry.UpdateFlockRequest;
 import ma.farmsense.entity.*;
 import ma.farmsense.exception.AppException;
+import ma.farmsense.repository.BreedRepository;
 import ma.farmsense.repository.FlockRepository;
 import ma.farmsense.repository.SupplierRepository;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,20 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class FlockService {
 
     private final FlockRepository flockRepository;
     private final SupplierRepository supplierRepository;
+    private final BreedRepository breedRepository;
     private final SupplierService supplierService;
+
+    public FlockService(FlockRepository flockRepository, SupplierRepository supplierRepository,
+                        BreedRepository breedRepository, SupplierService supplierService) {
+        this.flockRepository = flockRepository;
+        this.supplierRepository = supplierRepository;
+        this.breedRepository = breedRepository;
+        this.supplierService = supplierService;
+    }
 
     public List<FlockResponse> findAll(User user, FlockStatus status, FlockPurpose purpose) {
         List<Flock> flocks;
@@ -45,20 +53,25 @@ public class FlockService {
             supplier = supplierService.getOwned(user, req.supplierId());
         }
 
-        Flock flock = Flock.builder()
-                .user(user)
-                .supplier(supplier)
-                .name(req.name())
-                .nameAr(req.nameAr())
-                .nameEn(req.nameEn())
-                .breed(req.breed())
-                .birdCount(req.birdCount())
-                .currentBirdCount(req.birdCount()) // auto-set to birdCount
-                .purpose(req.purpose())
-                .startDate(req.startDate())
-                .source(req.source())
-                .notes(req.notes())
-                .build();
+        Breed breed = null;
+        if (req.breedId() != null) {
+            breed = breedRepository.findByIdAndVisible(req.breedId(), user)
+                    .orElse(null);
+        }
+
+        Flock flock = new Flock();
+        flock.setUser(user);
+        flock.setSupplier(supplier);
+        flock.setBreed(breed);
+        flock.setName(req.name());
+        flock.setNameAr(req.nameAr());
+        flock.setNameEn(req.nameEn());
+        flock.setBirdCount(req.birdCount());
+        flock.setCurrentBirdCount(req.birdCount()); // auto-set to birdCount
+        flock.setPurpose(req.purpose());
+        flock.setStartDate(req.startDate());
+        flock.setSource(req.source());
+        flock.setNotes(req.notes());
         return FlockResponse.from(flockRepository.save(flock));
     }
 
@@ -71,10 +84,15 @@ public class FlockService {
             flock.setSupplier(supplier);
         }
 
+        if (req.breedId() != null) {
+            Breed breed = breedRepository.findByIdAndVisible(req.breedId(), user)
+                    .orElse(null);
+            flock.setBreed(breed);
+        }
+
         if (req.name() != null) flock.setName(req.name());
         if (req.nameAr() != null) flock.setNameAr(req.nameAr());
         if (req.nameEn() != null) flock.setNameEn(req.nameEn());
-        if (req.breed() != null) flock.setBreed(req.breed());
         if (req.birdCount() != null) flock.setBirdCount(req.birdCount());
         if (req.purpose() != null) flock.setPurpose(req.purpose());
         if (req.status() != null) flock.setStatus(req.status());

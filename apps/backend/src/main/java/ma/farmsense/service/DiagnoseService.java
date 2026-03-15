@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.extern.slf4j.Slf4j;
 import ma.farmsense.dto.diagnose.DiagnoseResponse;
 import ma.farmsense.entity.Diagnosis;
 import ma.farmsense.entity.Plant;
@@ -12,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Base64;
@@ -20,8 +21,9 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-@Slf4j
 public class DiagnoseService {
+
+        private static final Logger log = LoggerFactory.getLogger(DiagnoseService.class);
 
         private final WebClient webClient;
         private final String model;
@@ -62,11 +64,11 @@ public class DiagnoseService {
 
                 String rawResponse = callClaude(plant.getName(), plant.getSpecies(), base64Image, mediaType);
 
-                Diagnosis diagnosis = diagnosisRepository.save(Diagnosis.builder()
-                                .user(user)
-                                .plant(plant)
-                                .rawResponse(rawResponse)
-                                .build());
+                Diagnosis diagnosis = new Diagnosis();
+                diagnosis.setUser(user);
+                diagnosis.setPlant(plant);
+                diagnosis.setRawResponse(rawResponse);
+                diagnosis = diagnosisRepository.save(diagnosis);
 
                 return toResponse(diagnosis);
         }

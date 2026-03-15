@@ -1,7 +1,6 @@
 package ma.farmsense.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.accounting.ReceiptConfirmRequest;
 import ma.farmsense.dto.accounting.ReceiptResponse;
 import ma.farmsense.dto.accounting.ReceiptUploadResponse;
@@ -18,10 +17,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/receipts")
-@RequiredArgsConstructor
 public class ReceiptController {
 
     private final ReceiptService receiptService;
+
+    public ReceiptController(ReceiptService receiptService) {
+        this.receiptService = receiptService;
+    }
 
     @GetMapping
     public List<ReceiptResponse> getAll(@AuthenticationPrincipal User user) {

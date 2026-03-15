@@ -1,7 +1,6 @@
 package ma.farmsense.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -12,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "transactions")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Access(AccessType.FIELD)
 public class Transaction {
 
     @Id
@@ -67,7 +66,6 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private ApprovalStatus approvalStatus = ApprovalStatus.APPROVED;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -97,17 +95,94 @@ public class Transaction {
             joinColumns = @JoinColumn(name = "transaction_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    @Builder.Default
     private Set<Tag> tags = new HashSet<>();
 
     @Column(nullable = false, updatable = false)
-    @Builder.Default
     private Instant createdAt = Instant.now();
 
     @Column(nullable = false)
-    @Builder.Default
     private Instant updatedAt = Instant.now();
+
+    public Transaction() {}
 
     @PreUpdate
     void onUpdate() { this.updatedAt = Instant.now(); }
+
+    public UUID getId() { return this.id; }
+    public void setId(UUID id) { this.id = id; }
+
+    public User getUser() { return this.user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Team getTeam() { return this.team; }
+    public void setTeam(Team team) { this.team = team; }
+
+    public TransactionType getType() { return this.type; }
+    public void setType(TransactionType type) { this.type = type; }
+
+    public String getCategory() { return this.category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public String getSubcategory() { return this.subcategory; }
+    public void setSubcategory(String subcategory) { this.subcategory = subcategory; }
+
+    public BigDecimal getAmount() { return this.amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+
+    public Double getQuantity() { return this.quantity; }
+    public void setQuantity(Double quantity) { this.quantity = quantity; }
+
+    public BigDecimal getUnitPrice() { return this.unitPrice; }
+    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+
+    public LocalDate getTransactionDate() { return this.transactionDate; }
+    public void setTransactionDate(LocalDate transactionDate) { this.transactionDate = transactionDate; }
+
+    public String getDescription() { return this.description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public Supplier getSupplier() { return this.supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+
+    public Customer getCustomer() { return this.customer; }
+    public void setCustomer(Customer customer) { this.customer = customer; }
+
+    public PaymentMethod getPaymentMethod() { return this.paymentMethod; }
+    public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public String getReferenceNumber() { return this.referenceNumber; }
+    public void setReferenceNumber(String referenceNumber) { this.referenceNumber = referenceNumber; }
+
+    public Receipt getReceipt() { return this.receipt; }
+    public void setReceipt(Receipt receipt) { this.receipt = receipt; }
+
+    public ApprovalStatus getApprovalStatus() { return this.approvalStatus; }
+    public void setApprovalStatus(ApprovalStatus approvalStatus) { this.approvalStatus = approvalStatus; }
+
+    public User getApprovedBy() { return this.approvedBy; }
+    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
+
+    public Instant getApprovedAt() { return this.approvedAt; }
+    public void setApprovedAt(Instant approvedAt) { this.approvedAt = approvedAt; }
+
+    public Flock getFlock() { return this.flock; }
+    public void setFlock(Flock flock) { this.flock = flock; }
+
+    public CropPlan getCropPlan() { return this.cropPlan; }
+    public void setCropPlan(CropPlan cropPlan) { this.cropPlan = cropPlan; }
+
+    public FarmLocation getFarmLocation() { return this.farmLocation; }
+    public void setFarmLocation(FarmLocation farmLocation) { this.farmLocation = farmLocation; }
+
+    public String getNotes() { return this.notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public Set<Tag> getTags() { return this.tags; }
+    public void setTags(Set<Tag> tags) { this.tags = tags; }
+
+    public Instant getCreatedAt() { return this.createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return this.updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }

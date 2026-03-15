@@ -57,11 +57,10 @@ class DiagnoseServiceTest {
     @Test
     void getShared_ShouldReturnResponse_WhenValid() {
         UUID id = UUID.randomUUID();
-        Diagnosis d = Diagnosis.builder()
-                .id(id)
-                .createdAt(Instant.now())
-                .problemName("Leaf Spot")
-                .build();
+        Diagnosis d = new Diagnosis();
+        d.setId(id);
+        d.setCreatedAt(Instant.now());
+        d.setProblemName("Leaf Spot");
 
         when(diagnosisRepository.findById(id)).thenReturn(Optional.of(d));
 
@@ -75,10 +74,9 @@ class DiagnoseServiceTest {
     @Test
     void getShared_ShouldThrowException_WhenExpired() {
         UUID id = UUID.randomUUID();
-        Diagnosis d = Diagnosis.builder()
-                .id(id)
-                .createdAt(Instant.now().minus(8, ChronoUnit.DAYS))
-                .build();
+        Diagnosis d = new Diagnosis();
+        d.setId(id);
+        d.setCreatedAt(Instant.now().minus(8, ChronoUnit.DAYS));
 
         when(diagnosisRepository.findById(id)).thenReturn(Optional.of(d));
 

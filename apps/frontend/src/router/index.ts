@@ -177,6 +177,16 @@ const router = createRouter({
           component: () => import('@/views/poultry/FlockDetailView.vue'),
         },
         {
+          path: 'poultry/breeds',
+          name: 'breeds',
+          component: () => import('@/views/poultry/BreedsView.vue'),
+        },
+        {
+          path: 'poultry/breeds/:id',
+          name: 'breed-detail',
+          component: () => import('@/views/poultry/BreedDetailView.vue'),
+        },
+        {
           path: 'poultry/eggs',
           name: 'poultry-eggs',
           component: ComingSoonView,

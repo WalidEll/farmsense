@@ -1,6 +1,5 @@
 package ma.farmsense.service;
 
-import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.crop.*;
 import ma.farmsense.entity.*;
 import ma.farmsense.exception.AppException;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class CropService {
 
     private final CropRepository cropRepository;
@@ -20,6 +18,16 @@ public class CropService {
     private final CropGrowthStageRepository stageRepository;
     private final CropNutrientRepository nutrientRepository;
     private final CropIssueRepository issueRepository;
+
+    public CropService(CropRepository cropRepository, CropRequirementRepository requirementRepository,
+                       CropGrowthStageRepository stageRepository, CropNutrientRepository nutrientRepository,
+                       CropIssueRepository issueRepository) {
+        this.cropRepository = cropRepository;
+        this.requirementRepository = requirementRepository;
+        this.stageRepository = stageRepository;
+        this.nutrientRepository = nutrientRepository;
+        this.issueRepository = issueRepository;
+    }
 
     // ── Crop CRUD ────────────────────────────────────────────────
 
@@ -48,20 +56,19 @@ public class CropService {
 
     @Transactional
     public CropResponse create(CreateCropRequest req) {
-        Crop crop = Crop.builder()
-                .name(req.name())
-                .nameAr(req.nameAr())
-                .nameEn(req.nameEn())
-                .scientificName(req.scientificName())
-                .category(req.category())
-                .description(req.description())
-                .descriptionAr(req.descriptionAr())
-                .descriptionEn(req.descriptionEn())
-                .imageUrl(req.imageUrl())
-                .growingSeason(req.growingSeason())
-                .daysToHarvest(req.daysToHarvest())
-                .difficulty(req.difficulty())
-                .build();
+        Crop crop = new Crop();
+        crop.setName(req.name());
+        crop.setNameAr(req.nameAr());
+        crop.setNameEn(req.nameEn());
+        crop.setScientificName(req.scientificName());
+        crop.setCategory(req.category());
+        crop.setDescription(req.description());
+        crop.setDescriptionAr(req.descriptionAr());
+        crop.setDescriptionEn(req.descriptionEn());
+        crop.setImageUrl(req.imageUrl());
+        crop.setGrowingSeason(req.growingSeason());
+        crop.setDaysToHarvest(req.daysToHarvest());
+        crop.setDifficulty(req.difficulty());
         return CropResponse.from(cropRepository.save(crop));
     }
 
@@ -95,7 +102,7 @@ public class CropService {
     public CropRequirementResponse setRequirements(UUID cropId, CropRequirementRequest req) {
         Crop crop = getCrop(cropId);
         CropRequirement r = requirementRepository.findByCrop(crop)
-                .orElse(CropRequirement.builder().crop(crop).build());
+                .orElseGet(() -> { CropRequirement c = new CropRequirement(); c.setCrop(crop); return c; });
         if (req.soilMoistureMin() != null) r.setSoilMoistureMin(req.soilMoistureMin());
         if (req.soilMoistureMax() != null) r.setSoilMoistureMax(req.soilMoistureMax());
         if (req.tempMin() != null) r.setTempMin(req.tempMin());
@@ -116,17 +123,16 @@ public class CropService {
     @Transactional
     public CropGrowthStageResponse addStage(UUID cropId, CropGrowthStageRequest req) {
         Crop crop = getCrop(cropId);
-        CropGrowthStage s = CropGrowthStage.builder()
-                .crop(crop)
-                .stageOrder(req.stageOrder())
-                .name(req.name())
-                .nameAr(req.nameAr())
-                .nameEn(req.nameEn())
-                .durationDays(req.durationDays())
-                .description(req.description())
-                .descriptionAr(req.descriptionAr())
-                .descriptionEn(req.descriptionEn())
-                .build();
+        CropGrowthStage s = new CropGrowthStage();
+        s.setCrop(crop);
+        s.setStageOrder(req.stageOrder());
+        s.setName(req.name());
+        s.setNameAr(req.nameAr());
+        s.setNameEn(req.nameEn());
+        s.setDurationDays(req.durationDays());
+        s.setDescription(req.description());
+        s.setDescriptionAr(req.descriptionAr());
+        s.setDescriptionEn(req.descriptionEn());
         return CropGrowthStageResponse.from(stageRepository.save(s));
     }
 
@@ -158,7 +164,7 @@ public class CropService {
     public CropNutrientResponse setNutrients(UUID cropId, CropNutrientRequest req) {
         Crop crop = getCrop(cropId);
         CropNutrient n = nutrientRepository.findByCrop(crop)
-                .orElse(CropNutrient.builder().crop(crop).build());
+                .orElseGet(() -> { CropNutrient cn = new CropNutrient(); cn.setCrop(crop); return cn; });
         if (req.nitrogenNeed() != null) n.setNitrogenNeed(req.nitrogenNeed());
         if (req.phosphorusNeed() != null) n.setPhosphorusNeed(req.phosphorusNeed());
         if (req.potassiumNeed() != null) n.setPotassiumNeed(req.potassiumNeed());
@@ -174,20 +180,19 @@ public class CropService {
     @Transactional
     public CropIssueResponse addIssue(UUID cropId, CropIssueRequest req) {
         Crop crop = getCrop(cropId);
-        CropIssue i = CropIssue.builder()
-                .crop(crop)
-                .issueType(req.issueType())
-                .name(req.name())
-                .nameAr(req.nameAr())
-                .nameEn(req.nameEn())
-                .symptoms(req.symptoms())
-                .symptomsAr(req.symptomsAr())
-                .symptomsEn(req.symptomsEn())
-                .treatment(req.treatment())
-                .treatmentAr(req.treatmentAr())
-                .treatmentEn(req.treatmentEn())
-                .prevention(req.prevention())
-                .build();
+        CropIssue i = new CropIssue();
+        i.setCrop(crop);
+        i.setIssueType(req.issueType());
+        i.setName(req.name());
+        i.setNameAr(req.nameAr());
+        i.setNameEn(req.nameEn());
+        i.setSymptoms(req.symptoms());
+        i.setSymptomsAr(req.symptomsAr());
+        i.setSymptomsEn(req.symptomsEn());
+        i.setTreatment(req.treatment());
+        i.setTreatmentAr(req.treatmentAr());
+        i.setTreatmentEn(req.treatmentEn());
+        i.setPrevention(req.prevention());
         return CropIssueResponse.from(issueRepository.save(i));
     }
 
