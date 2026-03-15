@@ -9,7 +9,7 @@
         </p>
       </div>
       <button
-        @click="router.push('/poultry/breeds/new')"
+        @click="openCreateModal"
         class="bg-green-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-200 flex items-center justify-center gap-2"
       >
         <span>➕</span> {{ t('breed_form_title') }}
@@ -75,7 +75,7 @@
       <h3 class="text-xl font-bold text-gray-900 mb-2">{{ t('breed_empty_state') }}</h3>
       <p class="text-gray-500 mb-6">{{ t('breed_empty_search') }}</p>
       <button
-        @click="router.push('/poultry/breeds/new')"
+        @click="openCreateModal"
         class="bg-green-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-green-700 transition-all"
       >
         {{ t('breed_empty_create') }}
@@ -159,6 +159,14 @@
         </div>
       </div>
     </div>
+
+    <!-- Create Breed Modal -->
+    <BreedForm
+      v-if="showCreateModal"
+      :loading="saving"
+      @close="showCreateModal = false"
+      @submit="handleCreateSubmit"
+    />
   </div>
 </template>
 
@@ -168,10 +176,15 @@ import { useRouter } from 'vue-router'
 import { useI18n } from '@/i18n'
 import { useBreedsStore } from '@/stores/breeds.store'
 import BreedCard from '@/components/poultry/BreedCard.vue'
-import type { BreedSummary, BreedCategory, BreedPurpose } from '@/types'
+import BreedForm from '@/components/poultry/BreedForm.vue'
+import type { BreedSummary, BreedCategory, BreedPurpose, CreateBreedRequest } from '@/types'
 
 const { t } = useI18n()
 const router = useRouter()
+const breedsStore = useBreedsStore()
+
+const showCreateModal = ref(false)
+const saving = ref(false)
 const breedsStore = useBreedsStore()
 
 const searchInput = ref('')
@@ -223,6 +236,23 @@ function clearCompare() {
 
 function goToCompare() {
   router.push('/poultry/breeds/compare')
+}
+
+function openCreateModal() {
+  showCreateModal.value = true
+}
+
+async function handleCreateSubmit(data: CreateBreedRequest) {
+  saving.value = true
+  try {
+    await breedsStore.createBreed(data)
+    showCreateModal.value = false
+    breedsStore.fetchBreeds()
+  } catch (e) {
+    console.error('Failed to create breed:', e)
+  } finally {
+    saving.value = false
+  }
 }
 
 onMounted(() => {

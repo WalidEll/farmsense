@@ -209,6 +209,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Breed Modal -->
+    <BreedForm
+      v-if="showEditModal && breed"
+      :initial-data="breed"
+      :loading="saving"
+      @close="showEditModal = false"
+      @submit="handleEditSubmit"
+    />
   </div>
 </template>
 
@@ -218,6 +227,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from '@/i18n'
 import { useBreedsStore } from '@/stores/breeds.store'
 import { useAuthStore } from '@/stores/auth.store'
+import BreedForm from '@/components/poultry/BreedForm.vue'
+import type { UpdateBreedRequest } from '@/types'
 
 const router = useRouter()
 const route = useRoute()
@@ -231,6 +242,7 @@ const showEditModal = ref(false)
 const showDeleteConfirm = ref(false)
 const activeFlockCount = ref<number | null>(null)
 const deleting = ref(false)
+const saving = ref(false)
 
 const breed = computed(() => breedsStore.currentBreed)
 const lang = computed(() => authStore.lang)
@@ -296,6 +308,19 @@ async function confirmDelete() {
     }
   } finally {
     deleting.value = false
+  }
+}
+
+async function handleEditSubmit(data: UpdateBreedRequest) {
+  if (!breed.value) return
+  saving.value = true
+  try {
+    await breedsStore.updateBreed(breed.value.id, data)
+    showEditModal.value = false
+  } catch (e: any) {
+    error.value = e.message || t('error_saving')
+  } finally {
+    saving.value = false
   }
 }
 

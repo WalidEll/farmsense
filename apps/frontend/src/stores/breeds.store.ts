@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { api } from '@/services/api'
+import { offlineQueue } from '@/services/offline-queue'
 import type {
   BreedSummary,
   BreedDetail,
@@ -77,6 +78,12 @@ export const useBreedsStore = defineStore('breeds', () => {
       breeds.value.unshift(breed)
       return breed
     } catch (e: any) {
+      if (!navigator.onLine) {
+        await offlineQueue.enqueue('POST', '/breeds', req)
+        const tempBreed = { ...req, id: `temp-${Date.now()}`, isSystem: false } as unknown as BreedDetail
+        breeds.value.unshift(tempBreed)
+        return tempBreed
+      }
       error.value = e.message || 'Failed to create breed'
       throw e
     } finally {

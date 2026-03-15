@@ -36,6 +36,24 @@ export default defineConfig({
               expiration: { maxEntries: 200, maxAgeSeconds: 3600 },
               cacheableResponse: { statuses: [0, 200] }
             }
+          },
+          {
+            urlPattern: /^https:\/\/api\.farmsense\.ma\/api\/v1\/breeds$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'breeds-list-cache',
+              expiration: { maxEntries: 50, maxAgeSeconds: 3600 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/api\.farmsense\.ma\/api\/v1\/breeds\/[a-f0-9-]+$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'breeds-detail-cache',
+              expiration: { maxEntries: 100, maxAgeSeconds: 3600 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
           }
         ]
       }

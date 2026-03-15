@@ -182,6 +182,11 @@ const router = createRouter({
           component: () => import('@/views/poultry/BreedsView.vue'),
         },
         {
+          path: 'poultry/breeds/compare',
+          name: 'breeds-compare',
+          component: () => import('@/views/poultry/BreedCompareView.vue'),
+        },
+        {
           path: 'poultry/breeds/:id',
           name: 'breed-detail',
           component: () => import('@/views/poultry/BreedDetailView.vue'),
