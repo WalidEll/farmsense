@@ -5,7 +5,11 @@
  *
  * US-062: Queue manual readings while offline
  */
-import PouchDB from 'pouchdb'
+// PouchDB is a CJS module; Vite's CJS→ESM shim may land the constructor
+// on `.default` or directly on the module object depending on the build.
+import PouchDBImport from 'pouchdb'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PouchDB: typeof PouchDBImport = (PouchDBImport as any).default ?? PouchDBImport
 import { api } from './api'
 
 interface QueuedRequest {
