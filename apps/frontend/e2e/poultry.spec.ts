@@ -15,4 +15,9 @@ test.describe('Poultry', () => {
     await page.goto('/poultry/customers')
     await expect(page.locator('h1, h2, [data-testid="customers-heading"]').first()).toBeVisible({ timeout: 5000 })
   })
+
+  test('breeds page loads', async ({ page }) => {
+    await page.goto('/poultry/breeds')
+    await expect(page.locator('h1, h2, [data-testid="breeds-heading"]').first()).toBeVisible({ timeout: 5000 })
+  })
 })

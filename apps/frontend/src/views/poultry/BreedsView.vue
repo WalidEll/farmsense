@@ -185,7 +185,6 @@ const breedsStore = useBreedsStore()
 
 const showCreateModal = ref(false)
 const saving = ref(false)
-const breedsStore = useBreedsStore()
 
 const searchInput = ref('')
 const categoryFilter = ref<BreedCategory | null>(null)
