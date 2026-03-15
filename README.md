@@ -18,7 +18,7 @@ farmsense/
 
 | Tool | Version |
 |------|---------|
-| Java | 17+ |
+| Java | 21+ |
 | Node.js | 20+ |
 | Docker | 24+ |
 | Arduino IDE | 2.0+ |

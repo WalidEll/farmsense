@@ -68,8 +68,8 @@ class DiagnoseServiceTest {
         DiagnoseResponse res = diagnoseService.getShared(id);
 
         assertNotNull(res);
-        assertEquals("Leaf Spot", res.getProblemName());
-        assertTrue(res.getShareUrl().contains(id.toString()));
+        assertEquals("Leaf Spot", res.problemName());
+        assertTrue(res.shareUrl().contains(id.toString()));
     }
 
     @Test

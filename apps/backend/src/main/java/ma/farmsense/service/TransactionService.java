@@ -39,15 +39,15 @@ public class TransactionService {
         if (filters != null) {
             transactions = transactionRepository.findWithFilters(
                     user,
-                    filters.getType(),
-                    filters.getCategory(),
-                    filters.getFrom(),
-                    filters.getTo(),
-                    filters.getApprovalStatus()
+                    filters.type(),
+                    filters.category(),
+                    filters.from(),
+                    filters.to(),
+                    filters.approvalStatus()
             );
-            
-            if (filters.getTagIds() != null && !filters.getTagIds().isEmpty()) {
-                Set<UUID> tagIds = new HashSet<>(filters.getTagIds());
+
+            if (filters.tagIds() != null && !filters.tagIds().isEmpty()) {
+                Set<UUID> tagIds = new HashSet<>(filters.tagIds());
                 transactions = transactions.stream()
                         .filter(t -> t.getTags().stream().anyMatch(tag -> tagIds.contains(tag.getId())))
                         .collect(Collectors.toList());
@@ -67,22 +67,22 @@ public class TransactionService {
     public TransactionResponse create(User user, CreateTransactionRequest req) {
         Transaction transaction = Transaction.builder()
                 .user(user)
-                .type(req.getType())
-                .category(req.getCategory())
-                .subcategory(req.getSubcategory())
-                .amount(req.getAmount())
-                .quantity(req.getQuantity())
-                .unitPrice(req.getUnitPrice())
-                .transactionDate(req.getTransactionDate())
-                .description(req.getDescription())
-                .paymentMethod(req.getPaymentMethod())
-                .referenceNumber(req.getReferenceNumber())
-                .notes(req.getNotes())
+                .type(req.type())
+                .category(req.category())
+                .subcategory(req.subcategory())
+                .amount(req.amount())
+                .quantity(req.quantity())
+                .unitPrice(req.unitPrice())
+                .transactionDate(req.transactionDate())
+                .description(req.description())
+                .paymentMethod(req.paymentMethod())
+                .referenceNumber(req.referenceNumber())
+                .notes(req.notes())
                 .approvalStatus(ApprovalStatus.APPROVED) // Default to approved for personal transactions
                 .build();
 
-        updateRelations(transaction, req.getSupplierId(), req.getCustomerId(), req.getReceiptId(), 
-                        req.getFlockId(), req.getCropPlanId(), req.getFarmLocationId(), req.getTagIds());
+        updateRelations(transaction, req.supplierId(), req.customerId(), req.receiptId(),
+                        req.flockId(), req.cropPlanId(), req.farmLocationId(), req.tagIds());
 
         return mapToResponse(transactionRepository.save(transaction));
     }
@@ -91,20 +91,20 @@ public class TransactionService {
     public TransactionResponse update(User user, UUID id, UpdateTransactionRequest req) {
         Transaction transaction = getOwned(user, id);
 
-        if (req.getType() != null) transaction.setType(req.getType());
-        if (req.getCategory() != null) transaction.setCategory(req.getCategory());
-        if (req.getSubcategory() != null) transaction.setSubcategory(req.getSubcategory());
-        if (req.getAmount() != null) transaction.setAmount(req.getAmount());
-        if (req.getQuantity() != null) transaction.setQuantity(req.getQuantity());
-        if (req.getUnitPrice() != null) transaction.setUnitPrice(req.getUnitPrice());
-        if (req.getTransactionDate() != null) transaction.setTransactionDate(req.getTransactionDate());
-        if (req.getDescription() != null) transaction.setDescription(req.getDescription());
-        if (req.getPaymentMethod() != null) transaction.setPaymentMethod(req.getPaymentMethod());
-        if (req.getReferenceNumber() != null) transaction.setReferenceNumber(req.getReferenceNumber());
-        if (req.getNotes() != null) transaction.setNotes(req.getNotes());
+        if (req.type() != null) transaction.setType(req.type());
+        if (req.category() != null) transaction.setCategory(req.category());
+        if (req.subcategory() != null) transaction.setSubcategory(req.subcategory());
+        if (req.amount() != null) transaction.setAmount(req.amount());
+        if (req.quantity() != null) transaction.setQuantity(req.quantity());
+        if (req.unitPrice() != null) transaction.setUnitPrice(req.unitPrice());
+        if (req.transactionDate() != null) transaction.setTransactionDate(req.transactionDate());
+        if (req.description() != null) transaction.setDescription(req.description());
+        if (req.paymentMethod() != null) transaction.setPaymentMethod(req.paymentMethod());
+        if (req.referenceNumber() != null) transaction.setReferenceNumber(req.referenceNumber());
+        if (req.notes() != null) transaction.setNotes(req.notes());
 
-        updateRelations(transaction, req.getSupplierId(), req.getCustomerId(), req.getReceiptId(), 
-                        req.getFlockId(), req.getCropPlanId(), req.getFarmLocationId(), req.getTagIds());
+        updateRelations(transaction, req.supplierId(), req.customerId(), req.receiptId(),
+                        req.flockId(), req.cropPlanId(), req.farmLocationId(), req.tagIds());
 
         return mapToResponse(transactionRepository.save(transaction));
     }
@@ -134,15 +134,15 @@ public class TransactionService {
                 .map(this::mapToResponse)
                 .toList();
 
-        return DashboardResponse.builder()
-                .totalIncome(totalIncome)
-                .totalExpenses(totalExpenses)
-                .netProfit(netProfit)
-                .expensesByCategory(expensesByCategory)
-                .incomesByCategory(incomesByCategory)
-                .recentTransactions(recent)
-                .pendingApprovals(pendingApprovals)
-                .build();
+        return new DashboardResponse(
+                totalIncome,
+                totalExpenses,
+                netProfit,
+                expensesByCategory,
+                incomesByCategory,
+                recent,
+                pendingApprovals
+        );
     }
 
     public List<String> getCategories(User user) {
@@ -157,12 +157,12 @@ public class TransactionService {
         // Ownership/Team check: for now just basic
         // In a real team scenario, we'd check if user is admin of the team
         
-        ApprovalStatus status = switch (req.getAction()) {
+        ApprovalStatus status = switch (req.action()) {
             case APPROVED -> ApprovalStatus.APPROVED;
             case REJECTED -> ApprovalStatus.REJECTED;
             default -> ApprovalStatus.PENDING;
         };
-        
+
         transaction.setApprovalStatus(status);
         if (status == ApprovalStatus.APPROVED) {
             transaction.setApprovedBy(user);
@@ -172,8 +172,8 @@ public class TransactionService {
         ApprovalLog log = ApprovalLog.builder()
                 .transaction(transaction)
                 .user(user)
-                .action(req.getAction())
-                .comment(req.getComment())
+                .action(req.action())
+                .comment(req.comment())
                 .build();
         approvalLogRepository.save(log);
 
@@ -184,13 +184,13 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> AppException.notFound("Transaction not found"));
         return approvalLogRepository.findByTransactionOrderByCreatedAtDesc(transaction).stream()
-                .map(log -> ApprovalLogResponse.builder()
-                        .id(log.getId())
-                        .action(log.getAction())
-                        .userName(log.getUser().getFullName())
-                        .comment(log.getComment())
-                        .createdAt(log.getCreatedAt())
-                        .build())
+                .map(log -> new ApprovalLogResponse(
+                        log.getId(),
+                        log.getAction(),
+                        log.getUser().getFullName(),
+                        log.getComment(),
+                        log.getCreatedAt()
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -252,42 +252,38 @@ public class TransactionService {
     }
 
     private TransactionResponse mapToResponse(Transaction t) {
-        return TransactionResponse.builder()
-                .id(t.getId())
-                .type(t.getType())
-                .category(t.getCategory())
-                .subcategory(t.getSubcategory())
-                .amount(t.getAmount())
-                .quantity(t.getQuantity())
-                .unitPrice(t.getUnitPrice())
-                .transactionDate(t.getTransactionDate())
-                .description(t.getDescription())
-                .paymentMethod(t.getPaymentMethod())
-                .referenceNumber(t.getReferenceNumber())
-                .approvalStatus(t.getApprovalStatus())
-                .supplierId(t.getSupplier() != null ? t.getSupplier().getId() : null)
-                .supplierName(t.getSupplier() != null ? t.getSupplier().getName() : null)
-                .customerId(t.getCustomer() != null ? t.getCustomer().getId() : null)
-                .customerName(t.getCustomer() != null ? t.getCustomer().getName() : null)
-                .receiptId(t.getReceipt() != null ? t.getReceipt().getId() : null)
-                .flockId(t.getFlock() != null ? t.getFlock().getId() : null)
-                .flockName(t.getFlock() != null ? t.getFlock().getName() : null)
-                .cropPlanId(t.getCropPlan() != null ? t.getCropPlan().getId() : null)
-                .cropPlanName(t.getCropPlan() != null ? t.getCropPlan().getName() : null)
-                .farmLocationId(t.getFarmLocation() != null ? t.getFarmLocation().getId() : null)
-                .farmLocationName(t.getFarmLocation() != null ? t.getFarmLocation().getName() : null)
-                .notes(t.getNotes())
-                .tags(t.getTags().stream()
-                        .map(tag -> TagResponse.builder()
-                                .id(tag.getId())
-                                .name(tag.getName())
-                                .color(tag.getColor())
-                                .build())
-                        .toList())
-                .approvedBy(t.getApprovedBy() != null ? t.getApprovedBy().getId() : null)
-                .approvedAt(t.getApprovedAt())
-                .createdAt(t.getCreatedAt())
-                .updatedAt(t.getUpdatedAt())
-                .build();
+        return new TransactionResponse(
+                t.getId(),
+                t.getType(),
+                t.getCategory(),
+                t.getSubcategory(),
+                t.getAmount(),
+                t.getQuantity(),
+                t.getUnitPrice(),
+                t.getTransactionDate(),
+                t.getDescription(),
+                t.getPaymentMethod(),
+                t.getReferenceNumber(),
+                t.getApprovalStatus(),
+                t.getSupplier() != null ? t.getSupplier().getId() : null,
+                t.getSupplier() != null ? t.getSupplier().getName() : null,
+                t.getCustomer() != null ? t.getCustomer().getId() : null,
+                t.getCustomer() != null ? t.getCustomer().getName() : null,
+                t.getReceipt() != null ? t.getReceipt().getId() : null,
+                t.getFlock() != null ? t.getFlock().getId() : null,
+                t.getFlock() != null ? t.getFlock().getName() : null,
+                t.getCropPlan() != null ? t.getCropPlan().getId() : null,
+                t.getCropPlan() != null ? t.getCropPlan().getName() : null,
+                t.getFarmLocation() != null ? t.getFarmLocation().getId() : null,
+                t.getFarmLocation() != null ? t.getFarmLocation().getName() : null,
+                t.getNotes(),
+                t.getTags().stream()
+                        .map(tag -> new TagResponse(tag.getId(), tag.getName(), tag.getColor()))
+                        .toList(),
+                t.getApprovedBy() != null ? t.getApprovedBy().getId() : null,
+                t.getApprovedAt(),
+                t.getCreatedAt(),
+                t.getUpdatedAt()
+        );
     }
 }

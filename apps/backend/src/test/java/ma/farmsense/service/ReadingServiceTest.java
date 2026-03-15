@@ -48,11 +48,7 @@ class ReadingServiceTest {
         Plant plant = Plant.builder().id(UUID.randomUUID()).build();
         Device device = Device.builder().deviceId(deviceId).plant(plant).build();
         
-        SensorReadingRequest req = SensorReadingRequest.builder()
-                .deviceId(deviceId)
-                .temperature(25.0)
-                .soilMoisture(60)
-                .build();
+        SensorReadingRequest req = new SensorReadingRequest(deviceId, null, 25.0, null, 60, null, null);
 
         when(deviceRepository.findByDeviceId(deviceId)).thenReturn(Optional.of(device));
 
@@ -80,7 +76,7 @@ class ReadingServiceTest {
         SensorReadingResponse res = readingService.latest(user, plantId);
 
         // Assert
-        assertEquals(55, res.getSoilMoisture());
+        assertEquals(55, res.soilMoisture());
     }
 
     @Test
@@ -107,7 +103,7 @@ class ReadingServiceTest {
         User user = User.builder().id(UUID.randomUUID()).build();
         UUID plantId = UUID.randomUUID();
         Plant plant = Plant.builder().id(plantId).user(user).build();
-        ManualReadingRequest req = ManualReadingRequest.builder().plantId(plantId).soilMoisture(45).build();
+        ManualReadingRequest req = new ManualReadingRequest(plantId, null, null, 45, null);
 
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(plant));
         when(readingRepository.save(any(SensorReading.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -116,7 +112,7 @@ class ReadingServiceTest {
         SensorReadingResponse res = readingService.addManual(user, req);
 
         // Assert
-        assertEquals(45, res.getSoilMoisture());
+        assertEquals(45, res.soilMoisture());
         verify(readingRepository).save(any(SensorReading.class));
     }
 }

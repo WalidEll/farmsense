@@ -1,44 +1,39 @@
 package ma.farmsense.dto.crop;
 
-import lombok.Builder;
-import lombok.Data;
 import ma.farmsense.entity.CropRequirement;
 
 import java.util.UUID;
 
-@Data
-@Builder
-public class CropRequirementResponse {
-
-    private UUID id;
-    private Integer soilMoistureMin;
-    private Integer soilMoistureMax;
-    private Double tempMin;
-    private Double tempMax;
-    private Integer lightMin;
-    private Integer lightMax;
-    private Double humidityMin;
-    private Double humidityMax;
-    private String soilType;
-    private Double phMin;
-    private Double phMax;
-    private String waterFrequency;
-
+public record CropRequirementResponse(
+        UUID id,
+        Integer soilMoistureMin,
+        Integer soilMoistureMax,
+        Double tempMin,
+        Double tempMax,
+        Integer lightMin,
+        Integer lightMax,
+        Double humidityMin,
+        Double humidityMax,
+        String soilType,
+        Double phMin,
+        Double phMax,
+        String waterFrequency
+) {
     public static CropRequirementResponse from(CropRequirement r) {
-        return CropRequirementResponse.builder()
-                .id(r.getId())
-                .soilMoistureMin(r.getSoilMoistureMin())
-                .soilMoistureMax(r.getSoilMoistureMax())
-                .tempMin(r.getTempMin())
-                .tempMax(r.getTempMax())
-                .lightMin(r.getLightMin())
-                .lightMax(r.getLightMax())
-                .humidityMin(r.getHumidityMin())
-                .humidityMax(r.getHumidityMax())
-                .soilType(r.getSoilType())
-                .phMin(r.getPhMin())
-                .phMax(r.getPhMax())
-                .waterFrequency(r.getWaterFrequency())
-                .build();
+        return new CropRequirementResponse(
+                r.getId(),
+                r.getSoilMoistureMin(),
+                r.getSoilMoistureMax(),
+                r.getTempMin(),
+                r.getTempMax(),
+                r.getLightMin(),
+                r.getLightMax(),
+                r.getHumidityMin(),
+                r.getHumidityMax(),
+                r.getSoilType(),
+                r.getPhMin(),
+                r.getPhMax(),
+                r.getWaterFrequency()
+        );
     }
 }

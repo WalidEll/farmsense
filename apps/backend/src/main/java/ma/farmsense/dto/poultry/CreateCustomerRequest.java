@@ -3,25 +3,11 @@ package ma.farmsense.dto.poultry;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
-public class CreateCustomerRequest {
-
-    @NotBlank
-    @Size(max = 255)
-    private String name;
-
-    @Size(max = 50)
-    private String phone;
-
-    @Email
-    @Size(max = 255)
-    private String email;
-
-    private String address;
-    private String notes;
-}
+public record CreateCustomerRequest(
+        @NotBlank @Size(max = 255) String name,
+        @Size(max = 50) String phone,
+        @Email @Size(max = 255) String email,
+        String address,
+        String notes
+) {}

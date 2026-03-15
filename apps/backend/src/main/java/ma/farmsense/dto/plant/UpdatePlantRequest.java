@@ -1,21 +1,13 @@
 package ma.farmsense.dto.plant;
 
-import lombok.*;
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class UpdatePlantRequest {
-
-    private String name;
-    private String species;
-    private String location;
-    private String photoUrl;
-
-    private Integer soilMin;
-    private Integer soilMax;
-    private Double tempMin;
-    private Double tempMax;
-    private Integer lightMin;
-}
+public record UpdatePlantRequest(
+        String name,
+        String species,
+        String location,
+        String photoUrl,
+        Integer soilMin,
+        Integer soilMax,
+        Double tempMin,
+        Double tempMax,
+        Integer lightMin
+) {}

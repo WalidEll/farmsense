@@ -38,11 +38,11 @@ public class CustomerService {
     public CustomerResponse create(User user, CreateCustomerRequest req) {
         Customer customer = Customer.builder()
                 .user(user)
-                .name(req.getName())
-                .phone(req.getPhone())
-                .email(req.getEmail())
-                .address(req.getAddress())
-                .notes(req.getNotes())
+                .name(req.name())
+                .phone(req.phone())
+                .email(req.email())
+                .address(req.address())
+                .notes(req.notes())
                 .build();
         return CustomerResponse.from(customerRepository.save(customer));
     }
@@ -50,11 +50,11 @@ public class CustomerService {
     @Transactional
     public CustomerResponse update(User user, UUID id, UpdateCustomerRequest req) {
         Customer customer = getOwned(user, id);
-        if (req.getName() != null) customer.setName(req.getName());
-        if (req.getPhone() != null) customer.setPhone(req.getPhone());
-        if (req.getEmail() != null) customer.setEmail(req.getEmail());
-        if (req.getAddress() != null) customer.setAddress(req.getAddress());
-        if (req.getNotes() != null) customer.setNotes(req.getNotes());
+        if (req.name() != null) customer.setName(req.name());
+        if (req.phone() != null) customer.setPhone(req.phone());
+        if (req.email() != null) customer.setEmail(req.email());
+        if (req.address() != null) customer.setAddress(req.address());
+        if (req.notes() != null) customer.setNotes(req.notes());
         return CustomerResponse.from(customerRepository.save(customer));
     }
 

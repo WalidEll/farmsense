@@ -60,8 +60,8 @@ public class TeamService {
     public TeamResponse create(User user, CreateTeamRequest req) {
         Team team = Team.builder()
                 .owner(user)
-                .name(req.getName())
-                .description(req.getDescription())
+                .name(req.name())
+                .description(req.description())
                 .build();
         
         Team saved = teamRepository.save(team);
@@ -83,8 +83,8 @@ public class TeamService {
     public TeamResponse update(User user, UUID id, UpdateTeamRequest req) {
         Team team = getOwnedTeam(user, id);
         
-        if (req.getName() != null) team.setName(req.getName());
-        if (req.getDescription() != null) team.setDescription(req.getDescription());
+        if (req.name() != null) team.setName(req.name());
+        if (req.description() != null) team.setDescription(req.description());
         
         return mapToResponse(teamRepository.save(team));
     }
@@ -110,8 +110,8 @@ public class TeamService {
     public TeamMemberResponse inviteMember(User user, UUID teamId, InviteMemberRequest req) {
         Team team = getOwnedTeam(user, teamId);
         
-        User invitee = userRepository.findByEmail(req.getEmail())
-                .orElseThrow(() -> AppException.notFound("User with email " + req.getEmail() + " not found"));
+        User invitee = userRepository.findByEmail(req.email())
+                .orElseThrow(() -> AppException.notFound("User with email " + req.email() + " not found"));
         
         if (teamMemberRepository.findByTeamAndUser(team, invitee).isPresent()) {
             throw AppException.conflict("User is already a member or has a pending invitation");
@@ -120,7 +120,7 @@ public class TeamService {
         TeamMember member = TeamMember.builder()
                 .team(team)
                 .user(invitee)
-                .role(req.getRole())
+                .role(req.role())
                 .status(MemberStatus.PENDING)
                 .invitedBy(user)
                 .invitedAt(Instant.now())
@@ -190,24 +190,28 @@ public class TeamService {
     }
 
     private TeamResponse mapToResponse(Team team) {
-        return TeamResponse.builder()
-                .id(team.getId())
-                .name(team.getName())
-                .description(team.getDescription())
-                .ownerName(team.getOwner().getFullName())
-                .createdAt(team.getCreatedAt())
-                .build();
+        return new TeamResponse(
+                team.getId(),
+                team.getOwner().getId(),
+                team.getOwner().getFullName(),
+                team.getName(),
+                team.getDescription(),
+                team.getCreatedAt(),
+                team.getUpdatedAt()
+        );
     }
 
     private TeamMemberResponse mapToMemberResponse(TeamMember tm) {
-        return TeamMemberResponse.builder()
-                .id(tm.getId())
-                .userId(tm.getUser().getId())
-                .userName(tm.getUser().getFullName())
-                .userEmail(tm.getUser().getEmail())
-                .role(tm.getRole())
-                .status(tm.getStatus())
-                .joinedAt(tm.getJoinedAt())
-                .build();
+        return new TeamMemberResponse(
+                tm.getId(),
+                tm.getUser().getId(),
+                tm.getUser().getFullName(),
+                tm.getUser().getEmail(),
+                tm.getRole(),
+                tm.getStatus(),
+                null,
+                null,
+                tm.getJoinedAt()
+        );
     }
 }

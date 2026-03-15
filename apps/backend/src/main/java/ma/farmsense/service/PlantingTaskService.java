@@ -45,13 +45,13 @@ public class PlantingTaskService {
             throw AppException.notFound("Task not found");
         }
 
-        task.setStatus(req.getStatus());
+        task.setStatus(req.status());
 
-        if (req.getStatus() == PlantingTaskStatus.DONE) {
+        if (req.status() == PlantingTaskStatus.DONE) {
             task.setCompletedAt(Instant.now());
         }
-        if (req.getStatus() == PlantingTaskStatus.SKIPPED && req.getSkipReason() != null) {
-            task.setSkipReason(req.getSkipReason());
+        if (req.status() == PlantingTaskStatus.SKIPPED && req.skipReason() != null) {
+            task.setSkipReason(req.skipReason());
         }
 
         return PlantingTaskResponse.from(plantingTaskRepository.save(task));

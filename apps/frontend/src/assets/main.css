@@ -1,6 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-dark: #1B4235;
+  --color-brand-light: #F9FAFB;
+  --color-status-optimal: #D1EAE0;
+  --color-status-warning: #FDF2D0;
+  --color-status-critical: #FAD5D5;
+  --color-status-optimal-dark: #21A366;
+  --color-status-warning-dark: #F2994A;
+  --color-status-critical-dark: #EB5757;
+  --color-green-700: #3D6B4F;
+}
 
 /* RTL support */
 [dir='rtl'] {

@@ -32,4 +32,7 @@ public interface AlertRepository extends JpaRepository<Alert, UUID> {
 
     /** Unacknowledged alerts */
     List<Alert> findByUserAndAckAtIsNullOrderByTriggeredAtDesc(User user);
+
+    /** Count unacknowledged alerts for badge */
+    long countByUserAndAckAtIsNull(User user);
 }

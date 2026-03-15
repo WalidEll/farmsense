@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.farmsense.dto.user.UpdateLocationRequest;
 import ma.farmsense.entity.User;
-import ma.farmsense.repository.UserRepository;
+import ma.farmsense.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,15 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @PutMapping("/location")
     public ResponseEntity<Void> updateLocation(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody UpdateLocationRequest req) {
-        user.setLatitude(req.getLatitude());
-        user.setLongitude(req.getLongitude());
-        userRepository.save(user);
+        userService.updateLocation(user, req);
         return ResponseEntity.noContent().build();
     }
 }

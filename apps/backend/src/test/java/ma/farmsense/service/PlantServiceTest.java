@@ -44,18 +44,14 @@ class PlantServiceTest {
 
         // Assert
         assertEquals(1, result.size());
-        assertEquals("Lily", result.get(0).getName());
+        assertEquals("Lily", result.get(0).name());
     }
 
     @Test
     void create_ShouldSavePlant_AndInitSchedule() {
         // Arrange
         User user = User.builder().id(UUID.randomUUID()).build();
-        CreatePlantRequest req = CreatePlantRequest.builder()
-                .name("Basil")
-                .species("Basil")
-                .soilMin(50)
-                .build();
+        CreatePlantRequest req = new CreatePlantRequest("Basil", "Basil", null, null, 50, null, null, null, null);
         
         Plant savedPlant = Plant.builder()
                 .id(UUID.randomUUID())
@@ -81,7 +77,7 @@ class PlantServiceTest {
         UUID plantId = UUID.randomUUID();
         Plant existing = Plant.builder().id(plantId).user(user).name("Old Name").build();
         
-        UpdatePlantRequest req = UpdatePlantRequest.builder().name("New Name").build();
+        UpdatePlantRequest req = new UpdatePlantRequest("New Name", null, null, null, null, null, null, null, null);
         
         when(plantRepository.findByIdAndUserAndDeletedAtIsNull(plantId, user)).thenReturn(Optional.of(existing));
         when(plantRepository.save(any(Plant.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -90,7 +86,7 @@ class PlantServiceTest {
         PlantResponse res = plantService.update(user, plantId, req);
 
         // Assert
-        assertEquals("New Name", res.getName());
+        assertEquals("New Name", res.name());
     }
 
     @Test

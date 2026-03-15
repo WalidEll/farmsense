@@ -93,8 +93,14 @@ public class DiagnoseService {
 
         private DiagnoseResponse toResponse(Diagnosis d) {
                 DiagnoseResponse res = DiagnoseResponse.from(d);
-                res.setShareUrl(String.format("%s/diagnose/share/%s", appBaseUrl, d.getId()));
-                return res;
+                String shareUrl = String.format("%s/diagnose/share/%s", appBaseUrl, d.getId());
+                return new DiagnoseResponse(
+                        res.id(), res.plantId(), res.plantName(),
+                        res.problemName(), res.severity(),
+                        res.treatmentFr(), res.treatmentAr(), res.treatmentEn(),
+                        res.prevention(), res.rawResponse(), res.photoUrl(),
+                        shareUrl, res.createdAt()
+                );
         }
 
         private String callClaude(String plantName, String species, String base64Image, String mediaType) {

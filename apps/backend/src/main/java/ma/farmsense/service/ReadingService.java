@@ -34,8 +34,8 @@ public class ReadingService {
 
     @Transactional
     public DeviceResponse ingest(String deviceKey, SensorReadingRequest req) {
-        Device device = deviceRepository.findByDeviceId(req.getDeviceId())
-                .orElseThrow(() -> AppException.notFound("Unknown device: " + req.getDeviceId()));
+        Device device = deviceRepository.findByDeviceId(req.deviceId())
+                .orElseThrow(() -> AppException.notFound("Unknown device: " + req.deviceId()));
 
         // Update heartbeat
         device.setLastSeenAt(Instant.now());
@@ -46,14 +46,14 @@ public class ReadingService {
             return DeviceResponse.from(device, offlineThresholdMinutes); // device not yet assigned — drop reading
 
         SensorReading reading = SensorReading.builder()
-                .deviceId(req.getDeviceId())
+                .deviceId(req.deviceId())
                 .plant(plant)
-                .temperature(req.getTemperature())
-                .humidity(req.getHumidity())
-                .soilMoisture(req.getSoilMoisture())
-                .lightLux(req.getLightLux())
+                .temperature(req.temperature())
+                .humidity(req.humidity())
+                .soilMoisture(req.soilMoisture())
+                .lightLux(req.lightLux())
                 .source(SensorReading.Source.SENSOR)
-                .recordedAt(req.getRecordedAt() != null ? req.getRecordedAt() : Instant.now())
+                .recordedAt(req.recordedAt() != null ? req.recordedAt() : Instant.now())
                 .build();
 
         readingRepository.save(reading);
@@ -77,15 +77,15 @@ public class ReadingService {
 
     @Transactional
     public SensorReadingResponse addManual(User user, ManualReadingRequest req) {
-        Plant plant = getOwnedPlant(user, req.getPlantId());
+        Plant plant = getOwnedPlant(user, req.plantId());
 
         SensorReading reading = SensorReading.builder()
                 .deviceId("MANUAL")
                 .plant(plant)
-                .temperature(req.getTemperature())
-                .humidity(req.getHumidity())
-                .soilMoisture(req.getSoilMoisture())
-                .lightLux(req.getLightLux())
+                .temperature(req.temperature())
+                .humidity(req.humidity())
+                .soilMoisture(req.soilMoisture())
+                .lightLux(req.lightLux())
                 .source(SensorReading.Source.MANUAL)
                 .build();
 

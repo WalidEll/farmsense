@@ -1,25 +1,18 @@
 package ma.farmsense.dto.alert;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Data;
 
-@Data
-public class AlertPreferenceRequest {
-
-    private boolean soilDryEnabled = true;
-    private boolean soilWetEnabled = true;
-    private boolean tempHighEnabled = true;
-    private boolean tempLowEnabled = true;
-    private boolean lightLowEnabled = true;
-    private boolean deviceOfflineEnabled = true;
-
-    @Min(0) @Max(23)
-    private Integer quietHoursStart;
-
-    @Min(0) @Max(23)
-    private Integer quietHoursEnd;
-
-    private boolean channelWhatsapp = true;
-    private boolean channelPush = true;
-}
+public record AlertPreferenceRequest(
+        @JsonProperty(defaultValue = "true") boolean soilDryEnabled,
+        @JsonProperty(defaultValue = "true") boolean soilWetEnabled,
+        @JsonProperty(defaultValue = "true") boolean tempHighEnabled,
+        @JsonProperty(defaultValue = "true") boolean tempLowEnabled,
+        @JsonProperty(defaultValue = "true") boolean lightLowEnabled,
+        @JsonProperty(defaultValue = "true") boolean deviceOfflineEnabled,
+        @Min(0) @Max(23) Integer quietHoursStart,
+        @Min(0) @Max(23) Integer quietHoursEnd,
+        @JsonProperty(defaultValue = "true") boolean channelWhatsapp,
+        @JsonProperty(defaultValue = "true") boolean channelPush
+) {}

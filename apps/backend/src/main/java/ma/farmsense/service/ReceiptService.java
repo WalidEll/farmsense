@@ -80,11 +80,11 @@ public class ReceiptService {
             // Trigger OCR processing asynchronously
             processOcrAsync(saved.getId());
 
-            return ReceiptUploadResponse.builder()
-                    .id(saved.getId())
-                    .ocrStatus(saved.getOcrStatus())
-                    .originalFilename(saved.getOriginalFilename())
-                    .build();
+            return new ReceiptUploadResponse(
+                    saved.getId(),
+                    saved.getOcrStatus(),
+                    saved.getOriginalFilename()
+            );
         } catch (IOException e) {
             log.error("Failed to store receipt: {}", e.getMessage());
             throw AppException.badRequest("Could not store receipt file");
@@ -187,22 +187,26 @@ public class ReceiptService {
             throw AppException.notFound("Receipt not found");
         }
 
-        CreateTransactionRequest createReq = CreateTransactionRequest.builder()
-                .type(req.getType())
-                .category(req.getCategory())
-                .subcategory(req.getSubcategory())
-                .amount(req.getAmount())
-                .transactionDate(req.getTransactionDate())
-                .description(req.getDescription())
-                .paymentMethod(req.getPaymentMethod())
-                .supplierId(req.getSupplierId())
-                .customerId(req.getCustomerId())
-                .receiptId(receipt.getId())
-                .flockId(req.getFlockId())
-                .cropPlanId(req.getCropPlanId())
-                .farmLocationId(req.getFarmLocationId())
-                .tagIds(req.getTagIds())
-                .build();
+        CreateTransactionRequest createReq = new CreateTransactionRequest(
+                req.type(),
+                req.category(),
+                req.subcategory(),
+                req.amount(),
+                null, // quantity
+                null, // unitPrice
+                req.transactionDate(),
+                req.description(),
+                req.paymentMethod(),
+                null, // referenceNumber
+                req.supplierId(),
+                req.customerId(),
+                receipt.getId(),
+                req.flockId(),
+                req.cropPlanId(),
+                req.farmLocationId(),
+                req.tagIds(),
+                null  // notes
+        );
 
         TransactionResponse response = transactionService.create(user, createReq);
         
@@ -230,22 +234,22 @@ public class ReceiptService {
     }
 
     private ReceiptResponse mapToResponse(Receipt r) {
-        return ReceiptResponse.builder()
-                .id(r.getId())
-                .originalFilename(r.getOriginalFilename())
-                .contentType(r.getContentType())
-                .fileSizeBytes(r.getFileSizeBytes())
-                .ocrVendor(r.getOcrVendor())
-                .ocrDate(r.getOcrDate())
-                .ocrAmount(r.getOcrAmount())
-                .ocrCategory(r.getOcrCategory())
-                .ocrLineItems(r.getOcrLineItems())
-                .ocrRawJson(r.getOcrRawJson())
-                .ocrConfidence(r.getOcrConfidence())
-                .ocrStatus(r.getOcrStatus())
-                .transactionId(r.getTransaction() != null ? r.getTransaction().getId() : null)
-                .createdAt(r.getCreatedAt())
-                .updatedAt(r.getUpdatedAt())
-                .build();
+        return new ReceiptResponse(
+                r.getId(),
+                r.getOriginalFilename(),
+                r.getContentType(),
+                r.getFileSizeBytes(),
+                r.getOcrVendor(),
+                r.getOcrDate(),
+                r.getOcrAmount(),
+                r.getOcrCategory(),
+                r.getOcrLineItems(),
+                r.getOcrRawJson(),
+                r.getOcrConfidence(),
+                r.getOcrStatus(),
+                r.getTransaction() != null ? r.getTransaction().getId() : null,
+                r.getCreatedAt(),
+                r.getUpdatedAt()
+        );
     }
 }

@@ -23,16 +23,16 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest req) {
-        if (userRepository.existsByEmail(req.getEmail())) {
+        if (userRepository.existsByEmail(req.email())) {
             throw AppException.conflict("Email already registered");
         }
 
         User user = User.builder()
-                .email(req.getEmail())
-                .passwordHash(passwordEncoder.encode(req.getPassword()))
-                .name(req.getName())
-                .phoneWa(req.getPhoneWa())
-                .lang(req.getLang() != null ? req.getLang() : User.Language.FR)
+                .email(req.email())
+                .passwordHash(passwordEncoder.encode(req.password()))
+                .name(req.name())
+                .phoneWa(req.phoneWa())
+                .lang(req.lang() != null ? req.lang() : User.Language.FR)
                 .build();
 
         userRepository.save(user);
@@ -41,10 +41,10 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest req) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
+                new UsernamePasswordAuthenticationToken(req.email(), req.password())
         );
 
-        User user = userRepository.findByEmail(req.getEmail())
+        User user = userRepository.findByEmail(req.email())
                 .orElseThrow(() -> AppException.unauthorized("User not found"));
 
         return buildResponse(user);
@@ -63,16 +63,16 @@ public class AuthService {
     }
 
     private AuthResponse buildResponse(User user) {
-        return AuthResponse.builder()
-                .accessToken(jwtService.generateAccessToken(user))
-                .refreshToken(jwtService.generateRefreshToken(user))
-                .userId(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .lang(user.getLang())
-                .phoneWa(user.getPhoneWa())
-                .latitude(user.getLatitude())
-                .longitude(user.getLongitude())
-                .build();
+        return new AuthResponse(
+                jwtService.generateAccessToken(user),
+                jwtService.generateRefreshToken(user),
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getLang(),
+                user.getPhoneWa(),
+                user.getLatitude(),
+                user.getLongitude()
+        );
     }
 }

@@ -78,26 +78,21 @@ public class CareService {
                 plant.getLastRepottedAt());
 
         // Dynamic watering adjustment: if soil moisture < soilMin → overdue
-        adjustWateringBySensor(plant, watering);
+        watering = adjustWateringBySensor(plant, watering);
 
         // Recent care history
         List<CareScheduleResponse.CareLogEntry> recentLog =
                 careLogRepository.findTop10ByPlantOrderByDoneAtDesc(plant)
                         .stream()
-                        .map(log -> CareScheduleResponse.CareLogEntry.builder()
-                                .id(log.getId())
-                                .taskType(log.getTaskType().name())
-                                .doneAt(log.getDoneAt())
-                                .notes(log.getNotes())
-                                .build())
+                        .map(log -> new CareScheduleResponse.CareLogEntry(
+                                log.getId(),
+                                log.getTaskType().name(),
+                                log.getDoneAt(),
+                                log.getNotes()
+                        ))
                         .toList();
 
-        return CareScheduleResponse.builder()
-                .watering(watering)
-                .fertilising(fertilising)
-                .repotting(repotting)
-                .recentLog(recentLog)
-                .build();
+        return new CareScheduleResponse(watering, fertilising, repotting, recentLog);
     }
 
     /**
@@ -133,42 +128,48 @@ public class CareService {
     private CareScheduleResponse.CareTask buildTask(int intervalDays, Instant lastDoneAt) {
         if (lastDoneAt == null) {
             // No history yet — treat as due now
-            return CareScheduleResponse.CareTask.builder()
-                    .intervalDays(intervalDays)
-                    .lastDoneAt(null)
-                    .nextDueAt(Instant.now())
-                    .daysRemaining(0)
-                    .overdue(true)
-                    .build();
+            return new CareScheduleResponse.CareTask(
+                    intervalDays,
+                    null,
+                    Instant.now(),
+                    0,
+                    true
+            );
         }
 
         Instant nextDue = lastDoneAt.plus(Duration.ofDays(intervalDays));
         long daysRemaining = Duration.between(Instant.now(), nextDue).toDays();
 
-        return CareScheduleResponse.CareTask.builder()
-                .intervalDays(intervalDays)
-                .lastDoneAt(lastDoneAt)
-                .nextDueAt(nextDue)
-                .daysRemaining((int) daysRemaining)
-                .overdue(daysRemaining < 0)
-                .build();
+        return new CareScheduleResponse.CareTask(
+                intervalDays,
+                lastDoneAt,
+                nextDue,
+                (int) daysRemaining,
+                daysRemaining < 0
+        );
     }
 
     /**
      * If the latest soil sensor reading is below the plant's soilMin
      * threshold, force the watering task to show as overdue/now.
      */
-    private void adjustWateringBySensor(Plant plant,
-                                         CareScheduleResponse.CareTask watering) {
-        sensorReadingRepository.findLatestByPlantId(plant.getId())
-                .ifPresent(reading -> {
-                    if (reading.getSoilMoisture() != null
-                            && reading.getSoilMoisture() < plant.getSoilMin()) {
-                        watering.setOverdue(true);
-                        watering.setDaysRemaining(0);
-                        watering.setNextDueAt(Instant.now());
-                    }
-                });
+    private CareScheduleResponse.CareTask adjustWateringBySensor(Plant plant,
+                                                                   CareScheduleResponse.CareTask watering) {
+        Optional<SensorReading> latestReading = sensorReadingRepository.findLatestByPlantId(plant.getId());
+        if (latestReading.isPresent()) {
+            SensorReading reading = latestReading.get();
+            if (reading.getSoilMoisture() != null
+                    && reading.getSoilMoisture() < plant.getSoilMin()) {
+                return new CareScheduleResponse.CareTask(
+                        watering.intervalDays(),
+                        watering.lastDoneAt(),
+                        Instant.now(),
+                        0,
+                        true
+                );
+            }
+        }
+        return watering;
     }
 
     private Intervals resolveDefaults(String species) {

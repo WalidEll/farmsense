@@ -1,27 +1,18 @@
 package ma.farmsense.dto.accounting;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreateLaborLogRequest {
-    private String workerName;
-    private String workerRole;
-    private BigDecimal hourlyRate;
-    private Double hoursWorked;
-    private LocalDate workDate;
-    private String activity;
-    private UUID flockId;
-    private UUID cropPlanId;
-    private UUID farmLocationId;
-    private String notes;
-}
+public record CreateLaborLogRequest(
+        String workerName,
+        String workerRole,
+        BigDecimal hourlyRate,
+        Double hoursWorked,
+        LocalDate workDate,
+        String activity,
+        UUID flockId,
+        UUID cropPlanId,
+        UUID farmLocationId,
+        String notes
+) {}

@@ -29,6 +29,6 @@ public class AuthController {
     /** US-003: Token refresh */
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest req) {
-        return ResponseEntity.ok(authService.refresh(req.getRefreshToken()));
+        return ResponseEntity.ok(authService.refresh(req.refreshToken()));
     }
 }

@@ -1,7 +1,5 @@
 package ma.farmsense.dto.crop;
 
-import lombok.Builder;
-import lombok.Data;
 import ma.farmsense.entity.Crop;
 import ma.farmsense.entity.CropCategory;
 import ma.farmsense.entity.CropDifficulty;
@@ -9,43 +7,40 @@ import ma.farmsense.entity.CropDifficulty;
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
-@Builder
-public class CropResponse {
-
-    private UUID id;
-    private String name;
-    private String nameAr;
-    private String nameEn;
-    private String scientificName;
-    private CropCategory category;
-    private String description;
-    private String descriptionAr;
-    private String descriptionEn;
-    private String imageUrl;
-    private String growingSeason;
-    private Integer daysToHarvest;
-    private CropDifficulty difficulty;
-    private Instant createdAt;
-    private Instant updatedAt;
-
+public record CropResponse(
+        UUID id,
+        String name,
+        String nameAr,
+        String nameEn,
+        String scientificName,
+        CropCategory category,
+        String description,
+        String descriptionAr,
+        String descriptionEn,
+        String imageUrl,
+        String growingSeason,
+        Integer daysToHarvest,
+        CropDifficulty difficulty,
+        Instant createdAt,
+        Instant updatedAt
+) {
     public static CropResponse from(Crop c) {
-        return CropResponse.builder()
-                .id(c.getId())
-                .name(c.getName())
-                .nameAr(c.getNameAr())
-                .nameEn(c.getNameEn())
-                .scientificName(c.getScientificName())
-                .category(c.getCategory())
-                .description(c.getDescription())
-                .descriptionAr(c.getDescriptionAr())
-                .descriptionEn(c.getDescriptionEn())
-                .imageUrl(c.getImageUrl())
-                .growingSeason(c.getGrowingSeason())
-                .daysToHarvest(c.getDaysToHarvest())
-                .difficulty(c.getDifficulty())
-                .createdAt(c.getCreatedAt())
-                .updatedAt(c.getUpdatedAt())
-                .build();
+        return new CropResponse(
+                c.getId(),
+                c.getName(),
+                c.getNameAr(),
+                c.getNameEn(),
+                c.getScientificName(),
+                c.getCategory(),
+                c.getDescription(),
+                c.getDescriptionAr(),
+                c.getDescriptionEn(),
+                c.getImageUrl(),
+                c.getGrowingSeason(),
+                c.getDaysToHarvest(),
+                c.getDifficulty(),
+                c.getCreatedAt(),
+                c.getUpdatedAt()
+        );
     }
 }

@@ -31,16 +31,16 @@ public class PlantService {
     public PlantResponse create(User user, CreatePlantRequest req) {
         Plant.PlantBuilder builder = Plant.builder()
                 .user(user)
-                .name(req.getName())
-                .species(req.getSpecies())
-                .location(req.getLocation())
-                .photoUrl(req.getPhotoUrl());
+                .name(req.name())
+                .species(req.species())
+                .location(req.location())
+                .photoUrl(req.photoUrl());
 
-        if (req.getSoilMin()  != null) builder.soilMin(req.getSoilMin());
-        if (req.getSoilMax()  != null) builder.soilMax(req.getSoilMax());
-        if (req.getTempMin()  != null) builder.tempMin(req.getTempMin());
-        if (req.getTempMax()  != null) builder.tempMax(req.getTempMax());
-        if (req.getLightMin() != null) builder.lightMin(req.getLightMin());
+        if (req.soilMin()  != null) builder.soilMin(req.soilMin());
+        if (req.soilMax()  != null) builder.soilMax(req.soilMax());
+        if (req.tempMin()  != null) builder.tempMin(req.tempMin());
+        if (req.tempMax()  != null) builder.tempMax(req.tempMax());
+        if (req.lightMin() != null) builder.lightMin(req.lightMin());
 
         Plant plant = plantRepository.save(builder.build());
         careService.initSchedule(plant);
@@ -51,15 +51,15 @@ public class PlantService {
     public PlantResponse update(User user, UUID id, UpdatePlantRequest req) {
         Plant plant = getOwned(user, id);
 
-        if (req.getName()     != null) plant.setName(req.getName());
-        if (req.getSpecies()  != null) plant.setSpecies(req.getSpecies());
-        if (req.getLocation() != null) plant.setLocation(req.getLocation());
-        if (req.getPhotoUrl() != null) plant.setPhotoUrl(req.getPhotoUrl());
-        if (req.getSoilMin()  != null) plant.setSoilMin(req.getSoilMin());
-        if (req.getSoilMax()  != null) plant.setSoilMax(req.getSoilMax());
-        if (req.getTempMin()  != null) plant.setTempMin(req.getTempMin());
-        if (req.getTempMax()  != null) plant.setTempMax(req.getTempMax());
-        if (req.getLightMin() != null) plant.setLightMin(req.getLightMin());
+        if (req.name()     != null) plant.setName(req.name());
+        if (req.species()  != null) plant.setSpecies(req.species());
+        if (req.location() != null) plant.setLocation(req.location());
+        if (req.photoUrl() != null) plant.setPhotoUrl(req.photoUrl());
+        if (req.soilMin()  != null) plant.setSoilMin(req.soilMin());
+        if (req.soilMax()  != null) plant.setSoilMax(req.soilMax());
+        if (req.tempMin()  != null) plant.setTempMin(req.tempMin());
+        if (req.tempMax()  != null) plant.setTempMax(req.tempMax());
+        if (req.lightMin() != null) plant.setLightMin(req.lightMin());
 
         return PlantResponse.from(plantRepository.save(plant));
     }

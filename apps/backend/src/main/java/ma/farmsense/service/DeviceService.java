@@ -44,13 +44,13 @@ public class DeviceService {
         user.setClaimTokenExpiresAt(expiry);
         userRepository.save(user);
 
-        return SetupCodeResponse.builder().code(code).expiresAt(expiry).build();
+        return new SetupCodeResponse(code, expiry);
     }
 
     /** US-032: ESP32 claims itself using device_id + claim_token */
     @Transactional
     public DeviceResponse claim(ClaimRequest req) {
-        User owner = userRepository.findByClaimToken(req.getClaimToken())
+        User owner = userRepository.findByClaimToken(req.claimToken())
                 .orElseThrow(() -> AppException.badRequest("Invalid or expired claim token"));
 
         if (owner.getClaimTokenExpiresAt() == null
@@ -58,8 +58,8 @@ public class DeviceService {
             throw AppException.badRequest("Claim token has expired");
         }
 
-        Device device = deviceRepository.findByDeviceId(req.getDeviceId())
-                .orElseGet(() -> Device.builder().deviceId(req.getDeviceId()).build());
+        Device device = deviceRepository.findByDeviceId(req.deviceId())
+                .orElseGet(() -> Device.builder().deviceId(req.deviceId()).build());
 
         device.setUser(owner);
         device.setClaimedAt(Instant.now());
@@ -99,9 +99,9 @@ public class DeviceService {
     @Transactional
     public DeviceResponse updateConfig(User user, UUID deviceId, DeviceConfigRequest req) {
         Device device = getOwned(user, deviceId);
-        device.setReadIntervalMs(req.getReadIntervalMs());
-        device.setSoilDryValue(req.getSoilDryValue());
-        device.setSoilWetValue(req.getSoilWetValue());
+        device.setReadIntervalMs(req.readIntervalMs());
+        device.setSoilDryValue(req.soilDryValue());
+        device.setSoilWetValue(req.soilWetValue());
         return DeviceResponse.from(deviceRepository.save(device), offlineThresholdMinutes);
     }
 

@@ -28,14 +28,14 @@ public class TagService {
 
     @Transactional
     public TagResponse create(User user, CreateTagRequest req) {
-        if (tagRepository.findByUserAndName(user, req.getName()).isPresent()) {
-            throw AppException.conflict("Tag with name '" + req.getName() + "' already exists");
+        if (tagRepository.findByUserAndName(user, req.name()).isPresent()) {
+            throw AppException.conflict("Tag with name '" + req.name() + "' already exists");
         }
 
         Tag tag = Tag.builder()
                 .user(user)
-                .name(req.getName())
-                .color(req.getColor())
+                .name(req.name())
+                .color(req.color())
                 .build();
 
         return mapToResponse(tagRepository.save(tag));
@@ -45,15 +45,15 @@ public class TagService {
     public TagResponse update(User user, UUID id, UpdateTagRequest req) {
         Tag tag = getOwnedTag(user, id);
 
-        if (req.getName() != null && !req.getName().equals(tag.getName())) {
-            if (tagRepository.findByUserAndName(user, req.getName()).isPresent()) {
-                throw AppException.conflict("Tag with name '" + req.getName() + "' already exists");
+        if (req.name() != null && !req.name().equals(tag.getName())) {
+            if (tagRepository.findByUserAndName(user, req.name()).isPresent()) {
+                throw AppException.conflict("Tag with name '" + req.name() + "' already exists");
             }
-            tag.setName(req.getName());
+            tag.setName(req.name());
         }
 
-        if (req.getColor() != null) {
-            tag.setColor(req.getColor());
+        if (req.color() != null) {
+            tag.setColor(req.color());
         }
 
         return mapToResponse(tagRepository.save(tag));
@@ -75,10 +75,6 @@ public class TagService {
     }
 
     private TagResponse mapToResponse(Tag tag) {
-        return TagResponse.builder()
-                .id(tag.getId())
-                .name(tag.getName())
-                .color(tag.getColor())
-                .build();
+        return new TagResponse(tag.getId(), tag.getName(), tag.getColor());
     }
 }

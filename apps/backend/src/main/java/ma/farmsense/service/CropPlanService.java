@@ -40,14 +40,14 @@ public class CropPlanService {
     public CropPlanResponse createPlan(User user, CreateCropPlanRequest req) {
         CropPlan plan = CropPlan.builder()
                 .user(user)
-                .name(req.getName())
-                .nameAr(req.getNameAr())
-                .nameEn(req.getNameEn())
-                .description(req.getDescription())
-                .descriptionAr(req.getDescriptionAr())
-                .descriptionEn(req.getDescriptionEn())
-                .season(req.getSeason())
-                .year(req.getYear())
+                .name(req.name())
+                .nameAr(req.nameAr())
+                .nameEn(req.nameEn())
+                .description(req.description())
+                .descriptionAr(req.descriptionAr())
+                .descriptionEn(req.descriptionEn())
+                .season(req.season())
+                .year(req.year())
                 .build();
         return CropPlanResponse.from(cropPlanRepository.save(plan), 0);
     }
@@ -55,15 +55,15 @@ public class CropPlanService {
     @Transactional
     public CropPlanResponse updatePlan(User user, UUID id, UpdateCropPlanRequest req) {
         CropPlan plan = getOwnedPlan(user, id);
-        if (req.getName() != null) plan.setName(req.getName());
-        if (req.getNameAr() != null) plan.setNameAr(req.getNameAr());
-        if (req.getNameEn() != null) plan.setNameEn(req.getNameEn());
-        if (req.getDescription() != null) plan.setDescription(req.getDescription());
-        if (req.getDescriptionAr() != null) plan.setDescriptionAr(req.getDescriptionAr());
-        if (req.getDescriptionEn() != null) plan.setDescriptionEn(req.getDescriptionEn());
-        if (req.getSeason() != null) plan.setSeason(req.getSeason());
-        if (req.getYear() != null) plan.setYear(req.getYear());
-        if (req.getStatus() != null) plan.setStatus(req.getStatus());
+        if (req.name() != null) plan.setName(req.name());
+        if (req.nameAr() != null) plan.setNameAr(req.nameAr());
+        if (req.nameEn() != null) plan.setNameEn(req.nameEn());
+        if (req.description() != null) plan.setDescription(req.description());
+        if (req.descriptionAr() != null) plan.setDescriptionAr(req.descriptionAr());
+        if (req.descriptionEn() != null) plan.setDescriptionEn(req.descriptionEn());
+        if (req.season() != null) plan.setSeason(req.season());
+        if (req.year() != null) plan.setYear(req.year());
+        if (req.status() != null) plan.setStatus(req.status());
         CropPlan saved = cropPlanRepository.save(plan);
         long count = plantingRepository.countByCropPlan(saved);
         return CropPlanResponse.from(saved, count);
@@ -92,16 +92,16 @@ public class CropPlanService {
     public LocationResponse createLocation(User user, CreateLocationRequest req) {
         FarmLocation location = FarmLocation.builder()
                 .user(user)
-                .name(req.getName())
-                .nameAr(req.getNameAr())
-                .nameEn(req.getNameEn())
-                .description(req.getDescription())
-                .descriptionAr(req.getDescriptionAr())
-                .descriptionEn(req.getDescriptionEn())
-                .locationType(req.getLocationType())
-                .areaM2(req.getAreaM2())
-                .latitude(req.getLatitude())
-                .longitude(req.getLongitude())
+                .name(req.name())
+                .nameAr(req.nameAr())
+                .nameEn(req.nameEn())
+                .description(req.description())
+                .descriptionAr(req.descriptionAr())
+                .descriptionEn(req.descriptionEn())
+                .locationType(req.locationType())
+                .areaM2(req.areaM2())
+                .latitude(req.latitude())
+                .longitude(req.longitude())
                 .build();
         return LocationResponse.from(farmLocationRepository.save(location));
     }
@@ -109,16 +109,16 @@ public class CropPlanService {
     @Transactional
     public LocationResponse updateLocation(User user, UUID id, UpdateLocationRequest req) {
         FarmLocation location = getOwnedLocation(user, id);
-        if (req.getName() != null) location.setName(req.getName());
-        if (req.getNameAr() != null) location.setNameAr(req.getNameAr());
-        if (req.getNameEn() != null) location.setNameEn(req.getNameEn());
-        if (req.getDescription() != null) location.setDescription(req.getDescription());
-        if (req.getDescriptionAr() != null) location.setDescriptionAr(req.getDescriptionAr());
-        if (req.getDescriptionEn() != null) location.setDescriptionEn(req.getDescriptionEn());
-        if (req.getLocationType() != null) location.setLocationType(req.getLocationType());
-        if (req.getAreaM2() != null) location.setAreaM2(req.getAreaM2());
-        if (req.getLatitude() != null) location.setLatitude(req.getLatitude());
-        if (req.getLongitude() != null) location.setLongitude(req.getLongitude());
+        if (req.name() != null) location.setName(req.name());
+        if (req.nameAr() != null) location.setNameAr(req.nameAr());
+        if (req.nameEn() != null) location.setNameEn(req.nameEn());
+        if (req.description() != null) location.setDescription(req.description());
+        if (req.descriptionAr() != null) location.setDescriptionAr(req.descriptionAr());
+        if (req.descriptionEn() != null) location.setDescriptionEn(req.descriptionEn());
+        if (req.locationType() != null) location.setLocationType(req.locationType());
+        if (req.areaM2() != null) location.setAreaM2(req.areaM2());
+        if (req.latitude() != null) location.setLatitude(req.latitude());
+        if (req.longitude() != null) location.setLongitude(req.longitude());
         return LocationResponse.from(farmLocationRepository.save(location));
     }
 
@@ -145,28 +145,28 @@ public class CropPlanService {
     @Transactional
     public PlantingResponse createPlanting(User user, UUID planId, CreatePlantingRequest req) {
         CropPlan plan = getOwnedPlan(user, planId);
-        Crop crop = cropRepository.findById(req.getCropId())
+        Crop crop = cropRepository.findById(req.cropId())
                 .orElseThrow(() -> AppException.notFound("Crop not found"));
 
         FarmLocation location = null;
-        if (req.getFarmLocationId() != null) {
-            location = getOwnedLocation(user, req.getFarmLocationId());
+        if (req.farmLocationId() != null) {
+            location = getOwnedLocation(user, req.farmLocationId());
         }
 
-        LocalDate plannedHarvest = req.getPlannedHarvestDate();
-        if (plannedHarvest == null && req.getPlannedSowDate() != null && crop.getDaysToHarvest() != null) {
-            plannedHarvest = req.getPlannedSowDate().plusDays(crop.getDaysToHarvest());
+        LocalDate plannedHarvest = req.plannedHarvestDate();
+        if (plannedHarvest == null && req.plannedSowDate() != null && crop.getDaysToHarvest() != null) {
+            plannedHarvest = req.plannedSowDate().plusDays(crop.getDaysToHarvest());
         }
 
         Planting planting = Planting.builder()
                 .cropPlan(plan)
                 .crop(crop)
                 .farmLocation(location)
-                .quantity(req.getQuantity())
-                .areaM2(req.getAreaM2())
-                .notes(req.getNotes())
-                .plannedSowDate(req.getPlannedSowDate())
-                .plannedTransplantDate(req.getPlannedTransplantDate())
+                .quantity(req.quantity())
+                .areaM2(req.areaM2())
+                .notes(req.notes())
+                .plannedSowDate(req.plannedSowDate())
+                .plannedTransplantDate(req.plannedTransplantDate())
                 .plannedHarvestDate(plannedHarvest)
                 .build();
         return PlantingResponse.from(plantingRepository.save(planting));
@@ -176,22 +176,22 @@ public class CropPlanService {
     public PlantingResponse updatePlanting(User user, UUID planId, UUID plantingId, UpdatePlantingRequest req) {
         Planting planting = getOwnedPlanting(user, planId, plantingId);
 
-        if (req.getFarmLocationId() != null) {
-            FarmLocation location = getOwnedLocation(user, req.getFarmLocationId());
+        if (req.farmLocationId() != null) {
+            FarmLocation location = getOwnedLocation(user, req.farmLocationId());
             planting.setFarmLocation(location);
         }
-        if (req.getQuantity() != null) planting.setQuantity(req.getQuantity());
-        if (req.getAreaM2() != null) planting.setAreaM2(req.getAreaM2());
-        if (req.getNotes() != null) planting.setNotes(req.getNotes());
-        if (req.getPlannedSowDate() != null) planting.setPlannedSowDate(req.getPlannedSowDate());
-        if (req.getPlannedTransplantDate() != null) planting.setPlannedTransplantDate(req.getPlannedTransplantDate());
-        if (req.getPlannedHarvestDate() != null) planting.setPlannedHarvestDate(req.getPlannedHarvestDate());
-        if (req.getFailureReason() != null) planting.setFailureReason(req.getFailureReason());
+        if (req.quantity() != null) planting.setQuantity(req.quantity());
+        if (req.areaM2() != null) planting.setAreaM2(req.areaM2());
+        if (req.notes() != null) planting.setNotes(req.notes());
+        if (req.plannedSowDate() != null) planting.setPlannedSowDate(req.plannedSowDate());
+        if (req.plannedTransplantDate() != null) planting.setPlannedTransplantDate(req.plannedTransplantDate());
+        if (req.plannedHarvestDate() != null) planting.setPlannedHarvestDate(req.plannedHarvestDate());
+        if (req.failureReason() != null) planting.setFailureReason(req.failureReason());
 
         // Record actual dates on status changes
-        if (req.getStatus() != null) {
-            planting.setStatus(req.getStatus());
-            switch (req.getStatus()) {
+        if (req.status() != null) {
+            planting.setStatus(req.status());
+            switch (req.status()) {
                 case SOWN -> planting.setActualSowDate(LocalDate.now());
                 case TRANSPLANTED -> planting.setActualTransplantDate(LocalDate.now());
                 case HARVESTING, COMPLETED -> planting.setActualHarvestDate(LocalDate.now());
@@ -213,10 +213,10 @@ public class CropPlanService {
     @Transactional
     public PlantingResponse setYield(User user, UUID planId, UUID plantingId, PlantingYieldRequest req) {
         Planting planting = getOwnedPlanting(user, planId, plantingId);
-        planting.setYieldAmount(req.getYieldAmount());
-        planting.setYieldUnit(req.getYieldUnit());
-        if (req.getQualityRating() != null) planting.setQualityRating(req.getQualityRating());
-        if (req.getHarvestNotes() != null) planting.setHarvestNotes(req.getHarvestNotes());
+        planting.setYieldAmount(req.yieldAmount());
+        planting.setYieldUnit(req.yieldUnit());
+        if (req.qualityRating() != null) planting.setQualityRating(req.qualityRating());
+        if (req.harvestNotes() != null) planting.setHarvestNotes(req.harvestNotes());
         return PlantingResponse.from(plantingRepository.save(planting));
     }
 
@@ -227,7 +227,7 @@ public class CropPlanService {
         Planting planting = getOwnedPlanting(user, planId, plantingId);
         PlantingNote note = PlantingNote.builder()
                 .planting(planting)
-                .content(req.getContent())
+                .content(req.content())
                 .build();
         return PlantingNoteResponse.from(plantingNoteRepository.save(note));
     }

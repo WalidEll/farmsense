@@ -49,8 +49,8 @@ class DeviceServiceTest {
         SetupCodeResponse res = deviceService.generateSetupCode(user);
 
         // Assert
-        assertNotNull(res.getCode());
-        assertEquals(user.getClaimToken(), res.getCode());
+        assertNotNull(res.code());
+        assertEquals(user.getClaimToken(), res.code());
         verify(userRepository).save(user);
     }
 
@@ -66,10 +66,7 @@ class DeviceServiceTest {
                 .claimTokenExpiresAt(Instant.now().plusSeconds(600))
                 .build();
         
-        ClaimRequest req = ClaimRequest.builder()
-                .deviceId(deviceId)
-                .claimToken(token)
-                .build();
+        ClaimRequest req = new ClaimRequest(deviceId, token);
         when(userRepository.findByClaimToken(token)).thenReturn(Optional.of(user));
         when(deviceRepository.findByDeviceId(deviceId)).thenReturn(Optional.empty());
         when(deviceRepository.save(any(Device.class))).thenAnswer(i -> i.getArguments()[0]);

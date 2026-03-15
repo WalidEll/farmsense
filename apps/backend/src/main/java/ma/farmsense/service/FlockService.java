@@ -41,23 +41,23 @@ public class FlockService {
     @Transactional
     public FlockResponse create(User user, CreateFlockRequest req) {
         Supplier supplier = null;
-        if (req.getSupplierId() != null) {
-            supplier = supplierService.getOwned(user, req.getSupplierId());
+        if (req.supplierId() != null) {
+            supplier = supplierService.getOwned(user, req.supplierId());
         }
 
         Flock flock = Flock.builder()
                 .user(user)
                 .supplier(supplier)
-                .name(req.getName())
-                .nameAr(req.getNameAr())
-                .nameEn(req.getNameEn())
-                .breed(req.getBreed())
-                .birdCount(req.getBirdCount())
-                .currentBirdCount(req.getBirdCount()) // auto-set to birdCount
-                .purpose(req.getPurpose())
-                .startDate(req.getStartDate())
-                .source(req.getSource())
-                .notes(req.getNotes())
+                .name(req.name())
+                .nameAr(req.nameAr())
+                .nameEn(req.nameEn())
+                .breed(req.breed())
+                .birdCount(req.birdCount())
+                .currentBirdCount(req.birdCount()) // auto-set to birdCount
+                .purpose(req.purpose())
+                .startDate(req.startDate())
+                .source(req.source())
+                .notes(req.notes())
                 .build();
         return FlockResponse.from(flockRepository.save(flock));
     }
@@ -66,21 +66,21 @@ public class FlockService {
     public FlockResponse update(User user, UUID id, UpdateFlockRequest req) {
         Flock flock = getOwned(user, id);
 
-        if (req.getSupplierId() != null) {
-            Supplier supplier = supplierService.getOwned(user, req.getSupplierId());
+        if (req.supplierId() != null) {
+            Supplier supplier = supplierService.getOwned(user, req.supplierId());
             flock.setSupplier(supplier);
         }
 
-        if (req.getName() != null) flock.setName(req.getName());
-        if (req.getNameAr() != null) flock.setNameAr(req.getNameAr());
-        if (req.getNameEn() != null) flock.setNameEn(req.getNameEn());
-        if (req.getBreed() != null) flock.setBreed(req.getBreed());
-        if (req.getBirdCount() != null) flock.setBirdCount(req.getBirdCount());
-        if (req.getPurpose() != null) flock.setPurpose(req.getPurpose());
-        if (req.getStatus() != null) flock.setStatus(req.getStatus());
-        if (req.getStartDate() != null) flock.setStartDate(req.getStartDate());
-        if (req.getSource() != null) flock.setSource(req.getSource());
-        if (req.getNotes() != null) flock.setNotes(req.getNotes());
+        if (req.name() != null) flock.setName(req.name());
+        if (req.nameAr() != null) flock.setNameAr(req.nameAr());
+        if (req.nameEn() != null) flock.setNameEn(req.nameEn());
+        if (req.breed() != null) flock.setBreed(req.breed());
+        if (req.birdCount() != null) flock.setBirdCount(req.birdCount());
+        if (req.purpose() != null) flock.setPurpose(req.purpose());
+        if (req.status() != null) flock.setStatus(req.status());
+        if (req.startDate() != null) flock.setStartDate(req.startDate());
+        if (req.source() != null) flock.setSource(req.source());
+        if (req.notes() != null) flock.setNotes(req.notes());
 
         return FlockResponse.from(flockRepository.save(flock));
     }

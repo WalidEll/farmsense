@@ -1,23 +1,14 @@
 package ma.farmsense.dto.team;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class TeamResponse {
-    private UUID id;
-    private UUID ownerId;
-    private String ownerName;
-    private String name;
-    private String description;
-    private Instant createdAt;
-    private Instant updatedAt;
-}
+public record TeamResponse(
+        UUID id,
+        UUID ownerId,
+        String ownerName,
+        String name,
+        String description,
+        Instant createdAt,
+        Instant updatedAt
+) {}

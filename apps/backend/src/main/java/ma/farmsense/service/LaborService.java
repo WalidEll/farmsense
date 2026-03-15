@@ -35,39 +35,39 @@ public class LaborService {
 
     @Transactional
     public LaborLogResponse create(User user, CreateLaborLogRequest req) {
-        BigDecimal totalAmount = req.getHourlyRate().multiply(BigDecimal.valueOf(req.getHoursWorked()));
-        
+        BigDecimal totalAmount = req.hourlyRate().multiply(BigDecimal.valueOf(req.hoursWorked()));
+
         // Create auto-synced transaction
         Transaction transaction = Transaction.builder()
                 .user(user)
                 .type(TransactionType.EXPENSE)
                 .category("Labor")
-                .subcategory(req.getWorkerRole())
+                .subcategory(req.workerRole())
                 .amount(totalAmount)
-                .quantity(req.getHoursWorked())
-                .unitPrice(req.getHourlyRate())
-                .transactionDate(req.getWorkDate())
-                .description("Labor: " + req.getWorkerName() + " - " + req.getActivity())
+                .quantity(req.hoursWorked())
+                .unitPrice(req.hourlyRate())
+                .transactionDate(req.workDate())
+                .description("Labor: " + req.workerName() + " - " + req.activity())
                 .approvalStatus(ApprovalStatus.APPROVED)
-                .notes(req.getNotes())
+                .notes(req.notes())
                 .build();
-        
-        updateTransactionRelations(transaction, req.getFlockId(), req.getCropPlanId(), req.getFarmLocationId());
+
+        updateTransactionRelations(transaction, req.flockId(), req.cropPlanId(), req.farmLocationId());
         Transaction savedTransaction = transactionRepository.save(transaction);
 
         LaborLog laborLog = LaborLog.builder()
                 .user(user)
-                .workerName(req.getWorkerName())
-                .workerRole(req.getWorkerRole())
-                .hourlyRate(req.getHourlyRate())
-                .hoursWorked(req.getHoursWorked())
-                .workDate(req.getWorkDate())
-                .activity(req.getActivity())
+                .workerName(req.workerName())
+                .workerRole(req.workerRole())
+                .hourlyRate(req.hourlyRate())
+                .hoursWorked(req.hoursWorked())
+                .workDate(req.workDate())
+                .activity(req.activity())
                 .transaction(savedTransaction)
-                .notes(req.getNotes())
+                .notes(req.notes())
                 .build();
-        
-        updateLaborRelations(laborLog, req.getFlockId(), req.getCropPlanId(), req.getFarmLocationId());
+
+        updateLaborRelations(laborLog, req.flockId(), req.cropPlanId(), req.farmLocationId());
         
         return mapToResponse(laborLogRepository.save(laborLog));
     }
@@ -76,15 +76,15 @@ public class LaborService {
     public LaborLogResponse update(User user, UUID id, UpdateLaborLogRequest req) {
         LaborLog laborLog = getOwned(user, id);
 
-        if (req.getWorkerName() != null) laborLog.setWorkerName(req.getWorkerName());
-        if (req.getWorkerRole() != null) laborLog.setWorkerRole(req.getWorkerRole());
-        if (req.getHourlyRate() != null) laborLog.setHourlyRate(req.getHourlyRate());
-        if (req.getHoursWorked() != null) laborLog.setHoursWorked(req.getHoursWorked());
-        if (req.getWorkDate() != null) laborLog.setWorkDate(req.getWorkDate());
-        if (req.getActivity() != null) laborLog.setActivity(req.getActivity());
-        if (req.getNotes() != null) laborLog.setNotes(req.getNotes());
+        if (req.workerName() != null) laborLog.setWorkerName(req.workerName());
+        if (req.workerRole() != null) laborLog.setWorkerRole(req.workerRole());
+        if (req.hourlyRate() != null) laborLog.setHourlyRate(req.hourlyRate());
+        if (req.hoursWorked() != null) laborLog.setHoursWorked(req.hoursWorked());
+        if (req.workDate() != null) laborLog.setWorkDate(req.workDate());
+        if (req.activity() != null) laborLog.setActivity(req.activity());
+        if (req.notes() != null) laborLog.setNotes(req.notes());
 
-        updateLaborRelations(laborLog, req.getFlockId(), req.getCropPlanId(), req.getFarmLocationId());
+        updateLaborRelations(laborLog, req.flockId(), req.cropPlanId(), req.farmLocationId());
 
         // Update auto-synced transaction
         Transaction transaction = laborLog.getTransaction();
@@ -98,7 +98,7 @@ public class LaborService {
             transaction.setDescription("Labor: " + laborLog.getWorkerName() + " - " + laborLog.getActivity());
             transaction.setNotes(laborLog.getNotes());
             
-            updateTransactionRelations(transaction, req.getFlockId(), req.getCropPlanId(), req.getFarmLocationId());
+            updateTransactionRelations(transaction, req.flockId(), req.cropPlanId(), req.farmLocationId());
             transactionRepository.save(transaction);
         }
 
@@ -167,24 +167,24 @@ public class LaborService {
     }
 
     private LaborLogResponse mapToResponse(LaborLog l) {
-        return LaborLogResponse.builder()
-                .id(l.getId())
-                .workerName(l.getWorkerName())
-                .workerRole(l.getWorkerRole())
-                .hourlyRate(l.getHourlyRate())
-                .hoursWorked(l.getHoursWorked())
-                .workDate(l.getWorkDate())
-                .activity(l.getActivity())
-                .transactionId(l.getTransaction() != null ? l.getTransaction().getId() : null)
-                .flockId(l.getFlock() != null ? l.getFlock().getId() : null)
-                .flockName(l.getFlock() != null ? l.getFlock().getName() : null)
-                .cropPlanId(l.getCropPlan() != null ? l.getCropPlan().getId() : null)
-                .cropPlanName(l.getCropPlan() != null ? l.getCropPlan().getName() : null)
-                .farmLocationId(l.getFarmLocation() != null ? l.getFarmLocation().getId() : null)
-                .farmLocationName(l.getFarmLocation() != null ? l.getFarmLocation().getName() : null)
-                .notes(l.getNotes())
-                .createdAt(l.getCreatedAt())
-                .updatedAt(l.getUpdatedAt())
-                .build();
+        return new LaborLogResponse(
+                l.getId(),
+                l.getWorkerName(),
+                l.getWorkerRole(),
+                l.getHourlyRate(),
+                l.getHoursWorked(),
+                l.getWorkDate(),
+                l.getActivity(),
+                l.getTransaction() != null ? l.getTransaction().getId() : null,
+                l.getFlock() != null ? l.getFlock().getId() : null,
+                l.getFlock() != null ? l.getFlock().getName() : null,
+                l.getCropPlan() != null ? l.getCropPlan().getId() : null,
+                l.getCropPlan() != null ? l.getCropPlan().getName() : null,
+                l.getFarmLocation() != null ? l.getFarmLocation().getId() : null,
+                l.getFarmLocation() != null ? l.getFarmLocation().getName() : null,
+                l.getNotes(),
+                l.getCreatedAt(),
+                l.getUpdatedAt()
+        );
     }
 }

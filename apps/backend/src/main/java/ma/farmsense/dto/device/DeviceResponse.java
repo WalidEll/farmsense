@@ -1,41 +1,36 @@
 package ma.farmsense.dto.device;
 
-import lombok.Builder;
-import lombok.Data;
 import ma.farmsense.entity.Device;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
-@Builder
-public class DeviceResponse {
-
-    private UUID id;
-    private String deviceId;
-    private String label;
-    private UUID plantId;
-    private String plantName;
-    private boolean online;
-    private Instant lastSeenAt;
-    private Instant claimedAt;
-    private Integer readIntervalMs;
-    private Integer soilDryValue;
-    private Integer soilWetValue;
-
+public record DeviceResponse(
+        UUID id,
+        String deviceId,
+        String label,
+        UUID plantId,
+        String plantName,
+        boolean online,
+        Instant lastSeenAt,
+        Instant claimedAt,
+        Integer readIntervalMs,
+        Integer soilDryValue,
+        Integer soilWetValue
+) {
     public static DeviceResponse from(Device d, int offlineThresholdMinutes) {
-        return DeviceResponse.builder()
-                .id(d.getId())
-                .deviceId(d.getDeviceId())
-                .label(d.getLabel())
-                .plantId(d.getPlant() != null ? d.getPlant().getId() : null)
-                .plantName(d.getPlant() != null ? d.getPlant().getName() : null)
-                .online(d.isOnline(offlineThresholdMinutes))
-                .lastSeenAt(d.getLastSeenAt())
-                .claimedAt(d.getClaimedAt())
-                .readIntervalMs(d.getReadIntervalMs())
-                .soilDryValue(d.getSoilDryValue())
-                .soilWetValue(d.getSoilWetValue())
-                .build();
+        return new DeviceResponse(
+                d.getId(),
+                d.getDeviceId(),
+                d.getLabel(),
+                d.getPlant() != null ? d.getPlant().getId() : null,
+                d.getPlant() != null ? d.getPlant().getName() : null,
+                d.isOnline(offlineThresholdMinutes),
+                d.getLastSeenAt(),
+                d.getClaimedAt(),
+                d.getReadIntervalMs(),
+                d.getSoilDryValue(),
+                d.getSoilWetValue()
+        );
     }
 }

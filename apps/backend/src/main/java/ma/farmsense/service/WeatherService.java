@@ -76,26 +76,26 @@ public class WeatherService {
         List<WeatherResponse.DailyForecast> forecasts = new ArrayList<>();
         for (int i = 0; i < dates.size(); i++) {
             int code = dailyCodes.get(i).intValue();
-            forecasts.add(WeatherResponse.DailyForecast.builder()
-                    .date(dates.get(i))
-                    .tempMax(tempMaxList.get(i).doubleValue())
-                    .tempMin(tempMinList.get(i).doubleValue())
-                    .weatherCode(code)
-                    .weatherDescription(wmoDescription(code, lang))
-                    .weatherIcon(wmoIcon(code))
-                    .build());
+            forecasts.add(new WeatherResponse.DailyForecast(
+                    dates.get(i),
+                    tempMaxList.get(i).doubleValue(),
+                    tempMinList.get(i).doubleValue(),
+                    code,
+                    wmoDescription(code, lang),
+                    wmoIcon(code)
+            ));
         }
 
-        return WeatherResponse.builder()
-                .temperature(temperature)
-                .humidity(humidity)
-                .windSpeed(windSpeed)
-                .weatherCode(weatherCode)
-                .precipitation(precipitation)
-                .weatherDescription(wmoDescription(weatherCode, lang))
-                .weatherIcon(wmoIcon(weatherCode))
-                .daily(forecasts)
-                .build();
+        return new WeatherResponse(
+                temperature,
+                humidity,
+                windSpeed,
+                weatherCode,
+                precipitation,
+                wmoDescription(weatherCode, lang),
+                wmoIcon(weatherCode),
+                forecasts
+        );
     }
 
     // ── WMO Weather Interpretation Codes → emoji ─────────────────

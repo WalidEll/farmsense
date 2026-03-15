@@ -38,12 +38,12 @@ public class SupplierService {
     public SupplierResponse create(User user, CreateSupplierRequest req) {
         Supplier supplier = Supplier.builder()
                 .user(user)
-                .name(req.getName())
-                .phone(req.getPhone())
-                .email(req.getEmail())
-                .address(req.getAddress())
-                .productsSupplied(req.getProductsSupplied())
-                .notes(req.getNotes())
+                .name(req.name())
+                .phone(req.phone())
+                .email(req.email())
+                .address(req.address())
+                .productsSupplied(req.productsSupplied())
+                .notes(req.notes())
                 .build();
         return SupplierResponse.from(supplierRepository.save(supplier));
     }
@@ -51,12 +51,12 @@ public class SupplierService {
     @Transactional
     public SupplierResponse update(User user, UUID id, UpdateSupplierRequest req) {
         Supplier supplier = getOwned(user, id);
-        if (req.getName() != null) supplier.setName(req.getName());
-        if (req.getPhone() != null) supplier.setPhone(req.getPhone());
-        if (req.getEmail() != null) supplier.setEmail(req.getEmail());
-        if (req.getAddress() != null) supplier.setAddress(req.getAddress());
-        if (req.getProductsSupplied() != null) supplier.setProductsSupplied(req.getProductsSupplied());
-        if (req.getNotes() != null) supplier.setNotes(req.getNotes());
+        if (req.name() != null) supplier.setName(req.name());
+        if (req.phone() != null) supplier.setPhone(req.phone());
+        if (req.email() != null) supplier.setEmail(req.email());
+        if (req.address() != null) supplier.setAddress(req.address());
+        if (req.productsSupplied() != null) supplier.setProductsSupplied(req.productsSupplied());
+        if (req.notes() != null) supplier.setNotes(req.notes());
         return SupplierResponse.from(supplierRepository.save(supplier));
     }
 

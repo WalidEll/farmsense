@@ -2,6 +2,10 @@ spring:
   application:
     name: farmsense-backend
 
+  threads:
+    virtual:
+      enabled: true
+
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/farmsense}
     username: ${DB_USER:farmsense}

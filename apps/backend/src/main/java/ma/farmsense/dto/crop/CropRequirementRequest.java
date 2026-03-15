@@ -1,20 +1,16 @@
 package ma.farmsense.dto.crop;
 
-import lombok.Data;
-
-@Data
-public class CropRequirementRequest {
-
-    private Integer soilMoistureMin;
-    private Integer soilMoistureMax;
-    private Double tempMin;
-    private Double tempMax;
-    private Integer lightMin;
-    private Integer lightMax;
-    private Double humidityMin;
-    private Double humidityMax;
-    private String soilType;
-    private Double phMin;
-    private Double phMax;
-    private String waterFrequency;
-}
+public record CropRequirementRequest(
+        Integer soilMoistureMin,
+        Integer soilMoistureMax,
+        Double tempMin,
+        Double tempMax,
+        Integer lightMin,
+        Integer lightMax,
+        Double humidityMin,
+        Double humidityMax,
+        String soilType,
+        Double phMin,
+        Double phMax,
+        String waterFrequency
+) {}

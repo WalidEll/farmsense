@@ -59,8 +59,8 @@ class CareServiceTest {
         var schedule = careService.getSchedule(user, plantId);
 
         // Assert
-        assertTrue(schedule.getWatering().isOverdue(), "Watering should be overdue because soil is dry");
-        assertEquals(0, schedule.getWatering().getDaysRemaining());
+        assertTrue(schedule.watering().overdue(), "Watering should be overdue because soil is dry");
+        assertEquals(0, schedule.watering().daysRemaining());
     }
 
     @Test
@@ -86,6 +86,6 @@ class CareServiceTest {
 
         var schedule = careService.getSchedule(user, plantId);
 
-        assertFalse(schedule.getWatering().isOverdue(), "Watering should not be overdue when soil is wet");
+        assertFalse(schedule.watering().overdue(), "Watering should not be overdue when soil is wet");
     }
 }

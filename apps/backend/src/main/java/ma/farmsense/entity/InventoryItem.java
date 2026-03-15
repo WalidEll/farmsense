@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -126,14 +127,17 @@ public class InventoryItem {
      * Common units of measure for inventory items
      */
     public enum UnitOfMeasure {
-        PCS("pcs"),      // Pieces/units - individual countable items
-        KG("kg"),        // Kilograms - weight-based items
-        LITERS("liters"), // Liters - liquid items
-        BOXES("boxes"),  // Boxes - packaged items
-        PACKS("packs"),  // Packs - multi-pack items
-        LBS("lbs"),      // Pounds
-        DOZENS("dozens") // Dozens (for eggs, chicks)
+        PCS("pcs"),
+        KG("kg"),
+        LITERS("liters"),
+        BOXES("boxes"),
+        PACKS("packs"),
+        LBS("lbs"),
+        DOZENS("dozens");
 
+        private final String label;
+        UnitOfMeasure(String label) { this.label = label; }
+        public String getLabel() { return label; }
     }
 
 }

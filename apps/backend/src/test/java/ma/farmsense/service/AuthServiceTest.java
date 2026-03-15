@@ -42,15 +42,10 @@ class AuthServiceTest {
     @Test
     void register_ShouldCreateUser_WhenEmailIsNew() {
         // Arrange
-        RegisterRequest req = RegisterRequest.builder()
-                .email("test@example.com")
-                .password("password123")
-                .name("Test User")
-                .lang(User.Language.EN)
-                .build();
+        RegisterRequest req = new RegisterRequest("test@example.com", "password123", "Test User", null, User.Language.EN);
 
-        when(userRepository.existsByEmail(req.getEmail())).thenReturn(false);
-        when(passwordEncoder.encode(req.getPassword())).thenReturn("hashed_password");
+        when(userRepository.existsByEmail(req.email())).thenReturn(false);
+        when(passwordEncoder.encode(req.password())).thenReturn("hashed_password");
         when(jwtService.generateAccessToken(any(User.class))).thenReturn("access_token");
         when(jwtService.generateRefreshToken(any(User.class))).thenReturn("refresh_token");
 
@@ -59,19 +54,17 @@ class AuthServiceTest {
 
         // Assert
         assertNotNull(res);
-        assertEquals("test@example.com", res.getEmail());
-        assertEquals("access_token", res.getAccessToken());
+        assertEquals("test@example.com", res.email());
+        assertEquals("access_token", res.accessToken());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void register_ShouldThrowException_WhenEmailAlreadyExists() {
         // Arrange
-        RegisterRequest req = RegisterRequest.builder()
-                .email("existing@example.com")
-                .build();
+        RegisterRequest req = new RegisterRequest("existing@example.com", null, null, null, null);
 
-        when(userRepository.existsByEmail(req.getEmail())).thenReturn(true);
+        when(userRepository.existsByEmail(req.email())).thenReturn(true);
 
         // Act & Assert
         assertThrows(AppException.class, () -> authService.register(req));
@@ -81,17 +74,14 @@ class AuthServiceTest {
     @Test
     void login_ShouldReturnResponse_WhenCredentialsAreValid() {
         // Arrange
-        LoginRequest req = LoginRequest.builder()
-                .email("test@example.com")
-                .password("password123")
-                .build();
+        LoginRequest req = new LoginRequest("test@example.com", "password123");
         User user = User.builder()
                 .id(UUID.randomUUID())
                 .email("test@example.com")
                 .name("Test User")
                 .build();
 
-        when(userRepository.findByEmail(req.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(req.email())).thenReturn(Optional.of(user));
         when(jwtService.generateAccessToken(user)).thenReturn("access_token");
         when(jwtService.generateRefreshToken(user)).thenReturn("refresh_token");
 
@@ -100,7 +90,7 @@ class AuthServiceTest {
 
         // Assert
         assertNotNull(res);
-        assertEquals("test@example.com", res.getEmail());
+        assertEquals("test@example.com", res.email());
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
@@ -123,6 +113,6 @@ class AuthServiceTest {
 
         // Assert
         assertNotNull(res);
-        assertEquals("new_access_token", res.getAccessToken());
+        assertEquals("new_access_token", res.accessToken());
     }
 }

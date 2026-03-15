@@ -1,34 +1,29 @@
 package ma.farmsense.dto.sensor;
 
-import lombok.Builder;
-import lombok.Data;
 import ma.farmsense.entity.SensorReading;
 
 import java.time.Instant;
 
-@Data
-@Builder
-public class SensorReadingResponse {
-
-    private Long id;
-    private String deviceId;
-    private Double temperature;
-    private Double humidity;
-    private Integer soilMoisture;
-    private Double lightLux;
-    private String source;
-    private Instant recordedAt;
-
+public record SensorReadingResponse(
+        Long id,
+        String deviceId,
+        Double temperature,
+        Double humidity,
+        Integer soilMoisture,
+        Double lightLux,
+        String source,
+        Instant recordedAt
+) {
     public static SensorReadingResponse from(SensorReading r) {
-        return SensorReadingResponse.builder()
-                .id(r.getId())
-                .deviceId(r.getDeviceId())
-                .temperature(r.getTemperature())
-                .humidity(r.getHumidity())
-                .soilMoisture(r.getSoilMoisture())
-                .lightLux(r.getLightLux())
-                .source(r.getSource().name())
-                .recordedAt(r.getRecordedAt())
-                .build();
+        return new SensorReadingResponse(
+                r.getId(),
+                r.getDeviceId(),
+                r.getTemperature(),
+                r.getHumidity(),
+                r.getSoilMoisture(),
+                r.getLightLux(),
+                r.getSource().name(),
+                r.getRecordedAt()
+        );
     }
 }

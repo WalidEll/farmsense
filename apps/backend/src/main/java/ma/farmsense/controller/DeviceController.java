@@ -46,7 +46,7 @@ public class DeviceController {
             @AuthenticationPrincipal User user,
             @PathVariable UUID id,
             @RequestBody AssignRequest req) {
-        return ResponseEntity.ok(deviceService.assign(user, id, req.getPlantId()));
+        return ResponseEntity.ok(deviceService.assign(user, id, req.plantId()));
     }
 
     /** Rename a device */
@@ -55,7 +55,7 @@ public class DeviceController {
             @AuthenticationPrincipal User user,
             @PathVariable UUID id,
             @RequestBody LabelRequest req) {
-        return ResponseEntity.ok(deviceService.label(user, id, req.getLabel()));
+        return ResponseEntity.ok(deviceService.label(user, id, req.label()));
     }
 
     /** Update device configuration */
