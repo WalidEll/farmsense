@@ -47,3 +47,4 @@ docker-compose.override.yml
 
 # ── ESP32 build artifacts ────────────────────────────────
 apps/esp32/.build/
+.opencode/

@@ -75,10 +75,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from '@/i18n'
+import { useAuthStore } from '@/stores/auth.store'
 import type { BreedSummary } from '@/types'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
+const authStore = useAuthStore()
 
 const props = defineProps<{
   breed: BreedSummary
@@ -91,9 +93,9 @@ defineEmits<{
 }>()
 
 const displayName = computed(() => {
-  const lang = locale.value.toLowerCase()
-  if (lang === 'ar' && props.breed.nameAr) return props.breed.nameAr
-  if (lang === 'en' && props.breed.nameEn) return props.breed.nameEn
+  const lang = authStore.lang
+  if (lang === 'AR' && props.breed.nameAr) return props.breed.nameAr
+  if (lang === 'EN' && props.breed.nameEn) return props.breed.nameEn
   return props.breed.name
 })
 

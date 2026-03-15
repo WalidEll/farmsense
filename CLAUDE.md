@@ -167,6 +167,8 @@ Devices POST sensor readings with `X-Device-Key` header for authentication.
 ## Active Technologies
 - Markdown (document artifact); no runtime language required + `docs/USER_STORIES_V0.md` (source of truth for 26 stories + acceptance criteria); existing codebase in `apps/backend`, `apps/frontend`, `apps/esp32` (001-v0-us-coverage)
 - File system — `specs/001-v0-us-coverage/coverage-report.md` (001-v0-us-coverage)
+- Java 21 LTS (backend), TypeScript strict (frontend) + Spring Boot 3.4.x, Vue 3 (Composition API), Pinia, Tailwind CSS 4 (002-breed-catalogue)
+- PostgreSQL 15 via Flyway migrations, Redis 7 (auth only) (002-breed-catalogue)
 
 ## Recent Changes
 - 001-v0-us-coverage: Added Markdown (document artifact); no runtime language required + `docs/USER_STORIES_V0.md` (source of truth for 26 stories + acceptance criteria); existing codebase in `apps/backend`, `apps/frontend`, `apps/esp32`

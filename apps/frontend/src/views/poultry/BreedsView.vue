@@ -165,7 +165,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from '@/i18n'
 import { useBreedsStore } from '@/stores/breeds.store'
 import BreedCard from '@/components/poultry/BreedCard.vue'
 import type { BreedSummary, BreedCategory, BreedPurpose } from '@/types'
