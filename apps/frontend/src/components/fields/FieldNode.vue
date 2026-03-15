@@ -107,6 +107,8 @@ function onMouseUp() {
 </script>
 
 <style scoped>
+@reference "tailwindcss";
+
 .field-rect {
   pointer-events: all;
 }

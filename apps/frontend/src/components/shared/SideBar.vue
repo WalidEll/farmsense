@@ -208,6 +208,8 @@ function logout() {
 </script>
 
 <style scoped>
+@reference "tailwindcss";
+
 .nav-item {
   @apply flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-200 text-gray-400 relative;
 }
