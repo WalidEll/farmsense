@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * 5. Respect user alert preferences (enabled types + quiet hours)
  */
 @Component
+@ConditionalOnProperty(name = "farmsense.features.plant-management", havingValue = "true", matchIfMissing = true)
 public class AlertScheduler {
 
     private static final Logger log = LoggerFactory.getLogger(AlertScheduler.class);

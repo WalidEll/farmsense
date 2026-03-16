@@ -5,6 +5,7 @@ import ma.farmsense.dto.crop.*;
 import ma.farmsense.entity.CropCategory;
 import ma.farmsense.service.CropService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/crops")
+@ConditionalOnProperty(name = "farmsense.features.plant-management", havingValue = "true", matchIfMissing = true)
 public class CropController {
 
     private final CropService cropService;

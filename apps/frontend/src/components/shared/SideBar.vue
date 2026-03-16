@@ -151,7 +151,9 @@ import { useAuthStore } from '@/stores/auth.store'
 import { useAlertsStore } from '@/stores/alerts.store'
 import { useI18n } from '@/i18n'
 import LanguageSwitcher from './LanguageSwitcher.vue'
-import { navigationConfig, type NavItem } from '@/config/navigation'
+import { getActiveNavigation, type NavItem } from '@/config/navigation'
+
+const navigationConfig = getActiveNavigation()
 
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()

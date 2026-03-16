@@ -6,6 +6,7 @@ import ma.farmsense.entity.User;
 import ma.farmsense.service.PlantService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/plants")
+@ConditionalOnProperty(name = "farmsense.features.plant-management", havingValue = "true", matchIfMissing = true)
 public class PlantController {
 
     private final PlantService plantService;

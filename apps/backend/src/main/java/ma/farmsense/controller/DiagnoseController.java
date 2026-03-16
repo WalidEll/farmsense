@@ -6,6 +6,7 @@ import ma.farmsense.service.DiagnoseService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/diagnose")
+@ConditionalOnProperty(name = "farmsense.features.plant-management", havingValue = "true", matchIfMissing = true)
 public class DiagnoseController {
 
     private final DiagnoseService diagnoseService;

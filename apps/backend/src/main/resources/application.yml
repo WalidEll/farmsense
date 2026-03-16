@@ -70,6 +70,10 @@ farmsense:
   device:
     claim-token-expiry-minutes: 15
 
+  features:
+    plant-management: false   # postponed — plant monitoring module
+    iot-sensors: false         # postponed — ESP32 sensor hardware
+
 # ── Sentry ────────────────────────────────────────────────────
 sentry:
   dsn: https://b469611d8a059b0ae937368eb0e28e6f@o4511038357700608.ingest.de.sentry.io/4511039284969552

@@ -1,3 +1,5 @@
+import { features, type FeatureFlags } from './features'
+
 export interface NavBadge {
   type: 'danger' | 'count';
   key: string;
@@ -9,6 +11,7 @@ export interface NavItem {
   to: string;
   exact?: boolean;
   badge?: NavBadge | 'new';
+  feature?: keyof FeatureFlags;
 }
 
 export interface NavGroup {
@@ -16,6 +19,7 @@ export interface NavGroup {
   icon: string;
   items: NavItem[];
   defaultOpen?: boolean;
+  feature?: keyof FeatureFlags;
 }
 
 /* ── SVG icon helper (all 24×24, stroke-based) ── */
@@ -69,11 +73,12 @@ const icons = {
  *  Priority: high-use items first in each group
  * ────────────────────────────────────────────── */
 export const navigationConfig: NavGroup[] = [
-  /* ── 1. Plant Management ── */
+  /* ── 1. Plant Management ── (disabled via feature flag) */
   {
     nameKey: 'nav.group.plant',
     icon: icons.plant,
     defaultOpen: true,
+    feature: 'plantManagement',
     items: [
       { icon: icons.fields,     labelKey: 'nav.fields',           to: '/fields' },
       { icon: icons.crops,      labelKey: 'nav.crops',            to: '/crops' },
@@ -84,10 +89,11 @@ export const navigationConfig: NavGroup[] = [
     ]
   },
 
-  /* ── 2. Poultry Management ── */
+  /* ── 2. Poultry Management ── (main module) */
   {
     nameKey: 'nav.group.poultry',
     icon: icons.poultry,
+    defaultOpen: true,
     items: [
       { icon: icons.flocks, labelKey: 'nav.flocks',          to: '/poultry/flocks' },
       { icon: icons.breeds,  labelKey: 'nav.breeds',          to: '/poultry/breeds' },
@@ -136,10 +142,21 @@ export const navigationConfig: NavGroup[] = [
     nameKey: 'nav.group.admin',
     icon: icons.admin,
     items: [
-      { icon: icons.sensors,  labelKey: 'nav.sensors',   to: '/sensors' },
+      { icon: icons.sensors,  labelKey: 'nav.sensors',   to: '/sensors', feature: 'iotSensors' },
       { icon: icons.alerts,   labelKey: 'nav.alerts',    to: '/alerts', badge: { type: 'danger', key: 'alerts' } },
       { icon: icons.team,     labelKey: 'nav.team',      to: '/accounting/team' },
       { icon: icons.settings, labelKey: 'nav.settings',  to: '/settings' },
     ]
   },
 ]
+
+/* ── Active navigation (respects feature flags) ── */
+export function getActiveNavigation(): NavGroup[] {
+  return navigationConfig
+    .filter((group) => !group.feature || features[group.feature])
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => !item.feature || features[item.feature]),
+    }))
+    .filter((group) => group.items.length > 0)
+}

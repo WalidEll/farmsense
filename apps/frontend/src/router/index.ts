@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
+import { features } from '@/config/features'
 
 // ... existing imports
 import ComingSoonView from '@/views/ComingSoonView.vue'
@@ -23,50 +24,60 @@ const router = createRouter({
       path: '/',
       component: () => import('@/components/shared/AppLayout.vue'),
       children: [
+        /* ── Default → Poultry Dashboard ── */
         {
           path: '',
           name: 'dashboard',
-          component: () => import('@/views/DashboardView.vue'),
+          redirect: '/poultry',
         },
+        /* ── Plant Management (feature-gated) ── */
         {
           path: 'fields',
           name: 'fields',
           component: () => import('@/views/FieldMapView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'tasks',
           name: 'tasks',
           component: ComingSoonView,
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'nursery',
           name: 'nursery',
           component: ComingSoonView,
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'irrigation',
           name: 'irrigation',
           component: ComingSoonView,
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'harvests',
           name: 'harvests',
           component: ComingSoonView,
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'locations',
           name: 'locations',
           component: () => import('@/views/LocationsView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'sensors',
           name: 'sensors',
           component: () => import('@/views/SensorsView.vue'),
+          meta: { feature: 'iotSensors' },
         },
         {
           path: 'plants/:id',
           name: 'plant-detail',
           component: () => import('@/views/PlantDetailView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'alerts',
@@ -77,26 +88,31 @@ const router = createRouter({
           path: 'crops',
           name: 'crops',
           component: () => import('@/views/CropCatalogView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'crops/admin',
           name: 'crop-admin',
           component: () => import('@/views/CropAdminView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'crops/:id',
           name: 'crop-detail',
           component: () => import('@/views/CropDetailView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'plans',
           name: 'plans',
           component: () => import('@/views/CropPlansView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'plans/:id',
           name: 'plan-detail',
           component: () => import('@/views/CropPlanDetailView.vue'),
+          meta: { feature: 'plantManagement' },
         },
         {
           path: 'settings',
@@ -220,12 +236,19 @@ const router = createRouter({
     },
   ],
 })
-// ... rest of file
 
 router.beforeEach((to) => {
   const auth = useAuthStore()
+
+  // Auth guard
   if (!to.meta.public && !auth.isLoggedIn) return { name: 'login' }
-  if (to.meta.public && auth.isLoggedIn) return { name: 'dashboard' }
+  if (to.meta.public && auth.isLoggedIn) return { name: 'poultry-dashboard' }
+
+  // Feature flag guard — redirect disabled features to poultry dashboard
+  const requiredFeature = to.meta.feature as keyof typeof features | undefined
+  if (requiredFeature && !features[requiredFeature]) {
+    return { name: 'poultry-dashboard' }
+  }
 })
 
 export default router
