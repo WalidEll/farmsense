@@ -47,7 +47,7 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, UU
 
     // Bulk upsert for performance in stock adjustments
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("INSERT INTO inventory_items (id, user_id, team_id, sku, name, name_ar, name_en, " +
+    @Query(value = "INSERT INTO inventory_items (id, user_id, team_id, sku, name, name_ar, name_en, " +
             "category, sub_category, description, unit_of_measure, current_quantity, " +
             "min_quantity, max_quantity, reorder_level, unit_cost, purchase_price, sale_price, " +
             "expiry_date, batch_number, location, supplier_id, is_tracked, is_active, notes) " +
@@ -70,7 +70,7 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, UU
             "location = COALESCE(EXCLUDED.location, inventory_items.location), " +
             "supplier_id = COALESCE(EXCLUDED.supplier_id, inventory_items.supplier_id), " +
             "notes = COALESCE(EXCLUDED.notes, inventory_items.notes), " +
-            "updated_at = CURRENT_TIMESTAMP")
+            "updated_at = CURRENT_TIMESTAMP", nativeQuery = true)
     int upsert(@Param("id") UUID id, @Param("userId") UUID userId, @Param("teamId") UUID teamId,
                @Param("sku") String sku, @Param("name") String name, @Param("nameAr") String nameAr,
                @Param("nameEn") String nameEn, @Param("category") String category,

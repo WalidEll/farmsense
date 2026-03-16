@@ -4,12 +4,10 @@
  * On reconnect, replays them in order.
  *
  * US-062: Queue manual readings while offline
+ *
+ * PouchDB is loaded lazily to avoid crashing Vite's CJS→ESM shim
+ * during initial module evaluation (which breaks Vue Router startup).
  */
-// PouchDB is a CJS module; Vite's CJS→ESM shim may land the constructor
-// on `.default` or directly on the module object depending on the build.
-import PouchDBImport from 'pouchdb'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PouchDB: typeof PouchDBImport = (PouchDBImport as any).default ?? PouchDBImport
 import { api } from './api'
 
 interface QueuedRequest {
@@ -21,10 +19,19 @@ interface QueuedRequest {
   retries: number
 }
 
-const db = new PouchDB<QueuedRequest>('farmsense-offline-queue')
+let _db: any = null
+
+async function getDb() {
+  if (_db) return _db
+  const PouchDBModule = await import('pouchdb')
+  const PouchDB = (PouchDBModule as any).default ?? PouchDBModule
+  _db = new PouchDB('farmsense-offline-queue')
+  return _db
+}
 
 export const offlineQueue = {
   async enqueue(method: 'POST' | 'PUT' | 'DELETE', url: string, body?: unknown) {
+    const db = await getDb()
     const doc: QueuedRequest = {
       _id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       url, method, body,
@@ -36,8 +43,9 @@ export const offlineQueue = {
   },
 
   async flush() {
+    const db = await getDb()
     const { rows } = await db.allDocs({ include_docs: true })
-    const items = rows.map(r => r.doc!).sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    const items = rows.map((r: any) => r.doc!).sort((a: any, b: any) => a.createdAt.localeCompare(b.createdAt))
 
     for (const item of items) {
       try {
@@ -60,6 +68,7 @@ export const offlineQueue = {
   },
 
   async count(): Promise<number> {
+    const db = await getDb()
     const { total_rows } = await db.info()
     return total_rows
   }

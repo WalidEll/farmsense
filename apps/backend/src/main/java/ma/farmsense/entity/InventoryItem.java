@@ -16,8 +16,8 @@ public class InventoryItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID user_id;
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
@@ -93,8 +93,8 @@ public class InventoryItem {
     @Column(length = 1000)
     private String notes;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDate createdAt = LocalDate.now();
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "timestamptz")
+    private Instant createdAt = Instant.now();
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "timestamptz")
     private Instant updatedAt = Instant.now();
@@ -105,8 +105,8 @@ public class InventoryItem {
     public UUID getId() { return this.id; }
     public void setId(UUID id) { this.id = id; }
 
-    public UUID getUser_id() { return this.user_id; }
-    public void setUser_id(UUID user_id) { this.user_id = user_id; }
+    public UUID getUserId() { return this.userId; }
+    public void setUserId(UUID userId) { this.userId = userId; }
 
     public Team getTeam() { return this.team; }
     public void setTeam(Team team) { this.team = team; }
@@ -180,8 +180,8 @@ public class InventoryItem {
     public String getNotes() { return this.notes; }
     public void setNotes(String notes) { this.notes = notes; }
 
-    public LocalDate getCreatedAt() { return this.createdAt; }
-    public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
+    public Instant getCreatedAt() { return this.createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
     public Instant getUpdatedAt() { return this.updatedAt; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }

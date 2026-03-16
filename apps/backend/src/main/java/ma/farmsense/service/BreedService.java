@@ -76,6 +76,7 @@ public class BreedService {
      * @param id   the breed UUID
      * @return detailed breed response including all templates
      */
+    @Transactional(readOnly = true)
     public BreedDetailResponse findById(User user, UUID id) {
         Breed breed = getVisible(user, id);
         return BreedDetailResponse.from(breed);
@@ -300,6 +301,7 @@ public class BreedService {
      * @param id   the breed UUID
      * @return detailed breed response with all templates
      */
+    @Transactional(readOnly = true)
     public BreedDetailResponse getTemplates(User user, UUID id) {
         Breed breed = getVisible(user, id);
         return BreedDetailResponse.from(breed);
