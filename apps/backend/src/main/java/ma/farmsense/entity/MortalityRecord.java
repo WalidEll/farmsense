@@ -30,7 +30,7 @@ public class MortalityRecord {
     private LocalDate mortalityDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @Column(length = 255)
     private MortalityCause cause;
 
     @Column(columnDefinition = "TEXT")

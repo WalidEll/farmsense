@@ -56,8 +56,7 @@ apps/backend/src/main/java/ma/farmsense/
 ├── entity/
 │   ├── Flock.java                          ← MODIFY: add batchCode, housingLocation FK, expand enums
 │   ├── HousingLocation.java                ← NEW
-│   └── MortalityRecord.java                ← NEW (maps existing mortality_records table)
-├── entity/enums/
+│   ├── MortalityRecord.java                ← NEW (maps existing mortality_records table)
 │   ├── FlockPurpose.java                   ← MODIFY: add DUAL_PURPOSE, BREEDERS
 │   ├── FlockStatus.java                    ← MODIFY: add PHASED_OUT
 │   ├── HousingLocationType.java            ← NEW: COOP, PEN, FREE_RANGE
