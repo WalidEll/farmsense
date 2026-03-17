@@ -23,6 +23,13 @@ public class Flock {
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "housing_location_id")
+    private HousingLocation housingLocation;
+
+    @Column(name = "batch_code", nullable = false)
+    private String batchCode = "";
+
     @Column(nullable = false)
     private String name;
 
@@ -75,6 +82,12 @@ public class Flock {
 
     public Supplier getSupplier() { return this.supplier; }
     public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+
+    public HousingLocation getHousingLocation() { return this.housingLocation; }
+    public void setHousingLocation(HousingLocation housingLocation) { this.housingLocation = housingLocation; }
+
+    public String getBatchCode() { return this.batchCode; }
+    public void setBatchCode(String batchCode) { this.batchCode = batchCode != null ? batchCode : ""; }
 
     public String getName() { return this.name; }
     public void setName(String name) { this.name = name; }

@@ -223,6 +223,11 @@ const router = createRouter({
           component: ComingSoonView,
         },
         {
+          path: 'poultry/housing',
+          name: 'housing-locations',
+          component: () => import('@/views/poultry/HousingLocationsView.vue'),
+        },
+        {
           path: 'poultry/suppliers',
           name: 'suppliers',
           component: () => import('@/views/poultry/SuppliersView.vue'),

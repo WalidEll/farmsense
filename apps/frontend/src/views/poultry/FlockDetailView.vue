@@ -11,7 +11,13 @@
         </button>
         <div>
           <h1 class="text-2xl font-bold text-gray-900">{{ flock.name }}</h1>
-          <p class="text-sm text-gray-500">{{ flock.breed }} — {{ t(`flock_purpose_${flock.purpose.toLowerCase()}`) }}</p>
+          <p class="text-sm text-gray-500">
+            <span class="font-mono text-orange-600">{{ flock.batchCode }}</span>
+            — {{ t(`flock_purpose_${flock.purpose.toLowerCase()}`) }}
+            <span v-if="flock.ageWeeks != null" class="ml-2 text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-bold">
+              {{ flock.ageWeeks }}w
+            </span>
+          </p>
         </div>
       </div>
       <div class="flex gap-2">
@@ -95,6 +101,24 @@
       </div>
     </div>
 
+    <!-- Tab Content: Mortality / Health -->
+    <div v-else-if="activeTab === 'health'" class="space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-lg font-bold text-gray-900">{{ t('mortality_events_title') }}</h2>
+        <button
+          v-if="flock.status === 'ACTIVE'"
+          @click="showMortalityForm = true"
+          class="bg-orange-600 text-white font-bold px-4 py-2 rounded-xl hover:bg-orange-700 transition-all shadow-sm flex items-center gap-2 text-sm"
+        >
+          ➕ {{ t('mortality_log_loss') }}
+        </button>
+      </div>
+      <MortalityEventList
+        :events="mortalityEventsForFlock"
+        :loading="loadingMortality"
+      />
+    </div>
+
     <!-- Coming Soon Placeholder for other tabs -->
     <div v-else class="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm space-y-4">
       <div class="text-6xl">{{ tabs.find(t => t.id === activeTab)?.icon }}</div>
@@ -110,6 +134,16 @@
       @submit="handleUpdate"
       :loading="poultryStore.loading"
     />
+
+    <!-- Mortality Modal -->
+    <MortalityEventForm
+      v-if="showMortalityForm"
+      :flock-id="flock.id"
+      :max-count="flock.currentBirdCount"
+      :loading="loadingMortality"
+      @close="showMortalityForm = false"
+      @submit="handleLogMortality"
+    />
   </div>
 
   <div v-else-if="poultryStore.loading" class="flex justify-center py-20">
@@ -118,12 +152,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePoultryStore } from '@/stores/poultry.store'
 import { useI18n } from '@/i18n'
 import FlockForm from '@/components/poultry/FlockForm.vue'
-import type { UpdateFlockRequest } from '@/types'
+import MortalityEventForm from '@/components/poultry/MortalityEventForm.vue'
+import MortalityEventList from '@/components/poultry/MortalityEventList.vue'
+import type { UpdateFlockRequest, CreateMortalityEventRequest } from '@/types'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -132,8 +168,13 @@ const poultryStore = usePoultryStore()
 
 const activeTab = ref('overview')
 const showEditModal = ref(false)
+const showMortalityForm = ref(false)
+const loadingMortality = ref(false)
 
 const flock = computed(() => poultryStore.currentFlock)
+const mortalityEventsForFlock = computed(() =>
+  flock.value ? (poultryStore.mortalityEvents[flock.value.id] ?? []) : []
+)
 
 const tabs = [
   { id: 'overview', label: 'crop_overview', icon: '📋' },
@@ -162,6 +203,19 @@ async function handleUpdate(data: any) {
   }
 }
 
+async function handleLogMortality(data: CreateMortalityEventRequest) {
+  if (!flock.value) return
+  loadingMortality.value = true
+  try {
+    await poultryStore.createMortalityEvent(flock.value.id, data)
+    showMortalityForm.value = false
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loadingMortality.value = false
+  }
+}
+
 async function handleDelete() {
   if (!flock.value) return
   if (confirm(t('plant_delete_confirm'))) {
@@ -173,5 +227,12 @@ async function handleDelete() {
 onMounted(() => {
   const id = route.params.id as string
   poultryStore.fetchFlock(id)
+  poultryStore.fetchMortalityEvents(id)
+})
+
+watch(activeTab, (tab) => {
+  if (tab === 'health' && flock.value) {
+    poultryStore.fetchMortalityEvents(flock.value.id)
+  }
 })
 </script>

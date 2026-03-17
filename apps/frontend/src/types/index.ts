@@ -415,12 +415,13 @@ export interface PlantingYieldRequest {
 }
 
 // ── Poultry Module ────────────────────────────────────────
-export type FlockPurpose = 'LAYERS' | 'BROILERS'
-export type FlockStatus = 'ACTIVE' | 'SOLD' | 'FINISHED'
+export type FlockPurpose = 'LAYERS' | 'BROILERS' | 'DUAL_PURPOSE' | 'BREEDERS'
+export type FlockStatus = 'ACTIVE' | 'SOLD' | 'PHASED_OUT' | 'FINISHED'
 
 export interface Flock {
   id: string
   name: string
+  batchCode: string
   nameAr?: string
   nameEn?: string
   breedId?: string
@@ -428,15 +429,74 @@ export interface Flock {
   breedImageUrl?: string
   birdCount: number
   currentBirdCount: number
+  ageWeeks?: number
   purpose: FlockPurpose
   status: FlockStatus
   startDate?: string
+  housingLocationId?: string
+  housingLocationName?: string
   supplierId?: string
   supplierName?: string
   source?: string
   notes?: string
   createdAt: string
   updatedAt: string
+}
+
+export type HousingLocationType = 'COOP' | 'PEN' | 'FREE_RANGE'
+
+export interface HousingLocation {
+  id: string
+  name: string
+  nameAr?: string
+  nameEn?: string
+  locationType: HousingLocationType
+  notes?: string
+  currentFlockCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateHousingLocationRequest {
+  name: string
+  nameAr?: string
+  nameEn?: string
+  locationType: HousingLocationType
+  notes?: string
+}
+
+export interface UpdateHousingLocationRequest {
+  name?: string
+  nameAr?: string
+  nameEn?: string
+  locationType?: HousingLocationType
+  notes?: string
+}
+
+export type MortalityType = 'NATURAL_DEATH' | 'CULL'
+export type MortalityCause = 'DISEASE' | 'INJURY' | 'PREDATOR' | 'LOW_WEIGHT' | 'HEAT_STRESS' | 'UNKNOWN' | 'OTHER'
+
+export interface MortalityEvent {
+  id: string
+  flockId: string
+  type: MortalityType
+  count: number
+  mortalityDate: string
+  cause?: MortalityCause
+  notes?: string
+  createdAt: string
+}
+
+export interface MortalityEventCreateResponse extends MortalityEvent {
+  updatedFlockHeadcount: number
+}
+
+export interface CreateMortalityEventRequest {
+  type: MortalityType
+  count: number
+  mortalityDate: string
+  cause?: MortalityCause
+  notes?: string
 }
 
 export interface Supplier {
@@ -464,19 +524,32 @@ export interface Customer {
 
 export interface CreateFlockRequest {
   name: string
+  batchCode: string
   nameAr?: string
   nameEn?: string
   breedId?: string
   birdCount: number
   purpose: FlockPurpose
   startDate?: string
+  housingLocationId?: string
   supplierId?: string
   source?: string
   notes?: string
 }
 
-export interface UpdateFlockRequest extends Partial<CreateFlockRequest> {
+export interface UpdateFlockRequest {
+  name?: string
+  nameAr?: string
+  nameEn?: string
+  breedId?: string
+  birdCount?: number
+  purpose?: FlockPurpose
   status?: FlockStatus
+  startDate?: string
+  housingLocationId?: string
+  supplierId?: string
+  source?: string
+  notes?: string
 }
 
 // ── Breed Catalogue ────────────────────────────────────────

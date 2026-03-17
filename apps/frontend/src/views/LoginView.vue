@@ -10,8 +10,9 @@
 
       <form @submit.prevent="submit" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('auth.email') }}</label>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">{{ t('auth.email') }}</label>
           <input
+            id="email"
             v-model="email"
             type="email"
             required
@@ -20,8 +21,9 @@
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('auth.password') }}</label>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">{{ t('auth.password') }}</label>
           <input
+            id="password"
             v-model="password"
             type="password"
             required

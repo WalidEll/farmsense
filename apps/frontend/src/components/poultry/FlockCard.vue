@@ -7,13 +7,13 @@
     <div class="flex justify-between items-start">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-          {{ flock.purpose === 'LAYERS' ? '🥚' : '🍗' }}
+          {{ purposeEmoji }}
         </div>
         <div>
           <h3 class="font-bold text-gray-900 group-hover:text-orange-700 transition-colors">
             {{ flock.name }}
           </h3>
-          <p class="text-xs text-gray-500">{{ flock.breed || t('common.optional') }}</p>
+          <p class="text-xs text-gray-500 font-mono">{{ flock.batchCode || flock.breedName || '—' }}</p>
         </div>
       </div>
       <div class="flex flex-col items-end gap-1">
@@ -22,6 +22,9 @@
         </span>
         <span class="text-[9px] font-medium text-gray-400 uppercase tracking-widest">
           {{ t(`flock_purpose_${flock.purpose.toLowerCase()}`) }}
+        </span>
+        <span v-if="flock.ageWeeks != null" class="text-[9px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-md">
+          {{ flock.ageWeeks }}w
         </span>
       </div>
     </div>
@@ -41,8 +44,10 @@
     <!-- Info -->
     <div class="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
       <div class="flex items-center gap-1.5 text-xs text-gray-500">
-        <span>📅</span>
-        <span>{{ flock.startDate ? new Date(flock.startDate).toLocaleDateString() : '---' }}</span>
+        <span v-if="flock.housingLocationName">🏠</span>
+        <span v-if="flock.housingLocationName" class="truncate max-w-[100px]">{{ flock.housingLocationName }}</span>
+        <span v-else>📅</span>
+        <span v-if="!flock.housingLocationName">{{ flock.startDate ? new Date(flock.startDate).toLocaleDateString() : '---' }}</span>
       </div>
       <div v-if="flock.supplierName" class="flex items-center gap-1.5 text-xs text-gray-500">
         <span>📦</span>
@@ -66,8 +71,19 @@ const statusClass = computed(() => {
   switch (props.flock.status) {
     case 'ACTIVE': return 'bg-green-100 text-green-700'
     case 'SOLD': return 'bg-blue-100 text-blue-700'
+    case 'PHASED_OUT': return 'bg-amber-100 text-amber-700'
     case 'FINISHED': return 'bg-gray-100 text-gray-700'
     default: return 'bg-gray-100 text-gray-700'
+  }
+})
+
+const purposeEmoji = computed(() => {
+  switch (props.flock.purpose) {
+    case 'LAYERS': return '🥚'
+    case 'BROILERS': return '🍗'
+    case 'DUAL_PURPOSE': return '🐔'
+    case 'BREEDERS': return '🐣'
+    default: return '🐔'
   }
 })
 </script>
