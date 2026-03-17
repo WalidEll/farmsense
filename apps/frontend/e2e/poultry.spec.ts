@@ -1111,4 +1111,44 @@ test.describe('Flock Detail — Mortality Tab', () => {
     const dateInput = modal.locator('input[type="date"]')
     await expect(dateInput).toBeVisible()
   })
+
+  test('mortality form validates count does not exceed max', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+
+    const flockCards = page.locator('.grid div.cursor-pointer').filter({ has: page.locator('.font-mono') })
+    if (await flockCards.count() === 0) {
+      test.skip()
+      return
+    }
+
+    await flockCards.first().click()
+    await page.waitForLoadState('networkidle').catch(() => {})
+    await expect(page.locator('h1').first()).toBeVisible(TIMEOUT)
+
+    const healthTab = page.getByRole('button', { name: /💉|pépinière|nursery|المشتل/i }).first()
+    await healthTab.click()
+
+    const logButton = page.getByRole('button', { name: /perte|loss|خسارة/i }).first()
+    if (!await logButton.isVisible().catch(() => false)) {
+      test.skip()
+      return
+    }
+
+    await logButton.click()
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+
+    // Fill a very high number
+    const countInput = modal.locator('input[type="number"]')
+    await countInput.fill('999999')
+
+    // Submit
+    await modal.getByRole('button', { name: /perte|loss|خسارة/i }).click()
+
+    // Should show error message (inclusive regex for all languages)
+    const errorMsg = modal.locator('.text-red-600')
+    await expect(errorMsg).toBeVisible()
+    await expect(errorMsg).toHaveText(/pas dépasser|cannot exceed|يتجاوز/i)
+  })
 })

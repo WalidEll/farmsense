@@ -477,6 +477,7 @@ const translations = {
     mortality_cause_heat_stress: 'Stress thermique',
     mortality_cause_unknown: 'Inconnu',
     mortality_cause_other: 'Autre',
+    mortality_max_count_error: 'Le nombre ne peut pas dépasser {max}',
 
     // Breed Catalogue
     nav_breeds: 'Catalogue des races',
@@ -1169,6 +1170,7 @@ const translations = {
     mortality_cause_heat_stress: 'إجهاد حراري',
     mortality_cause_unknown: 'غير معروف',
     mortality_cause_other: 'أخرى',
+    mortality_max_count_error: 'العدد لا يمكن أن يتجاوز {max}',
 
     // Catalogue des races
     nav_breeds: 'كتالوج السلالات',
@@ -1888,6 +1890,7 @@ const translations = {
     mortality_cause_heat_stress: 'Heat Stress',
     mortality_cause_unknown: 'Unknown',
     mortality_cause_other: 'Other',
+    mortality_max_count_error: 'Count cannot exceed {max}',
 
     // Breed Catalogue
     nav_breeds: 'Breed Catalogue',

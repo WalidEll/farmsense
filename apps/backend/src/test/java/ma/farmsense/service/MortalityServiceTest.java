@@ -57,7 +57,7 @@ class MortalityServiceTest {
         CreateMortalityEventRequest req = new CreateMortalityEventRequest(
                 MortalityType.NATURAL_DEATH, 5, LocalDate.now(), MortalityCause.DISEASE, null);
 
-        when(flockService.getOwned(user, flockId)).thenReturn(flock);
+        when(flockService.getOwnedWithLock(user, flockId)).thenReturn(flock);
         MortalityRecord saved = new MortalityRecord();
         saved.setId(UUID.randomUUID());
         saved.setFlock(flock);
@@ -82,7 +82,7 @@ class MortalityServiceTest {
         CreateMortalityEventRequest req = new CreateMortalityEventRequest(
                 MortalityType.NATURAL_DEATH, 150, LocalDate.now(), null, null);
 
-        when(flockService.getOwned(user, flockId)).thenReturn(flock);
+        when(flockService.getOwnedWithLock(user, flockId)).thenReturn(flock);
 
         AppException ex = assertThrows(AppException.class,
                 () -> mortalityService.create(user, flockId, req));
@@ -99,7 +99,7 @@ class MortalityServiceTest {
         CreateMortalityEventRequest req = new CreateMortalityEventRequest(
                 MortalityType.CULL, 10, LocalDate.now(), MortalityCause.LOW_WEIGHT, null);
 
-        when(flockService.getOwned(user, flockId)).thenReturn(flock);
+        when(flockService.getOwnedWithLock(user, flockId)).thenReturn(flock);
 
         AppException ex = assertThrows(AppException.class,
                 () -> mortalityService.create(user, flockId, req));
@@ -115,14 +115,7 @@ class MortalityServiceTest {
         CreateMortalityEventRequest req = new CreateMortalityEventRequest(
                 MortalityType.CULL, 5, LocalDate.now(), MortalityCause.LOW_WEIGHT, null);
 
-        when(flockService.getOwned(user, flockId)).thenReturn(flock);
-        MortalityRecord saved = new MortalityRecord();
-        saved.setId(UUID.randomUUID());
-        saved.setFlock(flock);
-        saved.setType(MortalityType.CULL);
-        saved.setCount(5);
-        saved.setMortalityDate(LocalDate.now());
-        when(mortalityRecordRepository.save(any())).thenReturn(saved);
+        when(flockService.getOwnedWithLock(user, flockId)).thenReturn(flock);
         doThrow(new RuntimeException("DB error")).when(flockService).saveHeadcount(any());
 
         assertThrows(RuntimeException.class,

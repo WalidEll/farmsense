@@ -37,7 +37,7 @@ public class MortalityService {
 
     @Transactional
     public MortalityEventCreateResponse create(User user, UUID flockId, CreateMortalityEventRequest req) {
-        Flock flock = flockService.getOwned(user, flockId);
+        Flock flock = flockService.getOwnedWithLock(user, flockId);
 
         if (flock.getStatus() != FlockStatus.ACTIVE) {
             throw AppException.conflict(

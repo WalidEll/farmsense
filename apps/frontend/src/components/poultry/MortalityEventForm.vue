@@ -138,8 +138,8 @@ const form = ref({
 
 function handleSubmit() {
   error.value = ''
-  if (props.maxCount && form.value.count > props.maxCount) {
-    error.value = `Max ${props.maxCount}`
+  if (props.maxCount !== undefined && form.value.count > props.maxCount) {
+    error.value = t('mortality_max_count_error', { max: props.maxCount })
     return
   }
   const payload: CreateMortalityEventRequest = {

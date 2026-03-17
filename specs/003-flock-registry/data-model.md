@@ -96,7 +96,9 @@ createdAt: Instant (not updatable)
 updatedAt: Instant (auto-updated)
 ```
 
-**Side-effect on create**: `MortalityService.create()` decrements `flock.currentBirdCount` by `event.count` within the same transaction. Validates that `event.count ≤ flock.currentBirdCount` before persisting.
+**Side-effect on create**: `MortalityService.create()` decrements `flock.currentBirdCount` by `event.count` within the same transaction. 
+- **Race Condition Protection**: The method uses pessimistic row-level locking (`SELECT ... FOR UPDATE` via `flockRepository.findByIdForUpdate()`) to ensure that the validation `event.count ≤ flock.currentBirdCount` is performed against a locked row, preventing concurrent decrements from causing negative headcounts.
+- Validates that `event.count ≤ flock.currentBirdCount` before persisting.
 
 ---
 

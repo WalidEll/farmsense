@@ -142,6 +142,15 @@ public class FlockService {
         return flock;
     }
 
+    public Flock getOwnedWithLock(User user, UUID id) {
+        Flock flock = flockRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> AppException.notFound("Flock not found"));
+        if (!flock.getUser().getId().equals(user.getId())) {
+            throw AppException.notFound("Flock not found");
+        }
+        return flock;
+    }
+
     /** Called by MortalityService to persist headcount update within the same transaction. */
     @Transactional
     public void saveHeadcount(Flock flock) {
