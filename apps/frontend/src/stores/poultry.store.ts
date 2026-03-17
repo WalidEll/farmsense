@@ -3,10 +3,13 @@ import { ref } from 'vue'
 import { api } from '@/services/api'
 import type {
   Flock, Supplier, Customer,
+  HousingLocation, MortalityEvent, MortalityEventCreateResponse,
   CreateFlockRequest, UpdateFlockRequest,
   CreateSupplierRequest, UpdateSupplierRequest,
   CreateCustomerRequest, UpdateCustomerRequest,
-  FlockStatus, FlockPurpose
+  CreateHousingLocationRequest, UpdateHousingLocationRequest,
+  CreateMortalityEventRequest,
+  FlockStatus, FlockPurpose, HousingLocationType
 } from '@/types'
 
 export const usePoultryStore = defineStore('poultry', () => {
@@ -14,6 +17,8 @@ export const usePoultryStore = defineStore('poultry', () => {
   const currentFlock = ref<Flock | null>(null)
   const suppliers = ref<Supplier[]>([])
   const customers = ref<Customer[]>([])
+  const housingLocations = ref<HousingLocation[]>([])
+  const mortalityEvents = ref<Record<string, MortalityEvent[]>>({})
   const loading = ref(false)
 
   // ── Flocks ──
@@ -52,10 +57,60 @@ export const usePoultryStore = defineStore('poultry', () => {
 
   async function deleteFlock(id: string) {
     await api.delete(`/flocks/${id}`)
-    // Soft delete sets status to FINISHED
+    // Soft delete sets status to PHASED_OUT
     const idx = flocks.value.findIndex(f => f.id === id)
-    if (idx >= 0) flocks.value[idx].status = 'FINISHED'
-    if (currentFlock.value?.id === id) currentFlock.value.status = 'FINISHED'
+    if (idx >= 0) flocks.value[idx].status = 'PHASED_OUT'
+    if (currentFlock.value?.id === id) currentFlock.value.status = 'PHASED_OUT'
+  }
+
+  // ── Housing Locations ──
+  async function fetchHousingLocations(type?: HousingLocationType) {
+    loading.value = true
+    try {
+      const query = type ? `?type=${type}` : ''
+      housingLocations.value = await api.get(`/housing-locations${query}`)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function createHousingLocation(req: CreateHousingLocationRequest): Promise<HousingLocation> {
+    const location: HousingLocation = await api.post('/housing-locations', req)
+    housingLocations.value.unshift(location)
+    return location
+  }
+
+  async function updateHousingLocation(id: string, req: UpdateHousingLocationRequest): Promise<HousingLocation> {
+    const location: HousingLocation = await api.put(`/housing-locations/${id}`, req)
+    const idx = housingLocations.value.findIndex(l => l.id === id)
+    if (idx >= 0) housingLocations.value[idx] = location
+    return location
+  }
+
+  async function deleteHousingLocation(id: string) {
+    await api.delete(`/housing-locations/${id}`)
+    housingLocations.value = housingLocations.value.filter(l => l.id !== id)
+  }
+
+  // ── Mortality Events ──
+  async function fetchMortalityEvents(flockId: string) {
+    const events: MortalityEvent[] = await api.get(`/flocks/${flockId}/mortality-events`)
+    mortalityEvents.value[flockId] = events
+  }
+
+  async function createMortalityEvent(
+    flockId: string,
+    req: CreateMortalityEventRequest
+  ): Promise<MortalityEventCreateResponse> {
+    const response: MortalityEventCreateResponse = await api.post(`/flocks/${flockId}/mortality-events`, req)
+    // Update local mortality events list
+    if (!mortalityEvents.value[flockId]) mortalityEvents.value[flockId] = []
+    mortalityEvents.value[flockId].unshift(response)
+    // Update flock headcount in local state
+    const flockIdx = flocks.value.findIndex(f => f.id === flockId)
+    if (flockIdx >= 0) flocks.value[flockIdx].currentBirdCount = response.updatedFlockHeadcount
+    if (currentFlock.value?.id === flockId) currentFlock.value.currentBirdCount = response.updatedFlockHeadcount
+    return response
   }
 
   // ── Suppliers ──
@@ -125,8 +180,10 @@ export const usePoultryStore = defineStore('poultry', () => {
   }
 
   return {
-    flocks, currentFlock, suppliers, customers, loading,
+    flocks, currentFlock, suppliers, customers, housingLocations, mortalityEvents, loading,
     fetchFlocks, fetchFlock, createFlock, updateFlock, deleteFlock,
+    fetchHousingLocations, createHousingLocation, updateHousingLocation, deleteHousingLocation,
+    fetchMortalityEvents, createMortalityEvent,
     fetchSuppliers, fetchSupplier, createSupplier, updateSupplier, deleteSupplier,
     fetchCustomers, fetchCustomer, createCustomer, updateCustomer, deleteCustomer,
   }

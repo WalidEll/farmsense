@@ -119,7 +119,7 @@ test.describe('Flocks Management', () => {
     await gotoFlocks(page)
     await waitForLoading(page)
 
-    const createBtn = page.locator('button.bg-orange-600')
+    const createBtn = page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first()
     await expect(createBtn).toBeVisible(TIMEOUT)
   })
 
@@ -141,7 +141,7 @@ test.describe('Flocks Management', () => {
     await waitForLoading(page)
 
     // Click create button
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     // Modal should appear
     const modal = page.locator('.fixed.inset-0')
@@ -151,7 +151,7 @@ test.describe('Flocks Management', () => {
   test('flock form has required fields: name, bird count, purpose', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -172,7 +172,7 @@ test.describe('Flocks Management', () => {
   test('flock form has breed autocomplete selector', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -187,7 +187,7 @@ test.describe('Flocks Management', () => {
   test('flock form validates required fields (empty submit blocked)', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -253,7 +253,7 @@ test.describe('Flocks Management', () => {
   test('flock form close button dismisses modal', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -269,7 +269,7 @@ test.describe('Flocks Management', () => {
   test('flock form cancel button dismisses modal', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -776,7 +776,7 @@ test.describe('Flock ↔ Breed Integration', () => {
     await waitForLoading(page)
 
     // Open create modal
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -794,7 +794,7 @@ test.describe('Flock ↔ Breed Integration', () => {
   test('breed autocomplete shows dropdown on focus', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -822,7 +822,7 @@ test.describe('Flock ↔ Breed Integration', () => {
   test('flock form shows auto-generated programs when breed selected', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -865,7 +865,7 @@ test.describe('Flock ↔ Breed Integration', () => {
   test('flock form has supplier select populated from store', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
@@ -880,12 +880,234 @@ test.describe('Flock ↔ Breed Integration', () => {
   test('flock form has date picker for start date', async ({ page }) => {
     await gotoFlocks(page)
     await waitForLoading(page)
-    await page.locator('button.bg-orange-600').click()
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
 
     const modal = page.locator('.fixed.inset-0')
     await expect(modal).toBeVisible(TIMEOUT)
 
     // Date input for start date
+    const dateInput = modal.locator('input[type="date"]')
+    await expect(dateInput).toBeVisible()
+  })
+
+  test('flock create form has batch code input', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
+
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+
+    // Batch code input (font-mono styling)
+    const batchInput = modal.locator('input.font-mono')
+    await expect(batchInput).toBeVisible()
+  })
+
+  test('flock create form includes DUAL_PURPOSE and BREEDERS purpose options', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
+
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+
+    const purposeSelect = modal.locator('select').first()
+    const optionValues = await purposeSelect.locator('option').evaluateAll(
+      (opts: HTMLOptionElement[]) => opts.map(o => o.value)
+    )
+    expect(optionValues).toContain('DUAL_PURPOSE')
+    expect(optionValues).toContain('BREEDERS')
+  })
+
+  test('flock create form has housing location select', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
+
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+
+    // Housing location select (may be empty but should exist)
+    const selects = modal.locator('select')
+    const count = await selects.count()
+    expect(count).toBeGreaterThanOrEqual(2)
+  })
+})
+
+// ===========================================================================
+// HOUSING LOCATIONS
+// ===========================================================================
+
+test.describe('Housing Locations', () => {
+  async function gotoHousing(page: Page) {
+    await page.goto('/poultry/housing')
+    await page.waitForLoadState('networkidle').catch(() => {})
+  }
+
+  test('housing locations page loads', async ({ page }) => {
+    await gotoHousing(page)
+    await expectHeading(page)
+  })
+
+  test('shows empty state or grid of locations', async ({ page }) => {
+    await gotoHousing(page)
+    await waitForLoading(page)
+    // Either empty state or a grid of cards
+    const hasEmpty = await page.locator('.text-6xl').first().isVisible().catch(() => false)
+    const hasGrid = await page.locator('.grid').first().isVisible().catch(() => false)
+    expect(hasEmpty || hasGrid).toBe(true)
+  })
+
+  test('create housing location modal opens', async ({ page }) => {
+    await gotoHousing(page)
+    await waitForLoading(page)
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
+
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+  })
+
+  test('housing location form has type select with COOP, PEN, FREE_RANGE options', async ({ page }) => {
+    await gotoHousing(page)
+    await waitForLoading(page)
+    await page.getByRole('button', { name: /nouveau|new|ajouter|add/i }).first().click()
+
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+
+    const typeSelect = modal.locator('select').first()
+    const optionValues = await typeSelect.locator('option').evaluateAll(
+      (opts: HTMLOptionElement[]) => opts.map(o => o.value)
+    )
+    expect(optionValues).toContain('COOP')
+    expect(optionValues).toContain('PEN')
+    expect(optionValues).toContain('FREE_RANGE')
+  })
+})
+
+// ===========================================================================
+// FLOCK DETAIL — MORTALITY TAB
+// ===========================================================================
+
+test.describe('Flock Detail — Mortality Tab', () => {
+  test('mortality tab is visible in flock detail', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+
+    // Ensure we click a real flock card in the grid
+    const flockCards = page.locator('.grid div.cursor-pointer').filter({ has: page.locator('.font-mono') })
+    const count = await flockCards.count()
+    if (count === 0) {
+      test.skip() // No flocks in test environment
+      return
+    }
+
+    await flockCards.first().click()
+    await page.waitForLoadState('networkidle').catch(() => {})
+    
+    // Wait for detail page content (e.g. the heading)
+    await expect(page.locator('h1').first()).toBeVisible(TIMEOUT)
+
+    // Find the health/mortality tab button (uses nav_nursery / 💉 icon)
+    // The text is "💉 Pépinière" or "💉 Nursery"
+    const healthTab = page.getByRole('button', { name: /💉|pépinière|nursery|المشتل/i }).first()
+    await expect(healthTab).toBeVisible(TIMEOUT)
+  })
+
+  test('clicking mortality tab shows mortality events section', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+
+    const flockCards = page.locator('.grid div.cursor-pointer').filter({ has: page.locator('.font-mono') })
+    const count = await flockCards.count()
+    if (count === 0) {
+      test.skip()
+      return
+    }
+
+    await flockCards.first().click()
+    await page.waitForLoadState('networkidle').catch(() => {})
+    await expect(page.locator('h1').first()).toBeVisible(TIMEOUT)
+
+    const healthTab = page.getByRole('button', { name: /💉|pépinière|nursery|المشتل/i }).first()
+    await healthTab.click()
+
+    // Should show the mortality events section heading
+    // Key: mortality_events_title -> "Pertes et réformes" or "Losses & Culls"
+    const heading = page.locator('h2, h3').filter({ hasText: /perte|loss|خسارة/i }).first()
+    await expect(heading).toBeVisible(TIMEOUT)
+  })
+
+  test('log loss button opens mortality form modal for active flock', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+
+    const flockCards = page.locator('.grid div.cursor-pointer').filter({ has: page.locator('.font-mono') })
+    const count = await flockCards.count()
+    if (count === 0) {
+      test.skip()
+      return
+    }
+
+    await flockCards.first().click()
+    await page.waitForLoadState('networkidle').catch(() => {})
+    await expect(page.locator('h1').first()).toBeVisible(TIMEOUT)
+
+    const healthTab = page.getByRole('button', { name: /💉|pépinière|nursery|المشتل/i }).first()
+    await healthTab.click()
+
+    // Key: mortality_log_loss -> "Enregistrer une perte" or "Log Loss"
+    const logButton = page.getByRole('button', { name: /perte|loss|خسارة/i }).first()
+    const isVisible = await logButton.isVisible().catch(() => false)
+    if (!isVisible) {
+      // Flock might not be ACTIVE — check status badge
+      test.skip()
+      return
+    }
+
+    await logButton.click()
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+  })
+
+  test('mortality form has type, count, date inputs', async ({ page }) => {
+    await gotoFlocks(page)
+    await waitForLoading(page)
+
+    const flockCards = page.locator('.grid div.cursor-pointer').filter({ has: page.locator('.font-mono') })
+    const count = await flockCards.count()
+    if (count === 0) {
+      test.skip()
+      return
+    }
+
+    await flockCards.first().click()
+    await page.waitForLoadState('networkidle').catch(() => {})
+    await expect(page.locator('h1').first()).toBeVisible(TIMEOUT)
+
+    const healthTab = page.getByRole('button', { name: /💉|pépinière|nursery|المشتل/i }).first()
+    await healthTab.click()
+
+    const logButton = page.getByRole('button', { name: /perte|loss|خسارة/i }).first()
+    const isVisible = await logButton.isVisible().catch(() => false)
+    if (!isVisible) {
+      test.skip()
+      return
+    }
+
+    await logButton.click()
+    const modal = page.locator('.fixed.inset-0')
+    await expect(modal).toBeVisible(TIMEOUT)
+
+    // Type select
+    const typeSelect = modal.locator('select').first()
+    await expect(typeSelect).toBeVisible()
+
+    // Count input
+    const countInput = modal.locator('input[type="number"]')
+    await expect(countInput).toBeVisible()
+
+    // Date input
     const dateInput = modal.locator('input[type="date"]')
     await expect(dateInput).toBeVisible()
   })

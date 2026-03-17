@@ -15,17 +15,33 @@
       <form @submit.prevent="handleSubmit" class="p-6 space-y-4 overflow-y-auto flex-1">
         <!-- Names -->
         <div class="space-y-3">
-          <div>
-            <label class="block text-sm font-bold text-gray-700 mb-1">
-              {{ t('flock_name') }} <span class="text-red-500">*</span>
-            </label>
-            <input
-              v-model="form.name"
-              type="text"
-              required
-              class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-              :placeholder="t('flock_name')"
-            />
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">
+                {{ t('flock_name') }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="form.name"
+                type="text"
+                required
+                class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
+                :placeholder="t('flock_name')"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">
+                {{ t('flock_batch_code') }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="form.batchCode"
+                type="text"
+                :required="!initialData"
+                :readonly="!!initialData"
+                class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none font-mono"
+                :class="{ 'bg-gray-50 text-gray-500 cursor-not-allowed': !!initialData }"
+                placeholder="FL-2026-001"
+              />
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <div>
@@ -63,6 +79,8 @@
             >
               <option value="LAYERS">{{ t('flock_purpose_layers') }}</option>
               <option value="BROILERS">{{ t('flock_purpose_broilers') }}</option>
+              <option value="DUAL_PURPOSE">{{ t('flock_purpose_dual_purpose') }}</option>
+              <option value="BREEDERS">{{ t('flock_purpose_breeders') }}</option>
             </select>
           </div>
         </div>
@@ -108,6 +126,22 @@
               </button>
             </div>
           </div>
+        </div>
+
+        <!-- Housing Location -->
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-1">
+            {{ t('housing_location') }}
+          </label>
+          <select
+            v-model="form.housingLocationId"
+            class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none bg-white"
+          >
+            <option :value="undefined">{{ t('common.select') }}</option>
+            <option v-for="loc in poultryStore.housingLocations" :key="loc.id" :value="loc.id">
+              {{ loc.name }} ({{ t(`housing_location_type_${loc.locationType.toLowerCase()}`) }})
+            </option>
+          </select>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -190,6 +224,7 @@
           >
             <option value="ACTIVE">{{ t('flock_status_active') }}</option>
             <option value="SOLD">{{ t('flock_status_sold') }}</option>
+            <option value="PHASED_OUT">{{ t('flock_status_phased_out') }}</option>
             <option value="FINISHED">{{ t('flock_status_finished') }}</option>
           </select>
         </div>
@@ -357,12 +392,14 @@ function clearBreed() {
 
 const form = reactive<any>({
   name: props.initialData?.name || '',
+  batchCode: props.initialData?.batchCode || '',
   nameAr: props.initialData?.nameAr || '',
   nameEn: props.initialData?.nameEn || '',
   breedId: props.initialData?.breedId || null,
   birdCount: props.initialData?.birdCount || 0,
   purpose: props.initialData?.purpose || 'LAYERS',
   startDate: props.initialData?.startDate || new Date().toISOString().split('T')[0],
+  housingLocationId: props.initialData?.housingLocationId,
   supplierId: props.initialData?.supplierId,
   source: props.initialData?.source || '',
   notes: props.initialData?.notes || '',
@@ -399,8 +436,11 @@ onMounted(() => {
   if (!poultryStore.suppliers.length) {
     poultryStore.fetchSuppliers()
   }
+  if (!poultryStore.housingLocations.length) {
+    poultryStore.fetchHousingLocations()
+  }
   loadBreeds()
-  
+
   document.addEventListener('click', handleClickOutside)
 })
 </script>

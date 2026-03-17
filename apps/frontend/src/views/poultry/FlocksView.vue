@@ -21,7 +21,7 @@
         <button
           v-for="s in statusOptions"
           :key="s.val"
-          @click="statusFilter = s.val"
+          @click="statusFilter = s.val as (FlockStatus | 'ALL')"
           :class="[
             'px-4 py-1.5 rounded-full text-xs font-bold transition-all border',
             statusFilter === s.val
@@ -40,7 +40,7 @@
         <button
           v-for="p in purposeOptions"
           :key="p.val"
-          @click="purposeFilter = p.val"
+          @click="purposeFilter = p.val as (FlockPurpose | 'ALL')"
           :class="[
             'px-4 py-1.5 rounded-full text-xs font-bold transition-all border',
             purposeFilter === p.val
@@ -116,13 +116,16 @@ const statusOptions = [
   { val: 'ALL', label: t('alerts_all') },
   { val: 'ACTIVE', label: t('flock_status_active') },
   { val: 'SOLD', label: t('flock_status_sold') },
+  { val: 'PHASED_OUT', label: t('flock_status_phased_out') },
   { val: 'FINISHED', label: t('flock_status_finished') }
 ]
 
 const purposeOptions = [
   { val: 'ALL', label: t('alerts_all') },
   { val: 'LAYERS', label: t('flock_purpose_layers') },
-  { val: 'BROILERS', label: t('flock_purpose_broilers') }
+  { val: 'BROILERS', label: t('flock_purpose_broilers') },
+  { val: 'DUAL_PURPOSE', label: t('flock_purpose_dual_purpose') },
+  { val: 'BREEDERS', label: t('flock_purpose_breeders') }
 ]
 
 async function loadFlocks() {

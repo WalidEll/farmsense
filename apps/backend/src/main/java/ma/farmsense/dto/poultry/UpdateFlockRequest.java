@@ -17,6 +17,7 @@ public record UpdateFlockRequest(
         FlockPurpose purpose,
         FlockStatus status,
         LocalDate startDate,
+        UUID housingLocationId,
         UUID supplierId,
         String source,
         String notes

@@ -1,5 +1,5 @@
 package ma.farmsense.entity;
 
 public enum FlockPurpose {
-    LAYERS, BROILERS
+    LAYERS, BROILERS, DUAL_PURPOSE, BREEDERS
 }

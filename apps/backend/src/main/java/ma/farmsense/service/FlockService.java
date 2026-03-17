@@ -7,6 +7,7 @@ import ma.farmsense.entity.*;
 import ma.farmsense.exception.AppException;
 import ma.farmsense.repository.BreedRepository;
 import ma.farmsense.repository.FlockRepository;
+import ma.farmsense.repository.HousingLocationRepository;
 import ma.farmsense.repository.SupplierRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +22,16 @@ public class FlockService {
     private final SupplierRepository supplierRepository;
     private final BreedRepository breedRepository;
     private final SupplierService supplierService;
+    private final HousingLocationRepository housingLocationRepository;
 
     public FlockService(FlockRepository flockRepository, SupplierRepository supplierRepository,
-                        BreedRepository breedRepository, SupplierService supplierService) {
+                        BreedRepository breedRepository, SupplierService supplierService,
+                        HousingLocationRepository housingLocationRepository) {
         this.flockRepository = flockRepository;
         this.supplierRepository = supplierRepository;
         this.breedRepository = breedRepository;
         this.supplierService = supplierService;
+        this.housingLocationRepository = housingLocationRepository;
     }
 
     public List<FlockResponse> findAll(User user, FlockStatus status, FlockPurpose purpose) {
@@ -48,6 +52,13 @@ public class FlockService {
 
     @Transactional
     public FlockResponse create(User user, CreateFlockRequest req) {
+        // Batch code uniqueness check
+        if (req.batchCode() != null && !req.batchCode().isBlank()) {
+            if (flockRepository.existsByUserAndBatchCode(user, req.batchCode())) {
+                throw AppException.conflict("Batch code '" + req.batchCode() + "' already exists");
+            }
+        }
+
         Supplier supplier = null;
         if (req.supplierId() != null) {
             supplier = supplierService.getOwned(user, req.supplierId());
@@ -55,19 +66,26 @@ public class FlockService {
 
         Breed breed = null;
         if (req.breedId() != null) {
-            breed = breedRepository.findByIdAndVisible(req.breedId(), user)
-                    .orElse(null);
+            breed = breedRepository.findByIdAndVisible(req.breedId(), user).orElse(null);
+        }
+
+        HousingLocation housingLocation = null;
+        if (req.housingLocationId() != null) {
+            housingLocation = housingLocationRepository.findByIdAndUser(req.housingLocationId(), user)
+                    .orElseThrow(() -> AppException.notFound("Housing location not found"));
         }
 
         Flock flock = new Flock();
         flock.setUser(user);
         flock.setSupplier(supplier);
         flock.setBreed(breed);
+        flock.setHousingLocation(housingLocation);
+        flock.setBatchCode(req.batchCode());
         flock.setName(req.name());
         flock.setNameAr(req.nameAr());
         flock.setNameEn(req.nameEn());
         flock.setBirdCount(req.birdCount());
-        flock.setCurrentBirdCount(req.birdCount()); // auto-set to birdCount
+        flock.setCurrentBirdCount(req.birdCount());
         flock.setPurpose(req.purpose());
         flock.setStartDate(req.startDate());
         flock.setSource(req.source());
@@ -85,9 +103,14 @@ public class FlockService {
         }
 
         if (req.breedId() != null) {
-            Breed breed = breedRepository.findByIdAndVisible(req.breedId(), user)
-                    .orElse(null);
+            Breed breed = breedRepository.findByIdAndVisible(req.breedId(), user).orElse(null);
             flock.setBreed(breed);
+        }
+
+        if (req.housingLocationId() != null) {
+            HousingLocation housing = housingLocationRepository.findByIdAndUser(req.housingLocationId(), user)
+                    .orElseThrow(() -> AppException.notFound("Housing location not found"));
+            flock.setHousingLocation(housing);
         }
 
         if (req.name() != null) flock.setName(req.name());
@@ -106,8 +129,7 @@ public class FlockService {
     @Transactional
     public void delete(User user, UUID id) {
         Flock flock = getOwned(user, id);
-        // soft-delete: sets status to FINISHED
-        flock.setStatus(FlockStatus.FINISHED);
+        flock.setStatus(FlockStatus.PHASED_OUT);
         flockRepository.save(flock);
     }
 
@@ -118,6 +140,12 @@ public class FlockService {
             throw AppException.notFound("Flock not found");
         }
         return flock;
+    }
+
+    /** Called by MortalityService to persist headcount update within the same transaction. */
+    @Transactional
+    public void saveHeadcount(Flock flock) {
+        flockRepository.save(flock);
     }
 
     public long countActiveFlocks(User user) {

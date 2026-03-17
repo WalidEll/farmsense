@@ -11,12 +11,14 @@ import java.util.UUID;
 
 public record CreateFlockRequest(
         @NotBlank @Size(max = 255) String name,
+        @NotBlank @Size(max = 100) String batchCode,
         @Size(max = 255) String nameAr,
         @Size(max = 255) String nameEn,
         UUID breedId,
         @NotNull @Min(1) Integer birdCount,
         @NotNull FlockPurpose purpose,
         LocalDate startDate,
+        UUID housingLocationId,
         UUID supplierId,
         String source,
         String notes

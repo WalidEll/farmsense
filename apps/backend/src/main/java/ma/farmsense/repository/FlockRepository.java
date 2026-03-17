@@ -20,4 +20,8 @@ public interface FlockRepository extends JpaRepository<Flock, UUID> {
     long countByUserAndStatus(User user, FlockStatus status);
 
     long countByBreedIdAndStatus(UUID breedId, FlockStatus status);
+
+    boolean existsByUserAndBatchCode(User user, String batchCode);
+
+    long countByHousingLocationIdAndStatus(UUID housingLocationId, FlockStatus status);
 }
