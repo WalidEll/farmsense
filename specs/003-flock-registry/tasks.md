@@ -175,7 +175,7 @@
 
 ### Phase Dependencies
 
-```
+```text
 Phase 1 (Setup)
     └── Phase 2 (Foundational) — BLOCKS everything
             ├── Phase 3 (US1: Register Flock)  🎯 MVP
@@ -212,7 +212,7 @@ Within Phase 3 (US1), T017–T019 (Housing DTOs) and T022–T023 (Flock DTO modi
 
 ## Parallel Example: Foundational Phase
 
-```
+```text
 # Can run concurrently (all different files):
 T005  Extend FlockPurpose enum
 T006  Extend FlockStatus enum
@@ -224,7 +224,7 @@ T015  Extend frontend types
 
 ## Parallel Example: User Story 3 (Mortality)
 
-```
+```text
 # Can run concurrently:
 T036  CreateMortalityEventRequest DTO
 T037  MortalityEventResponse DTO
