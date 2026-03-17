@@ -3,9 +3,11 @@ import { test as setup, expect } from '@playwright/test'
 const authFile = 'e2e/.auth/user.json'
 
 setup('authenticate', async ({ page, request }) => {
+  const apiUrl = process.env.API_URL ?? 'http://localhost:8080'
+
   // 1. Idempotently register the test user via API
   // We use the full backend URL to ensure we hit the API directly
-  const registerRes = await request.post('http://localhost:8080/api/v1/auth/register', {
+  const registerRes = await request.post(`${apiUrl}/api/v1/auth/register`, {
     data: {
       email: 'test@farmsense.ma',
       password: 'Test1234!',
