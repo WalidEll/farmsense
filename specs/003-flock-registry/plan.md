@@ -8,8 +8,8 @@ Extend the existing poultry module to fully implement the Flock Registry as spec
 
 ## Technical Context
 
-**Language/Version**: Java 21 LTS (backend), TypeScript strict (frontend)
-**Primary Dependencies**: Spring Boot 3.4.x, Vue 3 (Composition API), Pinia, Tailwind CSS 4
+**Language/Version**: Java 21 LTS (authoritative for active feature; allowed range: Java 17/25), TypeScript strict (frontend)
+**Primary Dependencies**: Spring Boot 3.4.x (authoritative), Vue 3 (Composition API), Pinia, Tailwind CSS 4
 **Storage**: PostgreSQL 15 via Flyway migrations (next migration: V19)
 **Testing**: JUnit 5 + Mockito (backend unit), Vitest (frontend unit), Playwright (E2E)
 **Target Platform**: Linux server (backend), PWA in modern browsers (frontend)

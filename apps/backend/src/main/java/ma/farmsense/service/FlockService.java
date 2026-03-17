@@ -66,7 +66,8 @@ public class FlockService {
 
         Breed breed = null;
         if (req.breedId() != null) {
-            breed = breedRepository.findByIdAndVisible(req.breedId(), user).orElse(null);
+            breed = breedRepository.findByIdAndVisible(req.breedId(), user)
+                    .orElseThrow(() -> AppException.notFound("Breed not found"));
         }
 
         HousingLocation housingLocation = null;
@@ -103,7 +104,8 @@ public class FlockService {
         }
 
         if (req.breedId() != null) {
-            Breed breed = breedRepository.findByIdAndVisible(req.breedId(), user).orElse(null);
+            Breed breed = breedRepository.findByIdAndVisible(req.breedId(), user)
+                    .orElseThrow(() -> AppException.notFound("Breed not found"));
             flock.setBreed(breed);
         }
 
