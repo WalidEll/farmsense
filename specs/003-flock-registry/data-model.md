@@ -142,6 +142,10 @@ User ──< Flock >── Breed
            └──< MortalityRecord
 ```
 
+**Note on `Breed` entity**: The `Breed` entity is an existing component implemented in the Breed Catalogue feature (002). It represents bird breeds (system-wide or user-defined).
+- **Relationship**: `Flock` has a `ManyToOne` relationship with `Breed` (a flock belongs to one breed; a breed can have multiple flocks). This relationship is optional (`nullable = true`) at the database level but typically assigned during flock registration.
+- **Ownership**: Both `Flock` and `Breed` are scoped to a `User` (though `Breed` can also be a system-wide record with `is_system = true`).
+
 ---
 
 ## Frontend Type Changes
