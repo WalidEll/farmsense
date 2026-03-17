@@ -5,16 +5,19 @@ const authFile = 'e2e/.auth/user.json'
 setup('authenticate', async ({ page, request }) => {
   // 1. Idempotently register the test user via API
   // We use the full backend URL to ensure we hit the API directly
-  await request.post('http://localhost:8080/api/v1/auth/register', {
+  const registerRes = await request.post('http://localhost:8080/api/v1/auth/register', {
     data: {
       email: 'test@farmsense.ma',
       password: 'Test1234!',
       name: 'Test User',
       lang: 'FR'
     }
-  }).catch(() => {
-    // Ignore error if user already exists (409 Conflict)
   })
+  
+  // Only ignore 409 Conflict (user already exists), fail on any other error
+  if (registerRes.status() !== 409) {
+    expect(registerRes.ok(), `Registration failed with status ${registerRes.status()}`).toBeTruthy()
+  }
 
   // 2. Perform login via UI
   await page.goto('/login')
