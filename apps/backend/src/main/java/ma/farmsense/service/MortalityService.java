@@ -27,6 +27,7 @@ public class MortalityService {
         this.flockService = flockService;
     }
 
+    @Transactional(readOnly = true)
     public List<MortalityEventResponse> findByFlock(User user, UUID flockId) {
         Flock flock = flockService.getOwned(user, flockId);
         return mortalityRecordRepository.findByFlockOrderByMortalityDateDesc(flock)
