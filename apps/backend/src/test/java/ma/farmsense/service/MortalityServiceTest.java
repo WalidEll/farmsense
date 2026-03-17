@@ -86,7 +86,8 @@ class MortalityServiceTest {
 
         AppException ex = assertThrows(AppException.class,
                 () -> mortalityService.create(user, flockId, req));
-        assertEquals(400, ex.getStatus().value());
+        assertEquals(422, ex.getStatus().value());
+        assertEquals("EXCEEDS_HEADCOUNT", ex.getCode());
         verify(mortalityRecordRepository, never()).save(any());
     }
 

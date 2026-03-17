@@ -55,7 +55,7 @@ public class FlockService {
         // Batch code uniqueness check
         if (req.batchCode() != null && !req.batchCode().isBlank()) {
             if (flockRepository.existsByUserAndBatchCode(user, req.batchCode())) {
-                throw AppException.conflict("Batch code '" + req.batchCode() + "' already exists");
+                throw AppException.conflict("BATCH_CODE_CONFLICT", "Batch code '" + req.batchCode() + "' already exists");
             }
         }
 

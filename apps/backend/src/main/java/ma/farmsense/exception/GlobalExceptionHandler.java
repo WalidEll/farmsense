@@ -12,6 +12,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<Map<String, String>> handle(AppException ex) {
+        if (ex.getCode() != null) {
+            return ResponseEntity.status(ex.getStatus())
+                    .body(Map.of("error", ex.getCode(), "message", ex.getMessage()));
+        }
         return ResponseEntity.status(ex.getStatus())
                 .body(Map.of("error", ex.getMessage()));
     }

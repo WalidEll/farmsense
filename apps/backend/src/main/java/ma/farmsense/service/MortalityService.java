@@ -47,7 +47,8 @@ public class MortalityService {
         }
 
         if (req.count() > flock.getCurrentBirdCount()) {
-            throw AppException.badRequest(
+            throw AppException.unprocessableEntity(
+                    "EXCEEDS_HEADCOUNT",
                     "Loss of " + req.count() + " exceeds current headcount of " +
                     flock.getCurrentBirdCount());
         }
