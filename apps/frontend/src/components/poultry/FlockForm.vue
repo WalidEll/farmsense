@@ -133,15 +133,24 @@
           <label class="block text-sm font-bold text-gray-700 mb-1">
             {{ t('housing_location') }}
           </label>
-          <select
-            v-model="form.housingLocationId"
-            class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none bg-white"
-          >
-            <option :value="undefined">{{ t('common.select') }}</option>
-            <option v-for="loc in poultryStore.housingLocations" :key="loc.id" :value="loc.id">
-              {{ loc.name }} ({{ t(`housing_location_type_${loc.locationType.toLowerCase()}`) }})
-            </option>
-          </select>
+          <div class="flex gap-2">
+            <select
+              v-model="form.housingLocationId"
+              class="flex-1 border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none bg-white"
+            >
+              <option :value="undefined">{{ t('common.select') }}</option>
+              <option v-for="loc in poultryStore.housingLocations" :key="loc.id" :value="loc.id">
+                {{ loc.name }} ({{ t(`housing_location_type_${loc.locationType.toLowerCase()}`) }})
+              </option>
+            </select>
+            <button
+              type="button"
+              @click="showCreateHousingModal = true"
+              class="w-11 h-11 flex items-center justify-center bg-gray-100 hover:bg-green-100 text-gray-500 hover:text-green-600 rounded-xl transition-colors"
+            >
+              ➕
+            </button>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -283,6 +292,14 @@
         </div>
       </div>
     </div>
+
+    <!-- Housing Creation Modal -->
+    <HousingLocationForm
+      v-if="showCreateHousingModal"
+      @close="showCreateHousingModal = false"
+      @submit="handleCreateHousing"
+      :loading="housingLoading"
+    />
   </div>
 </template>
 
@@ -292,7 +309,8 @@ import { useI18n } from '@/i18n'
 import { usePoultryStore } from '@/stores/poultry.store'
 import { useBreedsStore } from '@/stores/breeds.store'
 import { useAuthStore } from '@/stores/auth.store'
-import type { Flock, CreateFlockRequest, UpdateFlockRequest, BreedSummary, BreedDetail } from '@/types'
+import HousingLocationForm from './HousingLocationForm.vue'
+import type { Flock, CreateFlockRequest, UpdateFlockRequest, BreedSummary, BreedDetail, CreateHousingLocationRequest } from '@/types'
 
 const props = defineProps<{
   initialData?: Flock
@@ -309,6 +327,20 @@ const poultryStore = usePoultryStore()
 const breedsStore = useBreedsStore()
 const authStore = useAuthStore()
 const error = ref('')
+
+// Housing creation
+const showCreateHousingModal = ref(false)
+const housingLoading = ref(false)
+
+async function handleCreateHousing(data: CreateHousingLocationRequest) {
+  try {
+    const newLoc = await poultryStore.createHousingLocation(data)
+    form.housingLocationId = newLoc.id
+    showCreateHousingModal.value = false
+  } catch (e: any) {
+    console.error('Failed to create housing', e)
+  }
+}
 
 // Breed selector state
 const breedSearch = ref('')
@@ -415,7 +447,15 @@ watch(() => props.initialData, (newVal) => {
 }, { immediate: true })
 
 async function handleSubmit() {
-  if (!form.name || !form.birdCount || !form.purpose) return
+  if (!form.name || !form.birdCount || form.birdCount <= 0 || !form.purpose) {
+    error.value = t('common_error_required_fields')
+    return
+  }
+  if (!props.initialData && !form.batchCode) {
+    error.value = t('common_error_required_fields')
+    return
+  }
+  
   error.value = ''
   
   const submitData: any = { ...form }

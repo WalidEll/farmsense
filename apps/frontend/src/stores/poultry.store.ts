@@ -75,16 +75,26 @@ export const usePoultryStore = defineStore('poultry', () => {
   }
 
   async function createHousingLocation(req: CreateHousingLocationRequest): Promise<HousingLocation> {
-    const location: HousingLocation = await api.post('/housing-locations', req)
-    housingLocations.value.unshift(location)
-    return location
+    loading.value = true
+    try {
+      const location: HousingLocation = await api.post('/housing-locations', req)
+      housingLocations.value.unshift(location)
+      return location
+    } finally {
+      loading.value = false
+    }
   }
 
   async function updateHousingLocation(id: string, req: UpdateHousingLocationRequest): Promise<HousingLocation> {
-    const location: HousingLocation = await api.put(`/housing-locations/${id}`, req)
-    const idx = housingLocations.value.findIndex(l => l.id === id)
-    if (idx >= 0) housingLocations.value[idx] = location
-    return location
+    loading.value = true
+    try {
+      const location: HousingLocation = await api.put(`/housing-locations/${id}`, req)
+      const idx = housingLocations.value.findIndex(l => l.id === id)
+      if (idx >= 0) housingLocations.value[idx] = location
+      return location
+    } finally {
+      loading.value = false
+    }
   }
 
   async function deleteHousingLocation(id: string) {

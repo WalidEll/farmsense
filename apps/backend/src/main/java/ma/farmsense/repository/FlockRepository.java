@@ -32,4 +32,6 @@ public interface FlockRepository extends JpaRepository<Flock, UUID> {
     boolean existsByUserAndBatchCode(User user, String batchCode);
 
     long countByHousingLocationIdAndStatus(UUID housingLocationId, FlockStatus status);
+
+    Optional<Flock> findFirstByHousingLocationIdAndStatusOrderByCreatedAtDesc(UUID housingLocationId, FlockStatus status);
 }

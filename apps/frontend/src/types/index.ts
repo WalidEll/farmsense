@@ -444,6 +444,7 @@ export interface Flock {
 }
 
 export type HousingLocationType = 'COOP' | 'PEN' | 'FREE_RANGE'
+export type HousingLocationStatus = 'ACTIVE' | 'EMPTY' | 'MAINTENANCE'
 
 export interface HousingLocation {
   id: string
@@ -451,8 +452,11 @@ export interface HousingLocation {
   nameAr?: string
   nameEn?: string
   locationType: HousingLocationType
+  status: HousingLocationStatus
+  capacity: number
   notes?: string
   currentFlockCount: number
+  currentFlockName?: string
   createdAt: string
   updatedAt: string
 }
@@ -462,6 +466,8 @@ export interface CreateHousingLocationRequest {
   nameAr?: string
   nameEn?: string
   locationType: HousingLocationType
+  status?: HousingLocationStatus
+  capacity?: number
   notes?: string
 }
 
@@ -470,6 +476,8 @@ export interface UpdateHousingLocationRequest {
   nameAr?: string
   nameEn?: string
   locationType?: HousingLocationType
+  status?: HousingLocationStatus
+  capacity?: number
   notes?: string
 }
 

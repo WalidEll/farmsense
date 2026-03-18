@@ -5,6 +5,7 @@ import ma.farmsense.dto.poultry.HousingLocationResponse;
 import ma.farmsense.dto.poultry.UpdateHousingLocationRequest;
 import ma.farmsense.entity.FlockStatus;
 import ma.farmsense.entity.HousingLocation;
+import ma.farmsense.entity.HousingLocationStatus;
 import ma.farmsense.entity.HousingLocationType;
 import ma.farmsense.entity.User;
 import ma.farmsense.exception.AppException;
@@ -33,13 +34,13 @@ public class HousingLocationService {
                 ? housingLocationRepository.findByUserAndLocationTypeOrderByCreatedAtDesc(user, locationType)
                 : housingLocationRepository.findByUserOrderByCreatedAtDesc(user);
         return locations.stream()
-                .map(l -> HousingLocationResponse.from(l, activeFlockCount(l.getId())))
+                .map(l -> HousingLocationResponse.from(l, activeFlockCount(l.getId()), activeFlockName(l.getId())))
                 .toList();
     }
 
     public HousingLocationResponse findById(User user, UUID id) {
         HousingLocation location = getOwned(user, id);
-        return HousingLocationResponse.from(location, activeFlockCount(id));
+        return HousingLocationResponse.from(location, activeFlockCount(id), activeFlockName(id));
     }
 
     @Transactional
@@ -50,9 +51,11 @@ public class HousingLocationService {
         location.setNameAr(req.nameAr());
         location.setNameEn(req.nameEn());
         location.setLocationType(req.locationType());
+        location.setStatus(req.status() != null ? req.status() : HousingLocationStatus.EMPTY);
+        location.setCapacity(req.capacity() != null ? req.capacity() : 0);
         location.setNotes(req.notes());
         HousingLocation saved = housingLocationRepository.save(location);
-        return HousingLocationResponse.from(saved, 0);
+        return HousingLocationResponse.from(saved, 0, null);
     }
 
     @Transactional
@@ -62,9 +65,11 @@ public class HousingLocationService {
         if (req.nameAr() != null) location.setNameAr(req.nameAr());
         if (req.nameEn() != null) location.setNameEn(req.nameEn());
         if (req.locationType() != null) location.setLocationType(req.locationType());
+        if (req.status() != null) location.setStatus(req.status());
+        if (req.capacity() != null) location.setCapacity(req.capacity());
         if (req.notes() != null) location.setNotes(req.notes());
         HousingLocation saved = housingLocationRepository.save(location);
-        return HousingLocationResponse.from(saved, activeFlockCount(id));
+        return HousingLocationResponse.from(saved, activeFlockCount(id), activeFlockName(id));
     }
 
     @Transactional
@@ -86,5 +91,11 @@ public class HousingLocationService {
 
     private long activeFlockCount(UUID locationId) {
         return flockRepository.countByHousingLocationIdAndStatus(locationId, FlockStatus.ACTIVE);
+    }
+
+    private String activeFlockName(UUID locationId) {
+        return flockRepository.findFirstByHousingLocationIdAndStatusOrderByCreatedAtDesc(locationId, FlockStatus.ACTIVE)
+                .map(f -> f.getName())
+                .orElse(null);
     }
 }

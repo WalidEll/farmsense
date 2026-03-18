@@ -42,6 +42,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Permit all OPTIONS requests for CORS pre-flight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Auth endpoints — public
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         // ESP32 sensor ingestion — device key auth (handled in service)

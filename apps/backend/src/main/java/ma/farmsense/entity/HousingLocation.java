@@ -34,6 +34,13 @@ public class HousingLocation {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private HousingLocationStatus status = HousingLocationStatus.EMPTY;
+
+    @Column(nullable = false)
+    private Integer capacity = 0;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -62,6 +69,12 @@ public class HousingLocation {
 
     public HousingLocationType getLocationType() { return locationType; }
     public void setLocationType(HousingLocationType locationType) { this.locationType = locationType; }
+
+    public HousingLocationStatus getStatus() { return status; }
+    public void setStatus(HousingLocationStatus status) { this.status = status; }
+
+    public Integer getCapacity() { return capacity; }
+    public void setCapacity(Integer capacity) { this.capacity = capacity; }
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }

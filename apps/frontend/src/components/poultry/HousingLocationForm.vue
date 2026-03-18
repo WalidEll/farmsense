@@ -21,25 +21,52 @@
           <input
             v-model="form.name"
             type="text"
-            required
             class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none"
+            :placeholder="t('housing_location_name')"
           />
         </div>
 
         <!-- Type -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">
+              {{ t('housing_location_type') }} <span class="text-red-500">*</span>
+            </label>
+            <select
+              v-model="form.locationType"
+              class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none bg-white"
+            >
+              <option value="COOP">{{ t('housing_location_type_coop') }}</option>
+              <option value="PEN">{{ t('housing_location_type_pen') }}</option>
+              <option value="FREE_RANGE">{{ t('housing_location_type_free_range') }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">
+              {{ t('housing_location_status') }}
+            </label>
+            <select
+              v-model="form.status"
+              class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none bg-white"
+            >
+              <option value="EMPTY">{{ t('housing_location_status_empty') }}</option>
+              <option value="ACTIVE">{{ t('housing_location_status_active') }}</option>
+              <option value="MAINTENANCE">{{ t('housing_location_status_maintenance') }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Capacity -->
         <div>
           <label class="block text-sm font-bold text-gray-700 mb-1">
-            {{ t('housing_location_type') }} <span class="text-red-500">*</span>
+            {{ t('housing_location_capacity') }}
           </label>
-          <select
-            v-model="form.locationType"
-            required
+          <input
+            v-model.number="form.capacity"
+            type="number"
+            min="0"
             class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none"
-          >
-            <option value="COOP">{{ t('housing_location_type_coop') }}</option>
-            <option value="PEN">{{ t('housing_location_type_pen') }}</option>
-            <option value="FREE_RANGE">{{ t('housing_location_type_free_range') }}</option>
-          </select>
+          />
         </div>
 
         <!-- Notes -->
@@ -51,6 +78,8 @@
             class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none resize-none"
           />
         </div>
+
+        <p v-if="error" class="text-red-500 text-xs font-bold">{{ error }}</p>
 
         <!-- Actions -->
         <div class="flex gap-3 pt-2">
@@ -75,9 +104,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useI18n } from '@/i18n'
-import type { HousingLocation, HousingLocationType, CreateHousingLocationRequest } from '@/types'
+import type { HousingLocation, HousingLocationType, HousingLocationStatus, CreateHousingLocationRequest } from '@/types'
 
 const props = defineProps<{
   initialData?: HousingLocation
@@ -89,24 +118,49 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const error = ref('')
 
-const form = ref({
+const form = reactive({
   name: props.initialData?.name ?? '',
   locationType: (props.initialData?.locationType ?? 'COOP') as HousingLocationType,
+  status: (props.initialData?.status ?? 'EMPTY') as HousingLocationStatus,
+  capacity: props.initialData?.capacity ?? 0,
   notes: props.initialData?.notes ?? '',
 })
 
 watch(() => props.initialData, (val) => {
   if (val) {
-    form.value = { name: val.name, locationType: val.locationType, notes: val.notes ?? '' }
+    Object.assign(form, { 
+      name: val.name, 
+      locationType: val.locationType, 
+      status: val.status, 
+      capacity: val.capacity, 
+      notes: val.notes ?? '' 
+    })
+  } else {
+    Object.assign(form, {
+      name: '',
+      locationType: 'COOP',
+      status: 'EMPTY',
+      capacity: 0,
+      notes: ''
+    })
   }
 })
 
 function handleSubmit() {
+  if (!form.name) {
+    error.value = t('common_error_required_fields')
+    return
+  }
+  error.value = ''
+  
   emit('submit', {
-    name: form.value.name,
-    locationType: form.value.locationType,
-    notes: form.value.notes || undefined,
+    name: form.name,
+    locationType: form.locationType,
+    status: form.status,
+    capacity: form.capacity,
+    notes: form.notes || undefined,
   })
 }
 </script>

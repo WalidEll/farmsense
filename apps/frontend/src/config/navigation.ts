@@ -96,6 +96,7 @@ export const navigationConfig: NavGroup[] = [
     defaultOpen: true,
     items: [
       { icon: icons.flocks, labelKey: 'nav.flocks',          to: '/poultry/flocks' },
+      { icon: icons.locations, labelKey: 'housing_location',  to: '/poultry/housing' },
       { icon: icons.breeds,  labelKey: 'nav.breeds',          to: '/poultry/breeds' },
       { icon: icons.eggs,   labelKey: 'nav.egg_collection',  to: '/poultry/eggs' },
       { icon: icons.feed,   labelKey: 'nav.feed_records',    to: '/poultry/feed' },
